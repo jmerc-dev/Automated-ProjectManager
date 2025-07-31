@@ -2,9 +2,11 @@
 import taskIcon from "../../assets/images/tasks.png";
 import membersIcon from "../../assets/images/members.png";
 import reportsIcon from "../../assets/images/reports.png";
+import notifIcon from "../../assets/images/notification.png";
+import helpIcon from "../../assets/images/help.png";
 import { useState } from "react";
 
-function Page() {
+function Project() {
   const [activeTab, setActiveTab] = useState("tasks-tab");
 
   const renderContent = () => {
@@ -20,12 +22,20 @@ function Page() {
   return (
     <div className="grid [grid-template-rows:auto_1fr] [grid-template-columns:70px_1fr] h-screen font-display">
       <nav className="bg-cyan-900 col-span-2">
-        <div className="grid [grid-template-columns:70px_auto_1fr] m-3 text-amber-50">
+        <div className="grid [grid-template-columns:70px_auto_1fr] m-3 text-amber-50 bg-amber-400">
           <div>logo</div>
-          <h1 className="font-semibold">Project Name</h1>
-          <div className="flex justify-end space-x-8">
-            <div>b1</div>
-            <div>b2</div>
+          <input
+            type="text"
+            className="font-semibold flex justify-center align-middle bg-blue-400"
+            value="asd"
+          />
+          <div className="flex justify-end space-x-5 [&>div]:bg-cyan-800 [&>div]:rounded-full [&>div]:cursor-pointer [&>div]:hover:bg-cyan-700 [&>div]:p-1 [&>div>img]:w-6">
+            <div>
+              <img src={notifIcon} />
+            </div>
+            <div>
+              <img src={helpIcon} />
+            </div>
             <div>b3</div>
           </div>
         </div>
@@ -40,7 +50,7 @@ function Page() {
           className={
             activeTab === "tasks-tab"
               ? "flex justify-center border-1"
-              : "flex justify-center border-transparent-1"
+              : "flex justify-center border border-transparent"
           }
           onClick={() => setActiveTab("tasks-tab")}
         >
@@ -52,7 +62,7 @@ function Page() {
           className={
             activeTab === "members-tab"
               ? "flex justify-center border-1"
-              : "flex justify-center border-transparent-1"
+              : "flex justify-center border border-transparent"
           }
           onClick={() => setActiveTab("members-tab")}
         >
@@ -63,7 +73,7 @@ function Page() {
           className={
             activeTab === "reports-tab"
               ? "flex justify-center border-1"
-              : "flex justify-center border-transparent-1"
+              : "flex justify-center border border-transparent"
           }
           onClick={() => setActiveTab("reports-tab")}
         >
@@ -75,4 +85,4 @@ function Page() {
   );
 }
 
-export default Page;
+export default Project;

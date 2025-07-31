@@ -1,5 +1,5 @@
 import { useState } from "react";
-import Page from "./Project/page";
+import Project from "./Project/page";
 import "./App.css";
 
 function App() {
@@ -7,7 +7,7 @@ function App() {
 
   return (
     <div>
-      <Page />
+      <Project />
     </div>
   );
 }
