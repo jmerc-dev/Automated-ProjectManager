@@ -81,7 +81,7 @@ function Project() {
           <img src={reportsIcon} className="h-8 w-8 p-1 my-2" />
         </button>
       </aside>
-      <main className="m-3">{renderContent()}</main>
+      <main className="p-3 bg-gray-300">{renderContent()}</main>
     </div>
   );
 }

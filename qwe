@@ -1,0 +1,35 @@
+[33mcommit ace0c4dce039a66302e4b7135ced46ab08439756[m[33m ([m[1;36mHEAD[m[33m -> [m[1;32mmain[m[33m)[m
+Author: jmerc-dev <jelmarmercado@gmail.com>
+Date:   Sat Aug 2 18:33:16 2025 +0800
+
+    checkpoint
+
+[33mcommit 04f1a71097ccebe7bcd003e9abe115829cf865ea[m
+Author: jmerc-dev <jelmarmercado@gmail.com>
+Date:   Fri Aug 1 00:09:47 2025 +0800
+
+    added notif and help icons
+
+[33mcommit 98a63c80d7e6f3462b2e2be4df619ff850b2f5d0[m
+Author: jmerc-dev <jelmarmercado@gmail.com>
+Date:   Thu Jul 31 12:17:30 2025 +0800
+
+    added tabs
+
+[33mcommit 1c28bb5b3d7096ad565213697d45a01fb0ca3a55[m
+Author: jmerc-dev <jelmarmercado@gmail.com>
+Date:   Thu Jul 31 08:58:15 2025 +0800
+
+    created layout for projects page
+
+[33mcommit 3be59f9f64d52bee5bf5ececba7cec641ac9a26b[m
+Author: jmerc-dev <jelmarmercado@gmail.com>
+Date:   Thu Jul 31 00:47:07 2025 +0800
+
+    clean
+
+[33mcommit 6734f1b3637d5e562a1886b6124f0946af6f305d[m[33m ([m[1;31morigin/main[m[33m)[m
+Author: jmerc-dev <jelmarmercado@gmail.com>
+Date:   Sun Jun 29 19:20:37 2025 +0800
+
+    first commit
