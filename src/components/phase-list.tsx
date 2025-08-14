@@ -11,6 +11,10 @@ export default function PhaseList() {
         {/* Put the Phases here */}
         <Phase />
         <Phase />
+        <Phase />
+        <Phase />
+        <Phase />
+        <Phase />
       </div>
     </div>
   );
