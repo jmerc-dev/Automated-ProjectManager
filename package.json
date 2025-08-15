@@ -17,6 +17,7 @@
     "gantt-task-react": "^0.3.9",
     "react": "^18.1.1",
     "react-dom": "^18.1.1",
+    "react-router-dom": "^7.8.0",
     "tailwindcss": "^4.1.11",
     "wx-react-gantt": "^1.3.1"
   },
