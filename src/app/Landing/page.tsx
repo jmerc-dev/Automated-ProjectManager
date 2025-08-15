@@ -5,13 +5,18 @@ import { useNavigate } from "react-router-dom";
 function Landing() {
   const navigate = useNavigate();
   async function signIn() {
-    await signInWithPopup(auth, googleProvider);
-    navigate("/home");
+    await signInWithPopup(auth, googleProvider)
+      .then(() => {
+        navigate("/home");
+      })
+      .catch((error) => {
+        console.log(error);
+      });
   }
 
   return (
     <div>
-      <div></div>
+      <div> </div>
       <div>
         <button onClick={signIn} className="border-1 border-gray-500">
           Login With Google
