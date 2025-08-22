@@ -5,10 +5,17 @@ import reportsIcon from "../../assets/images/reports.png";
 import notifIcon from "../../assets/images/notification.png";
 import helpIcon from "../../assets/images/help.png";
 import TasksView from "./Tasks/page";
+import homeIcon from "../../assets/images/home.png";
 import { useState } from "react";
+import { useNavigate } from "react-router-dom";
 
 function Project() {
   const [activeTab, setActiveTab] = useState("tasks-tab");
+  const navigate = useNavigate();
+
+  const handleHomeClick = () => {
+    navigate("/home");
+  };
 
   const renderContent = () => {
     if (activeTab === "tasks-tab") {
@@ -21,16 +28,18 @@ function Project() {
   };
 
   return (
-    <div className="grid [grid-template-rows:auto_1fr] overflow-hidden [grid-template-columns:50px_1fr] h-screen font-display">
-      <nav className="bg-cyan-900 col-span-2">
-        <div className="grid [grid-template-columns:70px_auto_1fr] m-3 text-amber-50">
-          <div>logo</div>
-          <input
-            type="text"
-            className="font-semibold flex justify-center align-middle p-1 cursor-pointer border-1 rounded border-transparent hover:border-1 hover:border-cyan-600"
-            value="Project Name"
-          />
-          <div className="flex justify-end space-x-5 [&>div]:bg-cyan-800 [&>div]:rounded-full [&>div]:cursor-pointer [&>div]:hover:bg-cyan-700 [&>div]:p-1 [&>div>img]:w-6">
+    <div className="grid bg-gray-300 [grid-template-rows:auto_1fr] overflow-hidden [grid-template-columns:50px_1fr] h-screen font-display">
+      <nav className=" col-span-2">
+        <div className="grid [grid-template-columns:50px_auto_1fr] text-black">
+          <div className="bg-white border-r-1 border-gray-400">
+            <button className="hover:bg-gray-300" onClick={handleHomeClick}>
+              <img src={homeIcon} className="p-3" />
+            </button>
+          </div>
+          <div className="font-semibold flex justify-center align-middle pt-3 pl-2">
+            AutoProject
+          </div>
+          <div className="flex justify-end space-x-5 m-3 [&>div]:bg-cyan-800 [&>div]:rounded-full [&>div]:cursor-pointer [&>div]:hover:bg-cyan-700 [&>div]:p-1 [&>div>img]:w-6">
             <div>
               <img src={notifIcon} />
             </div>
