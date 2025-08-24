@@ -5,6 +5,10 @@ import { useState } from "react";
 export default function Projects() {
   const [isModalOpen, setIsModalOpen] = useState<boolean>();
 
+  const createProject = () => {
+    console.log("project created");
+  };
+
   return (
     <div>
       <div className="grid grid-cols-2">
@@ -26,8 +30,12 @@ export default function Projects() {
         <ProjectCard />
         <ProjectCard />
       </div>
-      <Modal open={isModalOpen ?? false} onClose={() => setIsModalOpen(false)}>
-        asd
+      <Modal
+        open={isModalOpen ?? false}
+        onClose={() => setIsModalOpen(false)}
+        onConfirm={createProject}
+      >
+        <div></div>
       </Modal>
     </div>
   );

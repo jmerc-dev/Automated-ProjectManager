@@ -31,7 +31,7 @@ export default function Home() {
             <img src={homeIcon} className="p-3" />
           </div>
           <div className="font-semibold pt-3 p-1">AutoProject</div>
-          <div className="flex justify-end space-x-5 m-3 [&>div]:bg-cyan-800 [&>div]:rounded-full [&>div]:cursor-pointer [&>div]:hover:bg-cyan-700 [&>div]:p-1 [&>div>img]:w-6">
+          <div className="flex justify-end space-x-5 m-3 [&>div]:bg-transparent [&>div]:hover:bg-gray-300  [&>div]:rounded-full [&>div]:cursor-pointer [&>div]:p-1 [&>div>img]:w-6">
             <div>
               <img src={notifIcon} />
             </div>
@@ -39,7 +39,7 @@ export default function Home() {
               <img src={helpIcon} />
             </div>
             <div>
-              <img src={user?.photoURL || ""} />
+              <img src={user?.photoURL || ""} className="rounded-xl" />
             </div>
           </div>
         </div>
