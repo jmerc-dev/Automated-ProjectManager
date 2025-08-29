@@ -35,7 +35,11 @@ export default function Projects() {
         onClose={() => setIsModalOpen(false)}
         onConfirm={createProject}
       >
-        <div></div>
+        <div className="flex flex-col">
+          <input type="text" placeholder="Project Name" />
+          <textarea placeholder="Description" />
+          <input type="datetime-local" />
+        </div>
       </Modal>
     </div>
   );

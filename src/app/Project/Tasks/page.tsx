@@ -1,4 +1,3 @@
-import React, { useRef } from "react";
 import GanttChart from "../../../components/gantt-chart";
 import "../../../styles/frappe-gantt.css";
 import PhaseList from "../../../components/phase-list";
