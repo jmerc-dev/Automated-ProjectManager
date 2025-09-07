@@ -1,9 +1,27 @@
 import ProjectCard from "../../../components/project-card";
+import { getProjectsByOwner } from "../../../services/firestore/projects";
 import Modal from "../../../components/modal";
-import { useState } from "react";
+import { useState, useEffect } from "react";
+import type { User } from "firebase/auth";
+import type { Project } from "../../../types/project";
 
-export default function Projects() {
+export interface ProjectsProps {
+  user: User | null;
+}
+
+export default function Projects({ user }: ProjectsProps) {
   const [isModalOpen, setIsModalOpen] = useState<boolean>();
+  const [projects, setProjects] = useState<Project[] | undefined>([]);
+
+  // Load Projects
+  useEffect(() => {
+    async function load() {
+      const results = await getProjectsByOwner(user?.uid);
+      setProjects(results);
+      console.log(results);
+    }
+    if (user?.uid) load();
+  }, [user?.uid]);
 
   const createProject = () => {
     console.log("project created");
@@ -20,25 +38,39 @@ export default function Projects() {
           New Project
         </button>
       </div>
-      <div className="flex flex-row pt-5 *:m-2 flex-wrap">
-        <ProjectCard />
-        <ProjectCard />
-        <ProjectCard />
-        <ProjectCard />
-        <ProjectCard />
-        <ProjectCard />
-        <ProjectCard />
-        <ProjectCard />
+      <div className="flex flex-row pt-5 flex-wrap">
+        {projects.length > 0 ? (
+          projects.map((project) => (
+            <ProjectCard key={project.id} project={project} />
+          ))
+        ) : (
+          <p>No projects found.</p>
+        )}
       </div>
       <Modal
         open={isModalOpen ?? false}
         onClose={() => setIsModalOpen(false)}
         onConfirm={createProject}
+        title={"New Project"}
       >
         <div className="flex flex-col">
-          <input type="text" placeholder="Project Name" />
-          <textarea placeholder="Description" />
-          <input type="datetime-local" />
+          <input
+            type="text"
+            id="first_name"
+            className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:outline-none focus:ring-1 focus:ring-cyan-600 focus:border-cyan-600 block w-full p-2.5 m-1"
+            placeholder="Project Name"
+            required
+          />
+          <textarea
+            id="message"
+            rows={4}
+            className="block p-2.5 w-full text-sm text-gray-900 bg-gray-50 rounded-lg border border-gray-300 focus:outline-none focus:ring-1 focus:ring-cyan-600 focus:border-cyan-600 m-1"
+            placeholder="Project Description"
+          ></textarea>
+          <div className="m-1 w-full">
+            <label>Start Date</label>
+            <input className="p-2.5 w-55" type="datetime-local" />
+          </div>
         </div>
       </Modal>
     </div>

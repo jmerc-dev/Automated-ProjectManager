@@ -16,6 +16,11 @@ export default function Home() {
     navigate("/");
   }
 
+  if (!user) {
+    console.log("No user logged in");
+    navigate("/");
+  }
+
   useEffect(() => {
     const unsubscribe = onAuthStateChanged(auth, (user) => {
       setUser(user); // user is null if logged out
@@ -46,7 +51,7 @@ export default function Home() {
       </nav>
       <main>
         <div className="container mx-auto max-w-5/10 mt-7">
-          <Projects />
+          <Projects user={user} />
         </div>
       </main>
     </div>

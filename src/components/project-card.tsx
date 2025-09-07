@@ -1,8 +1,22 @@
-export default function ProjectCard() {
+import type { Project } from "../types/project";
+import DropdownMenu from "./dropdown";
+
+interface ProjectCardProps {
+  project: Project;
+}
+
+export default function ProjectCard({ project }: ProjectCardProps) {
+  const menuChoices = ["Delete", "Details"];
+
   return (
-    <div className="border-1 border-transparent rounded-md p-3 hover:border-gray-500 min-w-2xs cursor-pointer shadow-md bg-white">
-      <div className="text-lg">title</div>
-      <div className="text-sm font-extralight">Date Created</div>
+    <div className="w-1/3 p-1">
+      <div className="border-1 border-transparent rounded-md p-3 hover:border-gray-500 cursor-pointer shadow-md bg-white">
+        <div className="text-lg">{project.name}</div>
+        <div className="text-sm font-extralight">
+          Date Created: {project.createdAt.toLocaleDateString()}
+        </div>
+        <DropdownMenu />
+      </div>
     </div>
   );
 }
