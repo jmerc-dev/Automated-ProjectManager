@@ -3,11 +3,11 @@ export interface Project {
   name: string;
   description: string;
   ownerID: string;
-  members: string[];
+  members?: string[];
   progress: number;
   status: "active" | "completed" | "on-hold";
   startDate: Date;
-  expectedEndDate: Date;
+  expectedEndDate?: Date;
   createdAt: Date;
   updatedAt: Date;
 }

@@ -1,6 +1,8 @@
 import { db } from "../../config/firebase/config";
 import type { Project } from "../../types/project";
 import { Timestamp } from "firebase/firestore";
+import { auth } from "../../config/firebase/config";
+
 import {
   collection,
   addDoc,
@@ -11,6 +13,25 @@ import {
 } from "firebase/firestore";
 
 const projectsRef = collection(db, "projects");
+
+export async function createProject(project: Project) {
+  if (!auth.currentUser) {
+    throw new Error("Invalid Owner of Project");
+  }
+
+  try {
+    const docRef = await addDoc(collection(db, "projects"), {
+      ...project,
+      ownerID: auth.currentUser?.uid,
+      createdAt: new Date(),
+      updatedAt: new Date(),
+    });
+
+    console.log("created project successfuly: ", docRef.id);
+  } catch (e) {
+    console.error("Error adding project");
+  }
+}
 
 export async function getProjectsByOwner(userId: string | undefined) {
   if (!userId) {

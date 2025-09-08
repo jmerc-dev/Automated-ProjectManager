@@ -1,5 +1,8 @@
 import ProjectCard from "../../../components/project-card";
-import { getProjectsByOwner } from "../../../services/firestore/projects";
+import {
+  getProjectsByOwner,
+  createProject,
+} from "../../../services/firestore/projects";
 import Modal from "../../../components/modal";
 import { useState, useEffect } from "react";
 import type { User } from "firebase/auth";
@@ -12,6 +15,9 @@ export interface ProjectsProps {
 export default function Projects({ user }: ProjectsProps) {
   const [isModalOpen, setIsModalOpen] = useState<boolean>();
   const [projects, setProjects] = useState<Project[] | undefined>([]);
+  const [projectName, setProjectName] = useState<string>("");
+  const [projectDescription, setprojectDescription] = useState<string>("");
+  const [projectStartDate, setprojectStartDate] = useState<string>("");
 
   // Load Projects
   useEffect(() => {
@@ -23,8 +29,23 @@ export default function Projects({ user }: ProjectsProps) {
     if (user?.uid) load();
   }, [user?.uid]);
 
-  const createProject = () => {
-    console.log("project created");
+  const handleCreateProject = () => {
+    const newProject = {
+      name: projectName,
+      description: projectDescription,
+      ownerID: "",
+      members: [],
+      progress: 0,
+      status: "active",
+      startDate: new Date(projectStartDate),
+      expectedEndDate: new Date(),
+      createdAt: new Date(),
+      updatedAt: new Date(),
+    } as Project;
+
+    console.log(newProject);
+
+    createProject(newProject);
   };
 
   return (
@@ -39,8 +60,8 @@ export default function Projects({ user }: ProjectsProps) {
         </button>
       </div>
       <div className="flex flex-row pt-5 flex-wrap">
-        {projects.length > 0 ? (
-          projects.map((project) => (
+        {projects != undefined && projects?.length > 0 ? (
+          projects?.map((project) => (
             <ProjectCard key={project.id} project={project} />
           ))
         ) : (
@@ -50,28 +71,39 @@ export default function Projects({ user }: ProjectsProps) {
       <Modal
         open={isModalOpen ?? false}
         onClose={() => setIsModalOpen(false)}
-        onConfirm={createProject}
+        onConfirm={handleCreateProject}
         title={"New Project"}
       >
-        <div className="flex flex-col">
-          <input
-            type="text"
-            id="first_name"
-            className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:outline-none focus:ring-1 focus:ring-cyan-600 focus:border-cyan-600 block w-full p-2.5 m-1"
-            placeholder="Project Name"
-            required
-          />
-          <textarea
-            id="message"
-            rows={4}
-            className="block p-2.5 w-full text-sm text-gray-900 bg-gray-50 rounded-lg border border-gray-300 focus:outline-none focus:ring-1 focus:ring-cyan-600 focus:border-cyan-600 m-1"
-            placeholder="Project Description"
-          ></textarea>
-          <div className="m-1 w-full">
-            <label>Start Date</label>
-            <input className="p-2.5 w-55" type="datetime-local" />
+        <form>
+          <div className="flex flex-col">
+            <input
+              type="text"
+              id="first_name"
+              className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:outline-none focus:ring-1 focus:ring-cyan-600 focus:border-cyan-600 block w-full p-2.5 m-1"
+              placeholder="Project Name"
+              required
+              value={projectName}
+              onChange={(e) => setProjectName(e.target.value)}
+            />
+            <textarea
+              id="message"
+              rows={4}
+              className="block p-2.5 w-full text-sm text-gray-900 bg-gray-50 rounded-lg border border-gray-300 focus:outline-none focus:ring-1 focus:ring-cyan-600 focus:border-cyan-600 m-1"
+              placeholder="Project Description"
+              value={projectDescription}
+              onChange={(e) => setprojectDescription(e.target.value)}
+            ></textarea>
+            <div className="m-1 w-full">
+              <label>Start Date</label>
+              <input
+                className="p-2.5 w-55"
+                type="datetime-local"
+                value={projectStartDate}
+                onChange={(e) => setprojectStartDate(e.target.value)}
+              />
+            </div>
           </div>
-        </div>
+        </form>
       </Modal>
     </div>
   );
