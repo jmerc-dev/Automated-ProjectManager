@@ -10,7 +10,9 @@
     "preview": "vite preview"
   },
   "dependencies": {
+    "@syncfusion/ej2-base": "^31.1.17",
     "@syncfusion/ej2-react-base": "^31.1.17",
+    "@syncfusion/ej2-react-gantt": "^31.1.18",
     "@tailwindcss/vite": "^4.1.11",
     "firebase": "^12.1.0",
     "frappe-gantt": "^1.0.3",
