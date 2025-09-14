@@ -37,14 +37,14 @@ function Project() {
             </button>
           </div>
           <div className="font-semibold flex align-middle pl-2">
-            <div className="text-base pt-[14px]">
+            <div className="text-sm mt-auto mb-auto font-bold text-cyan-600">
               <div>AutoProject</div>
             </div>
-            <div className="w-full flex align-middle ml-[100px]">
+            <div className="w-full flex align-middle mt-auto mb-auto ml-[100px]">
               <input
                 type="text"
                 placeholder="Project Name"
-                className="font-light outline-0 border border-transparent rounded-lg p-1 hover:bg-gray-300 hover:cursor-pointer focus:hover:bg-transparent focus:hover:cursor-auto ring-1 ring-transparent pb-1 focus:ring-blue-400"
+                className="font-bold outline-0 text-base h-10 border border-transparent rounded-lg p-1 hover:bg-gray-300 hover:cursor-pointer focus:hover:bg-transparent focus:hover:cursor-auto ring-1 ring-transparent focus:ring-blue-400"
                 value={"Pygame Online"}
               />
             </div>

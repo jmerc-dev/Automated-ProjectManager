@@ -5,17 +5,17 @@
   --color-primary: #dbdbdb;
 }
 
-@import "@syncfusion/ej2-base/styles/material.css";
-@import "@syncfusion/ej2-buttons/styles/material.css";
-@import "@syncfusion/ej2-calendars/styles/material.css";
-@import "@syncfusion/ej2-dropdowns/styles/material.css";
-@import "@syncfusion/ej2-gantt/styles/material.css";
-@import "@syncfusion/ej2-grids/styles/material.css";
-@import "@syncfusion/ej2-inputs/styles/material.css";
-@import "@syncfusion/ej2-layouts/styles/material.css";
-@import "@syncfusion/ej2-lists/styles/material.css";
-@import "@syncfusion/ej2-navigations/styles/material.css";
-@import "@syncfusion/ej2-notifications/styles/material.css";
-@import "@syncfusion/ej2-popups/styles/material.css";
-@import "@syncfusion/ej2-richtexteditor/styles/material.css";
-@import "@syncfusion/ej2-treegrid/styles/material.css";
+@import "@syncfusion/ej2-base/styles/fluent.css";
+@import "@syncfusion/ej2-buttons/styles/fluent.css";
+@import "@syncfusion/ej2-calendars/styles/fluent.css";
+@import "@syncfusion/ej2-dropdowns/styles/fluent.css";
+@import "@syncfusion/ej2-gantt/styles/fluent.css";
+@import "@syncfusion/ej2-grids/styles/fluent.css";
+@import "@syncfusion/ej2-inputs/styles/fluent.css";
+@import "@syncfusion/ej2-layouts/styles/fluent.css";
+@import "@syncfusion/ej2-lists/styles/fluent.css";
+@import "@syncfusion/ej2-navigations/styles/fluent.css";
+@import "@syncfusion/ej2-notifications/styles/fluent.css";
+@import "@syncfusion/ej2-popups/styles/fluent.css";
+@import "@syncfusion/ej2-richtexteditor/styles/fluent.css";
+@import "@syncfusion/ej2-treegrid/styles/fluent.css";
