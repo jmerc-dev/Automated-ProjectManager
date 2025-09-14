@@ -6,7 +6,6 @@ export default function DropdownMenu() {
   return (
     <>
       <div className="relative inline-block text-left">
-        {/* Button */}
         <button
           onClick={() => setOpen(!open)}
           className="px-4 py-2 text-white rounded-lg fill-gray-500 hover:[&>svg]:fill-gray-800 [&>svg]:fill-gray-5  00 transition"
@@ -23,13 +22,11 @@ export default function DropdownMenu() {
             <path d="M10 2C10 0.89543 9.10457 -4.82823e-08 8 0C6.89543 4.82823e-08 6 0.895431 6 2C6 3.10457 6.89543 4 8 4C9.10457 4 10 3.10457 10 2Z" />
           </svg>
         </button>
-
-        {/* Dropdown */}
         {open && (
           <div className="absolute mt-2 w-40 bg-white border border-gray-200 rounded-lg shadow-lg">
             {/* make this dynamic */}
             <a className="block px-4 py-2 text-gray-700 hover:bg-gray-300 rounded-t-lg">
-              Option 1
+              Open
             </a>
           </div>
         )}

@@ -23,7 +23,7 @@ export default function Home() {
 
   useEffect(() => {
     const unsubscribe = onAuthStateChanged(auth, (user) => {
-      setUser(user); // user is null if logged out
+      setUser(user);
     });
     return () => unsubscribe();
   }, [auth]);

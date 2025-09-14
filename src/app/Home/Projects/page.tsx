@@ -7,7 +7,12 @@ import Modal from "../../../components/modal";
 import { useState, useEffect } from "react";
 import type { User } from "firebase/auth";
 import type { Project } from "../../../types/project";
-import { BrowserRouter as Router, Routes, Route, useNavigate } from "react-router-dom";
+import {
+  BrowserRouter as Router,
+  Routes,
+  Route,
+  useNavigate,
+} from "react-router-dom";
 
 export interface ProjectsProps {
   user: User | null;
@@ -52,7 +57,9 @@ export default function Projects({ user }: ProjectsProps) {
   const navigate = useNavigate();
 
   return (
-    <div> {/*<<<< project design template*/}
+    <div>
+      {" "}
+      {/*<<<< project design template*/}
       <div className="grid grid-cols-2">
         <h1 className="text-2xl font-semibold">My Projects</h1>
         <button
@@ -62,11 +69,16 @@ export default function Projects({ user }: ProjectsProps) {
           New Project
         </button>
       </div>
-      
-      <div className="flex flex-row pt-5 flex-wrap" onClick={() => navigate("/tasks")}>  {/*<<<<< for each project renderer */}
+      <div className="flex flex-row pt-5 flex-wrap">
+        {" "}
+        {/*<<<<< for each project renderer */}
         {projects != undefined && projects?.length > 0 ? (
           projects?.map((project) => (
-            <ProjectCard key={project.id} project={project} />
+            <ProjectCard
+              key={project.id}
+              project={project}
+              onCardClick={() => navigate(`/project/${project.id}`)}
+            />
           ))
         ) : (
           <p>No projects found.</p>

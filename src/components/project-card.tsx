@@ -3,19 +3,26 @@ import DropdownMenu from "./dropdown";
 
 interface ProjectCardProps {
   project: Project;
+  onCardClick: () => void | Promise<void>;
 }
 
-export default function ProjectCard({ project }: ProjectCardProps) {
+export default function ProjectCard({
+  project,
+  onCardClick,
+}: ProjectCardProps) {
   const menuChoices = ["Delete", "Details"];
 
   return (
     <div className="w-1/3 p-1">
-      <div className="border-1 border-transparent rounded-md p-3 hover:border-gray-500 cursor-pointer shadow-md bg-white">
-        <div className="text-lg">{project.name}</div>
-        <div className="text-sm font-extralight">
-          Date Created: {project.createdAt.toLocaleDateString()}
+      <div className="grid grid-cols-2 border-1 border-transparent rounded-md p-3 hover:border-gray-500 cursor-pointer shadow-md bg-white">
+        <div>
+          <div className="text-lg">{project.name}</div>
+          <div className="text-sm font-extralight">
+            Date Created: {project.createdAt.toLocaleDateString()}
+          </div>
+          <DropdownMenu />
         </div>
-        <DropdownMenu />
+        <div onClick={onCardClick}>s</div>
       </div>
     </div>
   );
