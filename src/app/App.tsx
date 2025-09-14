@@ -1,6 +1,7 @@
 import Project from "./Project/page";
 import Home from "./Home/page";
 import Landing from "./Landing/page";
+import { Test } from "./test";
 import Tasks from "./Project/Tasks/page";
 import "./App.css";
 import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
@@ -13,6 +14,7 @@ function App() {
         <Route path="/home" element={<Home />} />
         <Route path="/tasks" element={<Tasks />} />
         <Route path="/project" element={<Project />} />
+        <Route path="/test" element={<Test />} />
       </Routes>
     </Router>
   );

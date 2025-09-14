@@ -28,18 +28,28 @@ function Project() {
   };
 
   return (
-    <div className="grid bg-gray-300 [grid-template-rows:auto_1fr] overflow-hidden [grid-template-columns:50px_1fr] h-screen font-display">
+    <div className="grid bg-white [grid-template-rows:auto_1fr] overflow-hidden [grid-template-columns:50px_1fr] h-screen font-display">
       <nav className=" col-span-2">
-        <div className="grid [grid-template-columns:50px_auto_1fr] text-black">
+        <div className="grid [grid-template-columns:50px_1fr_auto]  text-black">
           <div className="bg-white border-r-1 border-gray-400">
             <button className="hover:bg-gray-300" onClick={handleHomeClick}>
               <img src={homeIcon} className="p-3" />
             </button>
           </div>
-          <div className="font-semibold flex justify-center align-middle pt-3 pl-2">
-            AutoProject
+          <div className="font-semibold flex align-middle pl-2">
+            <div className="text-base pt-[14px]">
+              <div>AutoProject</div>
+            </div>
+            <div className="w-full flex align-middle ml-[100px]">
+              <input
+                type="text"
+                placeholder="Project Name"
+                className="font-light outline-0 border border-transparent rounded-lg p-1 hover:bg-gray-300 hover:cursor-pointer focus:hover:bg-transparent focus:hover:cursor-auto ring-1 ring-transparent pb-1 focus:ring-blue-400"
+                value={"Pygame Online"}
+              />
+            </div>
           </div>
-          <div className="flex justify-end space-x-5 m-3 [&>div]:bg-cyan-800 [&>div]:rounded-full [&>div]:cursor-pointer [&>div]:hover:bg-cyan-700 [&>div]:p-1 [&>div>img]:w-6">
+          <div className="flex justify-end space-x-5 m-3 [&>div]:bg-transparent [&>div]:hover:bg-gray-300  [&>div]:rounded-full [&>div]:cursor-pointer [&>div]:p-1 [&>div>img]:w-6">
             <div>
               <img src={notifIcon} />
             </div>
@@ -90,7 +100,7 @@ function Project() {
           <img src={reportsIcon} className="h-8 w-8 p-1 my-2" />
         </button>
       </aside>
-      <main className="p-3 bg-gray-300">{renderContent()}</main>
+      <main className="p-3 border-1 border-gray-200">{renderContent()}</main>
     </div>
   );
 }
