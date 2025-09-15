@@ -1,6 +1,5 @@
 // import { ReactComponent as TaskIcon } from "../../assets/svg/task.svg";
 import taskIcon from "../../assets/images/tasks.png";
-import { auth } from "../../services/firebase/config";
 import membersIcon from "../../assets/images/members.png";
 import reportsIcon from "../../assets/images/reports.png";
 import notifIcon from "../../assets/images/notification.png";
@@ -10,18 +9,24 @@ import homeIcon from "../../assets/images/home.png";
 import { useState, useEffect } from "react";
 import { useNavigate, useParams } from "react-router-dom";
 import type { Project } from "../../types/project";
+import { useAuth } from "../../services/firebase/auth-context";
+import NavDropdown from "../../components/nav-dropdown";
+import { getProjectById } from "../../services/firestore/projects";
 
 function Project() {
   const [activeTab, setActiveTab] = useState("tasks-tab");
+  const { user, logout } = useAuth();
   const navigate = useNavigate();
   const { id } = useParams();
-  const project = useState<Project | null>(null);
+  const [project, setProject] = useState<Project | null>(null);
 
   const handleHomeClick = () => {
     navigate("/home");
   };
 
-  useEffect(() => {}, []);
+  useEffect(() => {
+    getProjectById(String(id), user?.uid);
+  }, []);
 
   const renderContent = () => {
     if (activeTab === "tasks-tab") {
@@ -51,7 +56,7 @@ function Project() {
                 type="text"
                 placeholder="Project Name"
                 className="font-bold outline-0 text-base h-10 border border-transparent rounded-lg p-1 hover:bg-gray-300 hover:cursor-pointer focus:hover:bg-transparent focus:hover:cursor-auto ring-1 ring-transparent focus:ring-blue-400"
-                value={"Pygame Online"}
+                value={project?.name}
               />
             </div>
           </div>
@@ -62,7 +67,16 @@ function Project() {
             <div>
               <img src={helpIcon} />
             </div>
-            <div>b3</div>
+            <NavDropdown
+              actions={{
+                Logout: () => {
+                  logout();
+                  navigate("/");
+                },
+              }}
+            >
+              <img src={user?.photoURL || ""} className="rounded-xl h-6" />
+            </NavDropdown>
           </div>
         </div>
       </nav>

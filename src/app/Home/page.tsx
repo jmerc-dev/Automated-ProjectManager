@@ -16,8 +16,6 @@ export default function Home() {
     navigate("/");
   }
 
-  console.log(user);
-
   if (!user) {
     console.log("No user logged in");
     navigate("/");

@@ -1,6 +1,7 @@
-import { db } from "../../config/firebase/config";
+import { db } from "../firebase/config";
 import type { Project } from "../../types/project";
-import { Timestamp } from "firebase/firestore";
+import { Timestamp, doc, getDoc } from "firebase/firestore";
+import { useAuth } from "../firebase/auth-context";
 import { auth } from "../../config/firebase/config";
 
 import {
@@ -14,15 +15,17 @@ import {
 
 const projectsRef = collection(db, "projects");
 
+/* Create a project */
 export async function createProject(project: Project) {
-  if (!auth.currentUser) {
+  const { user } = useAuth();
+  if (!user) {
     throw new Error("Invalid Owner of Project");
   }
 
   try {
     const docRef = await addDoc(collection(db, "projects"), {
       ...project,
-      ownerID: auth.currentUser?.uid,
+      ownerID: user.uid,
       createdAt: new Date(),
       updatedAt: new Date(),
     });
@@ -33,6 +36,22 @@ export async function createProject(project: Project) {
   }
 }
 
+/* Get a specific project document  TODO::::*/
+export async function getProjectById(
+  projectId: string,
+  userId: string | undefined
+) {
+  const specificProjectRef = doc(db, "projects", projectId);
+  const projectSnap = await getDoc(specificProjectRef);
+
+  if (projectSnap.exists()) {
+    console.log(projectSnap);
+  } else {
+    console.log("Error getting project");
+  }
+}
+
+/* Get all projects of a specified user */
 export async function getProjectsByOwner(userId: string | undefined) {
   if (!userId) {
     console.log("Error: User is not logged in");
