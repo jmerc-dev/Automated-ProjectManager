@@ -1,32 +1,26 @@
-import { auth } from "../../config/firebase/config";
+import { auth } from "../../services/firebase/config";
 import { useNavigate } from "react-router-dom";
 import notifIcon from "../../assets/images/notification.png";
 import helpIcon from "../../assets/images/help.png";
 import homeIcon from "../../assets/images/home.png";
-import { onAuthStateChanged } from "firebase/auth";
-import type { User } from "firebase/auth";
-import { useEffect, useState } from "react";
 import Projects from "./Projects/page";
+import { useAuth } from "../../services/firebase/auth-context";
 
 export default function Home() {
   const navigate = useNavigate();
-  const [user, setUser] = useState<User | null>(null);
+
+  const { user, logout } = useAuth();
 
   if (!auth.currentUser) {
     navigate("/");
   }
 
+  console.log(user);
+
   if (!user) {
     console.log("No user logged in");
     navigate("/");
   }
-
-  useEffect(() => {
-    const unsubscribe = onAuthStateChanged(auth, (user) => {
-      setUser(user);
-    });
-    return () => unsubscribe();
-  }, [auth]);
 
   return (
     <div className="h-screen [background:#E6E6E6]">

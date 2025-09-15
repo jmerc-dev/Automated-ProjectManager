@@ -11,6 +11,7 @@ import {
   Filter,
   Toolbar,
   CriticalPath,
+  RowDD,
 } from "@syncfusion/ej2-react-gantt";
 import { GanttData, taskFields } from "../../../testdata/testdata";
 
@@ -47,6 +48,7 @@ function TasksView() {
         editSettings={editOptions}
         toolbar={toolbarOptions}
         enableCriticalPath={true}
+        allowRowDragAndDrop={true}
       >
         <Inject
           services={[
@@ -56,6 +58,7 @@ function TasksView() {
             DayMarkers,
             Toolbar,
             Filter,
+            RowDD,
           ]}
         />
       </GanttComponent>

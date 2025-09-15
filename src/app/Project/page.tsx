@@ -1,21 +1,27 @@
 // import { ReactComponent as TaskIcon } from "../../assets/svg/task.svg";
 import taskIcon from "../../assets/images/tasks.png";
+import { auth } from "../../services/firebase/config";
 import membersIcon from "../../assets/images/members.png";
 import reportsIcon from "../../assets/images/reports.png";
 import notifIcon from "../../assets/images/notification.png";
 import helpIcon from "../../assets/images/help.png";
 import TasksView from "./Tasks/page";
 import homeIcon from "../../assets/images/home.png";
-import { useState } from "react";
-import { useNavigate } from "react-router-dom";
+import { useState, useEffect } from "react";
+import { useNavigate, useParams } from "react-router-dom";
+import type { Project } from "../../types/project";
 
 function Project() {
   const [activeTab, setActiveTab] = useState("tasks-tab");
   const navigate = useNavigate();
+  const { id } = useParams();
+  const project = useState<Project | null>(null);
 
   const handleHomeClick = () => {
     navigate("/home");
   };
+
+  useEffect(() => {}, []);
 
   const renderContent = () => {
     if (activeTab === "tasks-tab") {

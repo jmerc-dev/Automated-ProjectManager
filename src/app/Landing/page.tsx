@@ -3,21 +3,25 @@ import {
   setPersistence,
   browserLocalPersistence,
 } from "firebase/auth";
-import { auth, googleProvider } from "../../config/firebase/config.ts";
+import { auth, googleProvider } from "../../services/firebase/config.ts";
 import { useNavigate } from "react-router-dom";
+import { useAuth } from "../../services/firebase/auth-context.tsx";
+import { useEffect } from "react";
 
 function Landing() {
   const navigate = useNavigate();
+  const { user, loginWithGoogle } = useAuth();
+
+  useEffect(() => {
+    if (user) {
+      navigate("/home");
+    } else {
+      navigate("/");
+    }
+  }, [user]);
 
   async function signIn() {
-    await setPersistence(auth, browserLocalPersistence);
-    await signInWithPopup(auth, googleProvider)
-      .then(() => {
-        navigate("/home");
-      })
-      .catch((error) => {
-        console.log(error);
-      });
+    loginWithGoogle();
   }
 
   return (
@@ -77,9 +81,9 @@ function Landing() {
               >
                 <path
                   stroke="currentColor"
-                  stroke-linecap="round"
-                  stroke-linejoin="round"
-                  stroke-width="2"
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                  strokeWidth="2"
                   d="M1 1h15M1 7h15M1 13h15"
                 />
               </svg>
