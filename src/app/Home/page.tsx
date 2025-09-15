@@ -5,6 +5,7 @@ import helpIcon from "../../assets/images/help.png";
 import homeIcon from "../../assets/images/home.png";
 import Projects from "./Projects/page";
 import { useAuth } from "../../services/firebase/auth-context";
+import NavDropdown from "../../components/nav-dropdown";
 
 export default function Home() {
   const navigate = useNavigate();
@@ -37,9 +38,12 @@ export default function Home() {
             <div>
               <img src={helpIcon} />
             </div>
-            <div>
+            <NavDropdown actions={{ Logout: () => logout() }}>
+              <img src={user?.photoURL || ""} className="rounded-xl h-6" />
+            </NavDropdown>
+            {/* <div>
               <img src={user?.photoURL || ""} className="rounded-xl" />
-            </div>
+            </div> */}
           </div>
         </div>
       </nav>

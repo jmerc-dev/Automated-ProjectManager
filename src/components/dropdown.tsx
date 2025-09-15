@@ -23,11 +23,10 @@ export default function DropdownMenu() {
           </svg>
         </button>
         {open && (
-          <div className="absolute mt-2 w-40 bg-white border border-gray-200 rounded-lg shadow-lg">
-            {/* make this dynamic */}
-            <a className="block px-4 py-2 text-gray-700 hover:bg-gray-300 rounded-t-lg">
-              Open
-            </a>
+          <div className="absolute right-0 mt-2 w-48 bg-white shadow-lg rounded-lg overflow-hidden z-10">
+            <button className="block w-full text-left px-4 py-2 text-sm hover:bg-gray-100">
+              Logout
+            </button>
           </div>
         )}
       </div>
