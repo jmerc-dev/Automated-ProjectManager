@@ -1,7 +1,13 @@
+import { Timestamp } from "firebase/firestore";
+
 export interface Task {
   id: number;
   name: string;
-  startDate: Date;
+  startDate: Date | Timestamp;
+  notes?: string;
+  child?: Task[];
   duration: number;
-  assignedMembers: string[];
+  dependency: string | null;
+  milestone: boolean;
+  assignedMembers?: string[] | null;
 }
