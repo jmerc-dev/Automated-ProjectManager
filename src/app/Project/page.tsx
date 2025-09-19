@@ -1,4 +1,3 @@
-// import { ReactComponent as TaskIcon } from "../../assets/svg/task.svg";
 import taskIcon from "../../assets/images/tasks.png";
 import membersIcon from "../../assets/images/members.png";
 import reportsIcon from "../../assets/images/reports.png";
@@ -12,6 +11,7 @@ import type { Project } from "../../types/project";
 import { useAuth } from "../../services/firebase/auth-context";
 import NavDropdown from "../../components/nav-dropdown";
 import { getProjectById } from "../../services/firestore/projects";
+import TitleInput from "../../components/title-input";
 
 function Project() {
   const [activeTab, setActiveTab] = useState("tasks-tab");
@@ -25,8 +25,12 @@ function Project() {
   };
 
   useEffect(() => {
-    getProjectById(String(id), user?.uid);
-  }, []);
+    async function loadProject(id: string) {
+      const result = await getProjectById(id);
+      setProject(result ?? null);
+    }
+    loadProject(String(id));
+  }, [id]);
 
   const renderContent = () => {
     if (activeTab === "tasks-tab") {
@@ -52,12 +56,11 @@ function Project() {
               <div>AutoProject</div>
             </div>
             <div className="w-full flex align-middle mt-auto mb-auto ml-[100px]">
-              <input
-                type="text"
-                placeholder="Project Name"
-                className="font-bold outline-0 text-base h-10 border border-transparent rounded-lg p-1 hover:bg-gray-300 hover:cursor-pointer focus:hover:bg-transparent focus:hover:cursor-auto ring-1 ring-transparent focus:ring-blue-400"
-                value={project?.name}
-              />
+              {project ? (
+                <TitleInput project={project} setProject={setProject} />
+              ) : (
+                <p>Loading...</p>
+              )}
             </div>
           </div>
           <div className="flex justify-end space-x-5 m-3 [&>div]:bg-transparent [&>div]:hover:bg-gray-300  [&>div]:rounded-full [&>div]:cursor-pointer [&>div]:p-1 [&>div>img]:w-6">

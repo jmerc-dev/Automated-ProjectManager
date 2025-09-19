@@ -36,18 +36,27 @@ export async function createProject(project: Project) {
   }
 }
 
-/* Get a specific project document  TODO::::*/
-export async function getProjectById(
-  projectId: string,
-  userId: string | undefined
-) {
+/* Get a specific project document*/
+export async function getProjectById(projectId: string) {
   const specificProjectRef = doc(db, "projects", projectId);
   const projectSnap = await getDoc(specificProjectRef);
-
-  if (projectSnap.exists()) {
-    console.log(projectSnap);
+  const data = projectSnap.data();
+  if (projectSnap.exists() && data) {
+    return {
+      id: projectSnap.id,
+      name: data.name,
+      description: data.description,
+      ownerID: data.ownerID,
+      members: data.members ?? [],
+      progress: data.progress,
+      status: data.status,
+      startDate: (data.startDate as Timestamp).toDate(),
+      expectedEndDate: (data.expectedEndDate as Timestamp).toDate(),
+      createdAt: (data.createdAt as Timestamp).toDate(),
+      updatedAt: (data.updatedAt as Timestamp).toDate(),
+    } as Project;
   } else {
-    console.log("Error getting project");
+    return null;
   }
 }
 
@@ -60,7 +69,6 @@ export async function getProjectsByOwner(userId: string | undefined) {
 
   const q = query(projectsRef, where("ownerID", "==", userId));
   const snapshot = await getDocs(q);
-  console.log(snapshot.docs);
 
   return snapshot.docs.map((doc) => {
     const data = doc.data();
