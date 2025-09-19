@@ -1,8 +1,7 @@
 import { db } from "../firebase/config";
 import type { Project } from "../../types/project";
-import { Timestamp, doc, getDoc } from "firebase/firestore";
+import { Timestamp, doc, getDoc, updateDoc } from "firebase/firestore";
 import { useAuth } from "../firebase/auth-context";
-import { auth } from "../../config/firebase/config";
 
 import {
   collection,
@@ -33,6 +32,23 @@ export async function createProject(project: Project) {
     console.log("created project successfuly: ", docRef.id);
   } catch (e) {
     console.error("Error adding project");
+  }
+}
+
+//Generic function to update project
+export async function updateProject(project: Project, key: string) {
+  switch (key) {
+    case "name":
+      updateProjectName(project);
+  }
+}
+
+async function updateProjectName(project: Project) {
+  if (project) {
+    updateDoc(doc(db, "projects", project.id), {
+      name: project.name,
+      updatedAt: new Date(),
+    });
   }
 }
 
@@ -86,5 +102,4 @@ export async function getProjectsByOwner(userId: string | undefined) {
       updatedAt: (data.updatedAt as Timestamp).toDate(),
     } as Project;
   });
-  //   return snapshot.docs.map((doc) => ({ id: doc.id, ...doc.data() }));
 }

@@ -1,5 +1,6 @@
 import { useEffect, useState } from "react";
 import type { Project } from "../types/project";
+import { updateProject } from "../services/firestore/projects";
 
 interface TitleInputProps {
   project: Project;
@@ -27,6 +28,12 @@ export default function TitleInput({ project, setProject }: TitleInputProps) {
             ? ({ ...prev, name: draftName } as Project)
             : ({ name: draftName } as Project)
         );
+        updateProject({ ...project, name: draftName }, "name");
+      }}
+      onKeyDown={(e) => {
+        if (e.key === "Enter") {
+          (e.target as HTMLInputElement).blur();
+        }
       }}
     />
   );
