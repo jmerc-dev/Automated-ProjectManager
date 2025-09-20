@@ -10,4 +10,6 @@ export interface Task {
   dependency: string | null;
   milestone: boolean;
   assignedMembers?: string[] | null;
+  createdAt: Date | Timestamp;
+  updatedAt: Date | Timestamp;
 }
