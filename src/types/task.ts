@@ -5,10 +5,10 @@ export interface Task {
   name: string;
   startDate: Date | Timestamp;
   notes?: string;
-  child?: Task[];
+  progress: number;
   duration: number;
+  parentId?: string;
   dependency: string | null;
-  milestone: boolean;
   assignedMembers?: string[] | null;
   createdAt: Date | Timestamp;
   updatedAt: Date | Timestamp;

@@ -10,4 +10,5 @@ export interface Project {
   expectedEndDate?: Date;
   createdAt: Date;
   updatedAt: Date;
+  lastTaskId: number;
 }

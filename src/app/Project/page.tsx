@@ -34,7 +34,7 @@ function Project() {
 
   const renderContent = () => {
     if (activeTab === "tasks-tab") {
-      return <TasksView />;
+      if (project) return <TasksView projectId={project?.id} />;
     } else if (activeTab === "members-tab") {
       return <>members</>;
     } else if (activeTab === "reports-tab") {
