@@ -18,7 +18,7 @@ import {
   getTaskIndex,
   updateTaskIndex,
 } from "../../../services/firestore/projects";
-import { createTask } from "../../../services/firestore/tasks";
+import { createTask, getAllTasks } from "../../../services/firestore/tasks";
 
 interface TasksViewProps {
   projectId: string;
@@ -26,13 +26,33 @@ interface TasksViewProps {
 
 function TasksView({ projectId }: TasksViewProps) {
   const [tasks, setTasks] = useState<Task[]>([]);
-
+  const ganttRef = useRef<GanttComponent>(null);
   const editOptions: EditSettingsModel = {
     allowAdding: true,
     allowEditing: true,
     allowDeleting: true,
     mode: "Dialog",
     allowTaskbarEditing: true,
+  };
+
+  useEffect(() => {
+    const loadTasks = async () => {
+      const rawTasks = await getAllTasks(projectId); // await the promise
+      console.log("Fetched tasks:", rawTasks);
+      setTasks(rawTasks);
+    };
+
+    loadTasks();
+  }, []);
+
+  const getRowNumber = (taskId: string) => {
+    if (ganttRef.current) {
+      const flatData = ganttRef.current.flatData; // all tasks flattened
+      const index = flatData.findIndex(
+        (task) => task.ganttProperties?.taskId == taskId
+      );
+      return index;
+    }
   };
 
   const taskFields: any = {
@@ -60,6 +80,7 @@ function TasksView({ projectId }: TasksViewProps) {
     <div className="w-full h-[700px] max-h-[500px] min-w-[500px] border-gray-300">
       {projectId && (
         <GanttComponent
+          ref={ganttRef}
           key={projectId}
           workWeek={[
             "Sunday",
@@ -96,8 +117,8 @@ function TasksView({ projectId }: TasksViewProps) {
                   createdAt: new Date(),
                   assignedMembers: [],
                   updatedAt: new Date(),
+                  row: getRowNumber(newTask.taskData.id),
                 } as Task;
-
                 updateTaskIndex(projectId, taskIndex);
                 createTask(projectId, formattedTask);
               });

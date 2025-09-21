@@ -1,7 +1,7 @@
 import { Timestamp } from "firebase/firestore";
 
 export interface Task {
-  id: number;
+  id: string;
   name: string;
   startDate: Date | Timestamp;
   notes?: string;
@@ -12,4 +12,5 @@ export interface Task {
   assignedMembers?: string[] | null;
   createdAt: Date | Timestamp;
   updatedAt: Date | Timestamp;
+  row: number;
 }
