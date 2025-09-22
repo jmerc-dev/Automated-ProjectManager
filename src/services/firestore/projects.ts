@@ -27,7 +27,7 @@ export async function createProject(project: Project) {
       ownerID: user.uid,
       createdAt: new Date(),
       updatedAt: new Date(),
-      lastTaskId: 0,
+      taskIndex: 0,
     });
 
     console.log("created project successfuly: ", docRef.id);
@@ -101,6 +101,7 @@ export async function getProjectsByOwner(userId: string | undefined) {
       expectedEndDate: (data.expectedEndDate as Timestamp).toDate(),
       createdAt: (data.createdAt as Timestamp).toDate(),
       updatedAt: (data.updatedAt as Timestamp).toDate(),
+      taskIndex: data.taskIndex,
     } as Project;
   });
 }
@@ -117,10 +118,10 @@ export async function getTaskIndex(projectId: string) {
   }
 }
 
-export async function updateTaskIndex(projectId: string, lastTaskId: number) {
+export async function incTaskIndex(projectId: string, lastTaskId: number) {
   if (projectId) {
     updateDoc(doc(db, "projects", projectId), {
-      lastTaskId: lastTaskId + 1,
+      taskIndex: lastTaskId + 1,
       updatedAt: new Date(),
     });
   }

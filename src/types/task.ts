@@ -10,7 +10,8 @@ export interface Task {
   parentId?: string;
   dependency: string | null;
   assignedMembers?: string[] | null;
-  createdAt: Date | Timestamp;
-  updatedAt: Date | Timestamp;
-  row: number;
+  createdAt?: Date | Timestamp;
+  updatedAt?: Date | Timestamp;
+  order: number;
+  docId: string;
 }
