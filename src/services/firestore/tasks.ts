@@ -1,5 +1,7 @@
 import type { Task } from "../../types/task";
 import { db } from "../firebase/config";
+import { CoreTaskFields } from "../../types/task";
+import type { CoreTaskFieldsType } from "../../types/task";
 import {
   addDoc,
   collection,
@@ -50,21 +52,43 @@ export async function deleteTask(projectId: string, taskId: string) {
   await deleteDoc(docRef);
 }
 
-export async function updateTaskOrder(
+// Update task properties
+export async function updateTask(
   projectId: string,
   taskId: string,
-  taskOrder: number
+  field: CoreTaskFieldsType,
+  value: any
 ) {
-  try {
-    // await updateDoc(doc(db, "projects", projectId, "tasks", taskId), {
-    //   order: taskOrder,
-    // });
-  } catch (e) {
-    console.error("Failed to update task order:", e);
+  switch (field) {
+    case CoreTaskFields.taskName:
+      await updateTaskName(projectId, taskId, value);
+      break;
+    case CoreTaskFields.duration:
+      await updateTaskDuration(projectId, taskId, value);
+      break;
+    case CoreTaskFields.startDate:
+      await updateTaskStartDate(projectId, taskId, value);
+      break;
+    case CoreTaskFields.dependency:
+      await updateTaskDependency(projectId, taskId, value);
+      break;
+    case CoreTaskFields.progress:
+      await updateTaskProgress(projectId, taskId, value);
+      break;
+    case CoreTaskFields.order:
+      await updateTaskOrder(projectId, taskId, value);
+      break;
+    case CoreTaskFields.notes:
+      await updateTaskNotes(projectId, taskId, value);
+      break;
+    case CoreTaskFields.parentId:
+      console.log("Handling task parentId.");
+      break;
+    default:
+      console.log("Unknown field received:", field);
   }
 }
 
-// Update task properties
 export async function updateTaskName(
   projectId: string,
   taskId: string,
@@ -130,3 +154,26 @@ export async function updateTaskNotes(
     notes: newNotes,
   });
 }
+
+export async function updateTaskOrder(
+  projectId: string,
+  taskId: string,
+  order: number
+) {
+  const docRef = doc(db, "projects", projectId, "tasks", String(taskId));
+  await updateDoc(docRef, {
+    notes: order,
+  });
+}
+
+// To fix
+// export async function updateTaskParentId(
+//   projectId: string,
+//   taskId: string,
+//   parentId: number
+// ) {
+//   const docRef = doc(db, "projects", projectId, "tasks", String(taskId));
+//   await updateDoc(docRef, {
+//     notes: order,
+//   });
+// }

@@ -15,3 +15,18 @@ export interface Task {
   order: number;
   docId: string;
 }
+
+export const CoreTaskFields: any = {
+  docId: "docId",
+  name: "name",
+  duration: "duration",
+  startDate: "startDate",
+  dependency: "dependency",
+  progress: "progress",
+  order: "order",
+  notes: "notes",
+  parentId: "parentId",
+} as const;
+
+export type CoreTaskFieldsType =
+  (typeof CoreTaskFields)[keyof typeof CoreTaskFields];

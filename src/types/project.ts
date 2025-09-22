@@ -6,7 +6,7 @@ export interface Project {
   members?: string[];
   progress: number;
   status: "active" | "completed" | "on-hold";
-  startDate: Date;
+  startDate?: Date;
   expectedEndDate?: Date;
   createdAt: Date;
   updatedAt: Date;

@@ -23,6 +23,7 @@ import {
   createTask,
   deleteTask,
   getAllTasks,
+  updateTask,
   updateTaskDependency,
   updateTaskDuration,
   updateTaskName,
@@ -32,6 +33,8 @@ import {
   updateTaskStartDate,
 } from "../../../services/firestore/tasks";
 
+import { changedTaskFields } from "../../../util/task-processing";
+
 interface TasksViewProps {
   projectId: string;
 }
@@ -39,6 +42,8 @@ interface TasksViewProps {
 function TasksView({ projectId }: TasksViewProps) {
   const [tasks, setTasks] = useState<Task[]>([]);
   const ganttRef = useRef<GanttComponent>(null);
+  const currentTaskToEdit = useRef<any>(null);
+
   const editOptions: EditSettingsModel = {
     allowAdding: true,
     allowEditing: true,
@@ -163,6 +168,13 @@ function TasksView({ projectId }: TasksViewProps) {
           enableCriticalPath={true}
           allowRowDragAndDrop={true}
           enableContextMenu={true}
+          actionBegin={(args) => {
+            if (args.requestType === "beforeOpenEditDialog") {
+              currentTaskToEdit.current = {
+                ...args.rowData,
+              };
+            }
+          }}
           actionComplete={(args) => {
             if (args.requestType === "add") {
               getTaskIndex(projectId).then((taskIndex: number) => {
@@ -202,13 +214,42 @@ function TasksView({ projectId }: TasksViewProps) {
                 createTask(projectId, allTasks[newTaskIndex]);
               });
             } else if (args.requestType === "save") {
-              updateTaskNotes(
-                projectId,
-                args.data.taskData.docId,
-                args.data.taskData.notes
-              );
+              const newTask = args.data.taskData;
+              const previousTaskState = {
+                docId: currentTaskToEdit?.current?.taskData.docId,
+                id: currentTaskToEdit?.current?.id,
+                dependency: currentTaskToEdit?.current?.dependency || "",
+                notes: currentTaskToEdit?.current?.notes,
+                progress: currentTaskToEdit?.current?.progress,
+                startDate: currentTaskToEdit?.current?.startDate,
+                name: currentTaskToEdit?.current?.name,
+                duration: currentTaskToEdit?.current?.duration,
+              } as Task;
 
-              console.log(args.data.taskData);
+              const changes = changedTaskFields(previousTaskState, newTask);
+              const docId = newTask.docId;
+              if (!changes) return;
+              Object.entries(changes).forEach(([key, value]) => {
+                console.log("key: ", key, "|| value: ", value);
+                console.log(typeof value);
+                updateTask(projectId, docId, key, value);
+              });
+
+              //console.log(changedTaskFields(previousTaskState, newTask));
+
+              // console.log(newTask);
+              // console.log(previousTaskState);
+
+              // Get the changed properties here
+              // const newTask = args.data.taskData;
+              // const previousTaskState = args.previousData;
+              // update
+              // updateTaskNotes(
+              //   projectId,
+              //   args.data.taskData.docId,
+              //   args.data.taskData.notes
+              // );
+              // console.log(previousTaskState);
             } else if (args.requestType === "delete") {
               const deletedTasks: any = args.data;
               deletedTasks.forEach((task: any) =>
