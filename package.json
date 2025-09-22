@@ -6,13 +6,9 @@
   "homepage": "https://jmerc-dev.github.io/Automated-ProjectManager",
   "scripts": {
     "dev": "vite",
-    "build": "tsc -b && vite build",
+    "build": "vite build",
     "lint": "eslint .",
     "preview": "vite preview",
-    "start": "react-scripts start",
-    "build": "react-scripts build",
-    "test": "react-scripts test",
-    "eject": "react-scripts eject",
     "predeploy": "npm run build",
     "deploy": "gh-pages -d build"
   },
@@ -22,21 +18,17 @@
     "@syncfusion/ej2-react-gantt": "^31.1.18",
     "@tailwindcss/vite": "^4.1.11",
     "firebase": "^12.1.0",
-    "frappe-gantt": "^1.0.3",
-    "frappe-gantt-react-wrapper": "^0.1.7",
-    "gantt-task-react": "^0.3.9",
     "react": "^18.1.1",
     "react-dom": "^18.1.1",
     "react-router-dom": "^7.9.1",
-    "tailwindcss": "^4.1.11",
-    "wx-react-gantt": "^1.3.1"
+    "tailwindcss": "^4.1.11"
   },
   "devDependencies": {
     "@eslint/js": "^9.25.0",
     "@types/frappe-gantt": "^0.9.0",
     "@types/react": "^18.1.9",
     "@types/react-dom": "^18.1.7",
-    "@vitejs/plugin-react": "^4.4.1",
+    "@vitejs/plugin-react": "^4.7.0",
     "eslint": "^9.25.0",
     "eslint-plugin-react-hooks": "^5.2.0",
     "eslint-plugin-react-refresh": "^0.4.19",
@@ -44,7 +36,7 @@
     "globals": "^16.0.0",
     "typescript": "~5.8.3",
     "typescript-eslint": "^8.30.1",
-    "vite": "^6.3.5",
+    "vite": "^6.3.6",
     "vite-plugin-svgr": "^4.3.0"
   }
 }
