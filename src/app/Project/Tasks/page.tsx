@@ -23,7 +23,13 @@ import {
   createTask,
   deleteTask,
   getAllTasks,
+  updateTaskDependency,
+  updateTaskDuration,
+  updateTaskName,
+  updateTaskNotes,
   updateTaskOrder,
+  updateTaskProgress,
+  updateTaskStartDate,
 } from "../../../services/firestore/tasks";
 
 interface TasksViewProps {
@@ -196,7 +202,13 @@ function TasksView({ projectId }: TasksViewProps) {
                 createTask(projectId, allTasks[newTaskIndex]);
               });
             } else if (args.requestType === "save") {
-              console.log("updated");
+              updateTaskNotes(
+                projectId,
+                args.data.taskData.docId,
+                args.data.taskData.notes
+              );
+
+              console.log(args.data.taskData);
             } else if (args.requestType === "delete") {
               const deletedTasks: any = args.data;
               deletedTasks.forEach((task: any) =>

@@ -11,12 +11,13 @@ import {
   where,
   serverTimestamp,
 } from "firebase/firestore";
+import type { User } from "firebase/auth";
 
 const projectsRef = collection(db, "projects");
 
 /* Create a project */
-export async function createProject(project: Project) {
-  const { user } = useAuth();
+export async function createProject(project: Project, user: any) {
+  //const { user } = useAuth();
   if (!user) {
     throw new Error("Invalid Owner of Project");
   }
@@ -67,7 +68,6 @@ export async function getProjectById(projectId: string) {
       members: data.members ?? [],
       progress: data.progress,
       status: data.status,
-      startDate: (data.startDate as Timestamp).toDate(),
       expectedEndDate: (data.expectedEndDate as Timestamp).toDate(),
       createdAt: (data.createdAt as Timestamp).toDate(),
       updatedAt: (data.updatedAt as Timestamp).toDate(),
@@ -97,7 +97,6 @@ export async function getProjectsByOwner(userId: string | undefined) {
       members: data.members ?? [],
       progress: data.progress,
       status: data.status,
-      startDate: (data.startDate as Timestamp).toDate(),
       expectedEndDate: (data.expectedEndDate as Timestamp).toDate(),
       createdAt: (data.createdAt as Timestamp).toDate(),
       updatedAt: (data.updatedAt as Timestamp).toDate(),

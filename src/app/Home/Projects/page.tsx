@@ -13,17 +13,14 @@ import {
   Route,
   useNavigate,
 } from "react-router-dom";
+import { useAuth } from "../../../services/firebase/auth-context";
 
-export interface ProjectsProps {
-  user: User | null;
-}
-
-export default function Projects({ user }: ProjectsProps) {
+export default function Projects() {
+  const { user } = useAuth();
   const [isModalOpen, setIsModalOpen] = useState<boolean>();
   const [projects, setProjects] = useState<Project[] | undefined>([]);
   const [projectName, setProjectName] = useState<string>("");
   const [projectDescription, setprojectDescription] = useState<string>("");
-  const [projectStartDate, setprojectStartDate] = useState<string>("");
 
   // Load Projects
   useEffect(() => {
@@ -37,21 +34,22 @@ export default function Projects({ user }: ProjectsProps) {
 
   const handleCreateProject = () => {
     const newProject = {
+      id: "",
       name: projectName,
       description: projectDescription,
       ownerID: "",
       members: [],
       progress: 0,
       status: "active",
-      startDate: new Date(projectStartDate),
       expectedEndDate: new Date(),
       createdAt: new Date(),
       updatedAt: new Date(),
+      taskIndex: 0,
     } as Project;
 
     console.log(newProject);
 
-    createProject(newProject);
+    createProject(newProject, user);
   };
 
   const navigate = useNavigate();
@@ -109,15 +107,6 @@ export default function Projects({ user }: ProjectsProps) {
               value={projectDescription}
               onChange={(e) => setprojectDescription(e.target.value)}
             ></textarea>
-            <div className="m-1 w-full">
-              <label>Start Date</label>
-              <input
-                className="p-2.5 w-55"
-                type="datetime-local"
-                value={projectStartDate}
-                onChange={(e) => setprojectStartDate(e.target.value)}
-              />
-            </div>
           </div>
         </form>
       </Modal>
