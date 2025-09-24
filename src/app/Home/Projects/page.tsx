@@ -21,7 +21,7 @@ export default function Projects() {
   const [projects, setProjects] = useState<Project[] | undefined>([]);
   const [projectName, setProjectName] = useState<string>("");
   const [projectDescription, setprojectDescription] = useState<string>("");
-
+  const navigate = useNavigate();
   // Load Projects
   useEffect(() => {
     async function load() {
@@ -47,12 +47,9 @@ export default function Projects() {
       taskIndex: 0,
     } as Project;
 
-    console.log(newProject);
-
     createProject(newProject, user);
+    navigate("/");
   };
-
-  const navigate = useNavigate();
 
   return (
     <div>
@@ -84,6 +81,7 @@ export default function Projects() {
       </div>
       <Modal
         open={isModalOpen ?? false}
+        setIsOpen={setIsModalOpen}
         onClose={() => setIsModalOpen(false)}
         onConfirm={handleCreateProject}
         title={"New Project"}

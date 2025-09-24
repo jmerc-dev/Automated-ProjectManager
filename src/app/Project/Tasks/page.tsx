@@ -230,8 +230,8 @@ function TasksView({ projectId }: TasksViewProps) {
               const docId = newTask.docId;
               if (!changes) return;
               Object.entries(changes).forEach(([key, value]) => {
-                console.log("key: ", key, "|| value: ", value);
-                console.log(typeof value);
+                // console.log("key: ", key, "|| value: ", value);
+                // console.log(typeof value);
                 updateTask(projectId, docId, key, value);
               });
 

@@ -47,7 +47,7 @@ export default function Home() {
       </nav>
       <main>
         <div className="container mx-auto max-w-5/10 mt-7">
-          <Projects user={user} />
+          <Projects />
         </div>
       </main>
     </div>

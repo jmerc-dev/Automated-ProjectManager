@@ -1,10 +1,12 @@
 import { createPortal } from "react-dom";
+import type { Dispatch, SetStateAction } from "react";
 
 interface ModalChildren {
   children: React.ReactNode;
   title: string;
   open: boolean;
   onClose: () => void;
+  setIsOpen: Dispatch<SetStateAction<boolean | undefined>>;
   onConfirm: () => void;
 }
 
@@ -12,6 +14,7 @@ export default function Modal({
   open,
   children,
   title,
+  setIsOpen,
   onClose,
   onConfirm,
 }: ModalChildren) {
@@ -33,7 +36,10 @@ export default function Modal({
             Cancel
           </button>
           <button
-            onClick={onConfirm}
+            onClick={() => {
+              onConfirm();
+              setIsOpen(false);
+            }}
             className="bg-cyan-700 hover:bg-cyan-800 text-white font-bold py-2 px-4 border border-cyan-700 rounded"
           >
             Confirm
