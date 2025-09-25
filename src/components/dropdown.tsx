@@ -24,9 +24,8 @@ export default function DropdownMenu() {
         </button>
         {open && (
           <div className="absolute mt-2 w-40 bg-white border border-gray-200 rounded-lg shadow-lg">
-            {/* make this dynamic */}
             <a className="block px-4 py-2 text-gray-700 hover:bg-gray-300 rounded-t-lg">
-              Open
+              Delete
             </a>
           </div>
         )}

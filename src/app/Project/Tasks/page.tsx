@@ -168,6 +168,14 @@ function TasksView({ projectId }: TasksViewProps) {
           enableCriticalPath={true}
           allowRowDragAndDrop={true}
           enableContextMenu={true}
+          taskbarEditing={(args) => {
+            currentTaskToEdit.current = {
+              ...args.data,
+            };
+          }}
+          taskbarEdited={(args) => {
+            console.log("old data: ", currentTaskToEdit.current);
+          }}
           actionBegin={(args) => {
             if (args.requestType === "beforeOpenEditDialog") {
               currentTaskToEdit.current = {
@@ -176,6 +184,7 @@ function TasksView({ projectId }: TasksViewProps) {
             }
           }}
           actionComplete={(args) => {
+            //console.log("taskbar edited: ", String(args.requestType));
             if (args.requestType === "add") {
               getTaskIndex(projectId).then((taskIndex: number) => {
                 // TODO:
@@ -214,6 +223,10 @@ function TasksView({ projectId }: TasksViewProps) {
                 createTask(projectId, allTasks[newTaskIndex]);
               });
             } else if (args.requestType === "save") {
+              if (!currentTaskToEdit?.current) {
+                return;
+              }
+
               const newTask = args.data.taskData;
               const previousTaskState = {
                 docId: currentTaskToEdit?.current?.taskData.docId,
@@ -230,26 +243,10 @@ function TasksView({ projectId }: TasksViewProps) {
               const docId = newTask.docId;
               if (!changes) return;
               Object.entries(changes).forEach(([key, value]) => {
-                // console.log("key: ", key, "|| value: ", value);
-                // console.log(typeof value);
                 updateTask(projectId, docId, key, value);
               });
 
-              //console.log(changedTaskFields(previousTaskState, newTask));
-
-              // console.log(newTask);
-              // console.log(previousTaskState);
-
-              // Get the changed properties here
-              // const newTask = args.data.taskData;
-              // const previousTaskState = args.previousData;
-              // update
-              // updateTaskNotes(
-              //   projectId,
-              //   args.data.taskData.docId,
-              //   args.data.taskData.notes
-              // );
-              // console.log(previousTaskState);
+              console.log("update complete");
             } else if (args.requestType === "delete") {
               const deletedTasks: any = args.data;
               deletedTasks.forEach((task: any) =>

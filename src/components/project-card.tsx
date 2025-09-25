@@ -10,8 +10,6 @@ export default function ProjectCard({
   project,
   onCardClick,
 }: ProjectCardProps) {
-  const menuChoices = ["Delete", "Details"];
-
   return (
     <div className="w-1/3 p-1">
       <div className="grid grid-cols-2 border-1 border-transparent rounded-md p-3 hover:border-gray-500 cursor-pointer shadow-md bg-white">
@@ -22,7 +20,7 @@ export default function ProjectCard({
           </div>
           <DropdownMenu />
         </div>
-        <div onClick={onCardClick}>s</div>
+        <div onClick={onCardClick}></div>
       </div>
     </div>
   );

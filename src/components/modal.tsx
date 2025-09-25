@@ -38,7 +38,7 @@ export default function Modal({
           <button
             onClick={() => {
               onConfirm();
-              setIsOpen(false);
+              //setIsOpen(false);
             }}
             className="bg-cyan-700 hover:bg-cyan-800 text-white font-bold py-2 px-4 border border-cyan-700 rounded"
           >
