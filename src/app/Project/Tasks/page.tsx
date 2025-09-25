@@ -244,6 +244,7 @@ function TasksView({ projectId }: TasksViewProps) {
               if (!changes) return;
               Object.entries(changes).forEach(([key, value]) => {
                 updateTask(projectId, docId, key, value);
+                console.log(key, value);
               });
 
               console.log("update complete");

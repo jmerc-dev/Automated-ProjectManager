@@ -59,8 +59,9 @@ export async function updateTask(
   field: CoreTaskFieldsType,
   value: any
 ) {
+  console.log(field);
   switch (field) {
-    case CoreTaskFields.taskName:
+    case CoreTaskFields.name:
       await updateTaskName(projectId, taskId, value);
       break;
     case CoreTaskFields.duration:
