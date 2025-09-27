@@ -105,6 +105,10 @@ export async function getProjectsByOwner(userId: string | undefined) {
   });
 }
 
+// Delete Project
+
+// Archive Project
+
 // Last task ID
 export async function getTaskIndex(projectId: string) {
   const projectRef = doc(db, "projects", projectId);

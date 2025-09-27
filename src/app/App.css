@@ -2,7 +2,7 @@
 
 @theme {
   --font-display: "Roboto", "sans-serif";
-  --color-primary: #dbdbdb;
+  --color-primary: #0f6cbd;
 }
 
 @import "@syncfusion/ej2-base/styles/fluent2.css";

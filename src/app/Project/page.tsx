@@ -12,6 +12,7 @@ import { useAuth } from "../../services/firebase/auth-context";
 import NavDropdown from "../../components/nav-dropdown";
 import { getProjectById } from "../../services/firestore/projects";
 import TitleInput from "../../components/title-input";
+import MembersManagement from "./Members/page";
 
 function Project() {
   const [activeTab, setActiveTab] = useState("tasks-tab");
@@ -36,7 +37,7 @@ function Project() {
     if (activeTab === "tasks-tab") {
       if (project) return <TasksView projectId={project?.id} />;
     } else if (activeTab === "members-tab") {
-      return <>members</>;
+      return <MembersManagement />;
     } else if (activeTab === "reports-tab") {
       return <>reports</>;
     }
@@ -52,7 +53,7 @@ function Project() {
             </button>
           </div>
           <div className="font-semibold flex align-middle pl-2">
-            <div className="text-sm mt-auto mb-auto font-bold text-cyan-600">
+            <div className="text-sm mt-auto mb-auto font-bold text-blue-500">
               <div>AutoProject</div>
             </div>
             <div className="w-full flex align-middle mt-auto mb-auto ml-[100px]">
