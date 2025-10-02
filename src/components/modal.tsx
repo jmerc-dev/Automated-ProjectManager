@@ -24,7 +24,7 @@ export default function Modal({
     <>
       <div className="fixed z-1000 top-0 left-0 right-0 bottom-0 bg-[rgb(0,0,0,.7)]"></div>
       <div className="fixed z-1000 bg-white top-1/2 left-1/2 -translate-y-1/2 -translate-x-1/2 min-w-2xl p-2 border border-transparent rounded-xl">
-        <div className="m-1 text-2xl text-cyan-800">{title}</div>
+        <div className="m-1 text-2xl text-primary">{title}</div>
 
         {children}
 
@@ -40,7 +40,7 @@ export default function Modal({
               onConfirm();
               //setIsOpen(false);
             }}
-            className="bg-cyan-700 hover:bg-cyan-800 text-white font-bold py-2 px-4 border border-cyan-700 rounded"
+            className="bg-primary hover:bg-primary-dark text-white font-bold py-2 px-4 border border-cyan-700 rounded"
           >
             Confirm
           </button>

@@ -1,8 +1,10 @@
 @import "tailwindcss";
 
 @theme {
-  --font-display: "Roboto", "sans-serif";
+  --font-display: "Segoe UI", "sans-serif";
   --color-primary: #0f6cbd;
+  --color-primary-light: #449ed9;
+  --color-primary-dark: #09477e;
 }
 
 @import "@syncfusion/ej2-base/styles/fluent2.css";

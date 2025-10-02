@@ -59,7 +59,7 @@ export default function Projects() {
         <h1 className="text-2xl font-semibold">My Projects</h1>
         <button
           onClick={() => setIsModalOpen(true)}
-          className="bg-cyan-700 text-white rounded-xl w-3/5 ml-auto hover:bg-cyan-600"
+          className="bg-primary text-white rounded-lg w-3/5 ml-auto hover:bg-primary-dark"
         >
           New Project
         </button>
@@ -91,7 +91,7 @@ export default function Projects() {
             <input
               type="text"
               id="first_name"
-              className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:outline-none focus:ring-1 focus:ring-cyan-600 focus:border-cyan-600 block w-full p-2.5 m-1"
+              className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:outline-none focus:ring-1 focus:ring-primary focus:border-primary block w-full p-2.5 m-1"
               placeholder="Project Name"
               required
               value={projectName}
@@ -100,7 +100,7 @@ export default function Projects() {
             <textarea
               id="message"
               rows={4}
-              className="block p-2.5 w-full text-sm text-gray-900 bg-gray-50 rounded-lg border border-gray-300 focus:outline-none focus:ring-1 focus:ring-cyan-600 focus:border-cyan-600 m-1"
+              className="block p-2.5 w-full text-sm text-gray-900 bg-gray-50 rounded-lg border border-gray-300 focus:outline-none focus:ring-1 focus:ring-primary focus:border-primary m-1"
               placeholder="Project Description"
               value={projectDescription}
               onChange={(e) => setprojectDescription(e.target.value)}

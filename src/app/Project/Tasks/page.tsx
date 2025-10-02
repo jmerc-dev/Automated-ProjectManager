@@ -24,19 +24,13 @@ import {
   deleteTask,
   getAllTasks,
   updateTask,
-  updateTaskDependency,
-  updateTaskDuration,
-  updateTaskName,
-  updateTaskNotes,
   updateTaskOrder,
-  updateTaskProgress,
-  updateTaskStartDate,
 } from "../../../services/firestore/tasks";
 
 import { changedTaskFields } from "../../../util/task-processing";
 
 interface TasksViewProps {
-  projectId: string;
+  projectId?: string;
 }
 
 function TasksView({ projectId }: TasksViewProps) {
@@ -54,6 +48,8 @@ function TasksView({ projectId }: TasksViewProps) {
 
   useEffect(() => {
     const loadTasks = async () => {
+      if (!projectId) return;
+
       const rawTasks = await getAllTasks(projectId);
       rawTasks.sort((a, b) => {
         return a.order - b.order;
@@ -69,6 +65,7 @@ function TasksView({ projectId }: TasksViewProps) {
     referenceTaskId: string | null,
     position: "above" | "below"
   ) {
+    if (!projectId) return;
     const siblings = tasks.filter((t) => t.parentId === parentId);
     const refIndex = referenceTaskId
       ? siblings.findIndex((t) => t.id === referenceTaskId)
@@ -117,22 +114,6 @@ function TasksView({ projectId }: TasksViewProps) {
     "Indent",
     "Outdent",
   ];
-
-  // const onRowDragStop = async (args: any) => {
-  //   const movedTask = args.data;
-  //   const siblings = ganttRef
-  //     .current!.flatData.filter((t) => t.parentId === movedTask.parentId)
-  //     .sort((a, b) => a.ganttProperties?.index - b.ganttProperties?.index);
-
-  //   // Recalculate order
-  //   for (let i = 0; i < siblings.length; i++) {
-  //     siblings[i].order = i;
-  //     // Update Firestore
-  //     await updateDoc(doc(db, "projects", projectId, "tasks", siblings[i].id), {
-  //       order: i,
-  //     });
-  //   }
-  // };
 
   return (
     <div className="w-full h-[700px] max-h-[500px] min-w-[500px] border-gray-300">
