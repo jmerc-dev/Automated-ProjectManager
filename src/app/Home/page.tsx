@@ -22,31 +22,40 @@ export default function Home() {
   }
 
   return (
-    <div className="h-screen [background:#E6E6E6]">
-      <nav className=" col-span-2">
-        <div className="grid [grid-template-columns:50px_auto_1fr] text-black">
-          <div>
-            <img src={homeIcon} className="p-3" />
+    <div className="min-h-screen bg-[#f4f8fb]">
+      <nav className="sticky top-0 z-30 w-full bg-[#eaf3fb] border-b border-[#b3d1ea]">
+        <div className="flex items-center justify-between max-w-6xl mx-auto px-4 py-2">
+          {/* Home Icon */}
+          <div className="flex items-center">
+            <img
+              src={homeIcon}
+              className="w-9 h-9 p-2 rounded-xl bg-[#e6f0fa]"
+            />
+            <div className="text-xl font-bold text-[#155a8a] tracking-tight select-none">
+              AutoProject
+            </div>
           </div>
-          <div className="font-semibold pt-3 p-1">AutoProject</div>
-          <div className="flex justify-end space-x-5 m-3 [&>div]:bg-transparent [&>div]:hover:bg-gray-300  [&>div]:rounded-full [&>div]:cursor-pointer [&>div]:p-1 [&>div>img]:w-6">
-            <div>
-              <img src={notifIcon} />
-            </div>
-            <div>
-              <img src={helpIcon} />
-            </div>
+          {/* App Name */}
+
+          {/* Right-side Icons */}
+          <div className="flex items-center gap-3">
+            <button className="rounded-full p-2 bg-[#e6f0fa] hover:bg-[#cbe3fa] transition-colors focus:outline-none focus:ring-2 focus:ring-[#0f6cbd]/30">
+              <img src={notifIcon} className="w-6 h-6" />
+            </button>
+            <button className="rounded-full p-2 bg-[#e6f0fa] hover:bg-[#cbe3fa] transition-colors focus:outline-none focus:ring-2 focus:ring-[#0f6cbd]/30">
+              <img src={helpIcon} className="w-6 h-6" />
+            </button>
             <NavDropdown actions={{ Logout: () => logout() }}>
-              <img src={user?.photoURL || ""} className="rounded-xl h-6" />
+              <img
+                src={user?.photoURL || ""}
+                className="rounded-full w-7 h-7 object-cover border border-[#b3d1ea]"
+              />
             </NavDropdown>
-            {/* <div>
-              <img src={user?.photoURL || ""} className="rounded-xl" />
-            </div> */}
           </div>
         </div>
       </nav>
       <main>
-        <div className="container mx-auto max-w-5/10 mt-7">
+        <div className="max-w-6xl mx-auto px-4 py-8">
           <Projects />
         </div>
       </main>

@@ -17,7 +17,7 @@ import { useAuth } from "../../../services/firebase/auth-context";
 
 export default function Projects() {
   const { user } = useAuth();
-  const [isModalOpen, setIsModalOpen] = useState<boolean>();
+  const [isModalOpen, setIsModalOpen] = useState<boolean>(false);
   const [projects, setProjects] = useState<Project[] | undefined>([]);
   const [projectName, setProjectName] = useState<string>("");
   const [projectDescription, setprojectDescription] = useState<string>("");
@@ -55,17 +55,18 @@ export default function Projects() {
     <div>
       {" "}
       {/*<<<< project design template*/}
-      <div className="grid grid-cols-2">
-        <h1 className="text-2xl font-semibold">My Projects</h1>
+      <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-4 mb-6 mt-2">
+        <h1 className="text-2xl font-bold text-[#0f6cbd] tracking-tight">
+          My Projects
+        </h1>
         <button
           onClick={() => setIsModalOpen(true)}
-          className="bg-primary text-white rounded-lg w-3/5 ml-auto hover:bg-primary-dark"
+          className="bg-[#0f6cbd] text-white font-semibold rounded-xl px-6 py-2 shadow hover:bg-[#155a8a] transition w-full md:w-auto"
         >
-          New Project
+          + New Project
         </button>
       </div>
-      <div className="flex flex-row pt-5 flex-wrap">
-        {" "}
+      <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4">
         {/*<<<<< for each project renderer */}
         {projects != undefined && projects?.length > 0 ? (
           projects?.map((project) => (
@@ -76,7 +77,9 @@ export default function Projects() {
             />
           ))
         ) : (
-          <p>No projects found.</p>
+          <p className="col-span-full text-center text-gray-400 py-10">
+            No projects found.
+          </p>
         )}
       </div>
       <Modal

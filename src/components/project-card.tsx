@@ -11,16 +11,32 @@ export default function ProjectCard({
   onCardClick,
 }: ProjectCardProps) {
   return (
-    <div className="w-1/3 p-1">
-      <div className="grid grid-cols-2 border-1 border-transparent rounded-md p-3 hover:border-gray-500 cursor-pointer shadow-md bg-white">
-        <div>
-          <div className="text-lg">{project.name}</div>
-          <div className="text-sm font-extralight">
-            Date Created: {project.createdAt.toLocaleDateString()}
+    <div className="h-full">
+      <div
+        className="group flex flex-col justify-between h-full w-full border border-gray-200 bg-white rounded-2xl px-7 py-6 transition-all duration-150 cursor-pointer hover:border-[#0f6cbd] hover:bg-[#f7fafd] focus-within:border-[#0f6cbd]"
+        tabIndex={0}
+        onClick={onCardClick}
+        onKeyDown={(e) => {
+          if (e.key === "Enter" || e.key === " ") onCardClick();
+        }}
+        role="button"
+        aria-label={`Open project ${project.name}`}
+      >
+        <div className="flex flex-col gap-2 flex-1">
+          <div className="text-lg font-semibold text-gray-900 truncate group-hover:text-[#0f6cbd]">
+            {project.name}
           </div>
+          <div className="text-xs text-gray-500 mb-2">
+            Created: {project.createdAt.toLocaleDateString()}
+          </div>
+        </div>
+        <div
+          className="flex justify-end mt-2"
+          onClick={(e) => e.stopPropagation()}
+          onKeyDown={(e) => e.stopPropagation()}
+        >
           <DropdownMenu />
         </div>
-        <div onClick={onCardClick}></div>
       </div>
     </div>
   );
