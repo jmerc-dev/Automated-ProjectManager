@@ -15,11 +15,9 @@ import {
 } from "firebase/firestore";
 import type { Collaborator } from "../../types/collaborator";
 
-// Collection path helper
 const getCollaboratorsCollection = (projectId: string) =>
   collection(db, `projects/${projectId}/collaborators`);
 
-// Add a collaborator
 export async function addCollaborator(
   projectId: string,
   collaborator: Omit<Collaborator, "id">
@@ -32,7 +30,6 @@ export async function addCollaborator(
   return docRef.id;
 }
 
-// Update a collaborator (by id)
 export async function updateCollaborator(
   projectId: string,
   id: string,

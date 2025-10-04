@@ -2,6 +2,7 @@ import { db } from "../firebase/config";
 import {
   collection,
   doc,
+  addDoc,
   setDoc,
   getDocs,
   updateDoc,
@@ -12,25 +13,23 @@ import {
 import type { DocumentData } from "firebase/firestore";
 import type { Member } from "../../types/member";
 
-// Create a member (set by id)
-export async function createMember(projectId: string, member: Member) {
+const getMembersCollection = (projectId: string) =>
+  collection(db, `projects/${projectId}/members`);
+
+export async function addMember(
+  projectId: string,
+  member: Omit<Member, "id">
+): Promise<string> {
   try {
-    const memberRef = doc(
-      db,
-      "projects",
-      projectId,
-      "members",
-      String(member.id)
-    );
-    await setDoc(memberRef, member);
-    return memberRef;
+    const memberRef = getMembersCollection(projectId);
+    const docRef = await addDoc(memberRef, { ...member });
+    return docRef.id;
   } catch (e) {
     console.error("Error creating member:", e);
     throw e;
   }
 }
 
-// Get all members for a project
 export async function getAllMembers(projectId: string): Promise<Member[]> {
   try {
     const membersCol = collection(db, "projects", projectId, "members");
@@ -44,7 +43,6 @@ export async function getAllMembers(projectId: string): Promise<Member[]> {
   }
 }
 
-// Update a member
 export async function updateMember(
   projectId: string,
   memberId: string,
@@ -60,7 +58,6 @@ export async function updateMember(
   }
 }
 
-// Delete a member
 export async function deleteMember(projectId: string, memberId: string) {
   try {
     const memberRef = doc(db, "projects", projectId, "members", memberId);
@@ -71,7 +68,6 @@ export async function deleteMember(projectId: string, memberId: string) {
   }
 }
 
-// Real-time listener for members
 export function onMembersSnapshot(
   projectId: string,
   callback: (members: Member[]) => void
@@ -84,5 +80,3 @@ export function onMembersSnapshot(
     callback(members);
   });
 }
-
-export async function getAllMember() {}

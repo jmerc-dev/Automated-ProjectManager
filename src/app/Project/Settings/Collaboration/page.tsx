@@ -34,10 +34,6 @@ export default function CollaborationSettings({
     return () => unsubscribe();
   }, [projectId]);
 
-  useEffect(() => {
-    console.log("Collaborators updated:", collaborators);
-  }, [collaborators]);
-
   const isEmailExisting = (email: string) => {
     return collaborators.some(
       (c) => c.email.toLowerCase() === email.toLowerCase()

@@ -128,77 +128,148 @@ function Landing() {
       {/* Main Content */}
       <main className="pt-24 bg-[#f4f8fb] min-h-screen">
         {/* Home Section */}
-        <section id="home" className="flex flex-col md:flex-row items-center justify-center py-16 px-4 text-center gap-10 max-w-5xl mx-auto rounded-2xl">
+        <section
+          id="home"
+          className="flex flex-col md:flex-row items-center justify-center py-16 px-4 text-center gap-10 max-w-5xl mx-auto rounded-2xl"
+        >
           <div className="flex-1 flex flex-col items-center md:items-start text-center md:text-left">
-            <h1 className="text-4xl md:text-5xl font-bold text-[#1976d2] mb-4">Welcome to AutoProject</h1>
+            <h1 className="text-4xl md:text-5xl font-bold text-[#1976d2] mb-4">
+              Welcome to AutoProject
+            </h1>
             <p className="text-lg md:text-xl text-[#4a6fa5] max-w-2xl mb-8">
-              A modern, collaborative project management platform designed for teams who want to move fast and stay organized.
+              A modern, collaborative project management platform designed for
+              teams who want to move fast and stay organized.
             </p>
             <div className="flex flex-col sm:flex-row gap-4 justify-center md:justify-start">
-              <a href="#about" className="bg-[#1976d2] text-white font-semibold rounded-xl px-8 py-3 hover:bg-[#155a8a] transition">Learn More</a>
-              <a href="#contact" className="bg-white border border-[#1976d2] text-[#1976d2] font-semibold rounded-xl px-8 py-3 hover:bg-[#e6f0fa] transition">Contact Us</a>
+              <a
+                href="#about"
+                className="bg-[#1976d2] text-white font-semibold rounded-xl px-8 py-3 hover:bg-[#155a8a] transition"
+              >
+                Learn More
+              </a>
+              <a
+                href="#contact"
+                className="bg-white border border-[#1976d2] text-[#1976d2] font-semibold rounded-xl px-8 py-3 hover:bg-[#e6f0fa] transition"
+              >
+                Contact Us
+              </a>
             </div>
           </div>
           <div className="flex-1 flex justify-center items-center mt-8 md:mt-0">
             <div className="w-60 h-60 rounded-2xl bg-[#e6f0fa] flex items-center justify-center">
-              <span className="text-[#1976d2] text-lg font-semibold opacity-60">Photo Placeholder</span>
+              <span className="text-[#1976d2] text-lg font-semibold opacity-60">
+                Photo Placeholder
+              </span>
             </div>
           </div>
         </section>
 
         {/* About Section */}
-        <section id="about" className="py-16 px-4 bg-white border-t border-[#e6f0fa]">
+        <section
+          id="about"
+          className="py-16 px-4 bg-white border-t border-[#e6f0fa]"
+        >
           <div className="max-w-3xl mx-auto text-center">
             <h2 className="text-3xl font-bold text-[#0f6cbd] mb-4">About</h2>
             <p className="text-lg text-gray-600">
-              AutoProject streamlines your workflow with real-time collaboration, intuitive task management, and powerful reporting tools. Whether you're a small team or a large organization, AutoProject adapts to your needs.
+              AutoProject streamlines your workflow with real-time
+              collaboration, intuitive task management, and powerful reporting
+              tools. Whether you're a small team or a large organization,
+              AutoProject adapts to your needs.
             </p>
           </div>
         </section>
 
         {/* Services Section */}
-        <section id="services" className="py-16 px-4 bg-[#f7fafd] border-t border-[#e6f0fa]">
+        <section
+          id="services"
+          className="py-16 px-4 bg-[#f7fafd] border-t border-[#e6f0fa]"
+        >
           <div className="max-w-5xl mx-auto text-center">
             <h2 className="text-3xl font-bold text-[#1976d2] mb-4">Services</h2>
             <div className="grid grid-cols-1 md:grid-cols-3 gap-8 mt-8">
               {/* Service 1 */}
               <div className="bg-white rounded-xl p-8 border border-[#e6f0fa] flex flex-col items-center">
                 <div className="w-20 h-20 mb-4 rounded-xl bg-[#e6f0fa] flex items-center justify-center border border-[#1976d2]/10">
-                  <span className="text-[#1976d2] text-base font-semibold opacity-70">Photo</span>
+                  <span className="text-[#1976d2] text-base font-semibold opacity-70">
+                    Photo
+                  </span>
                 </div>
-                <h3 className="text-xl font-semibold text-[#1976d2] mb-2">Task Management</h3>
-                <p className="text-gray-600">Organize, assign, and track tasks with ease. Stay on top of deadlines and priorities.</p>
+                <h3 className="text-xl font-semibold text-[#1976d2] mb-2">
+                  Task Management
+                </h3>
+                <p className="text-gray-600">
+                  Organize, assign, and track tasks with ease. Stay on top of
+                  deadlines and priorities.
+                </p>
               </div>
               {/* Service 2 */}
               <div className="bg-white rounded-xl p-8 border border-[#e6f0fa] flex flex-col items-center">
                 <div className="w-20 h-20 mb-4 rounded-xl bg-[#e6f0fa] flex items-center justify-center border border-[#1976d2]/10">
-                  <span className="text-[#1976d2] text-base font-semibold opacity-70">Photo</span>
+                  <span className="text-[#1976d2] text-base font-semibold opacity-70">
+                    Photo
+                  </span>
                 </div>
-                <h3 className="text-xl font-semibold text-[#1976d2] mb-2">Collaboration</h3>
-                <p className="text-gray-600">Work together in real time, share updates, and communicate seamlessly with your team.</p>
+                <h3 className="text-xl font-semibold text-[#1976d2] mb-2">
+                  Collaboration
+                </h3>
+                <p className="text-gray-600">
+                  Work together in real time, share updates, and communicate
+                  seamlessly with your team.
+                </p>
               </div>
               {/* Service 3 */}
               <div className="bg-white rounded-xl p-8 border border-[#e6f0fa] flex flex-col items-center">
                 <div className="w-20 h-20 mb-4 rounded-xl bg-[#e6f0fa] flex items-center justify-center border border-[#1976d2]/10">
-                  <span className="text-[#1976d2] text-base font-semibold opacity-70">Photo</span>
+                  <span className="text-[#1976d2] text-base font-semibold opacity-70">
+                    Photo
+                  </span>
                 </div>
-                <h3 className="text-xl font-semibold text-[#1976d2] mb-2">Reporting</h3>
-                <p className="text-gray-600">Gain insights with powerful analytics and reporting features to drive your projects forward.</p>
+                <h3 className="text-xl font-semibold text-[#1976d2] mb-2">
+                  Reporting
+                </h3>
+                <p className="text-gray-600">
+                  Gain insights with powerful analytics and reporting features
+                  to drive your projects forward.
+                </p>
               </div>
             </div>
           </div>
         </section>
 
         {/* Contact Section */}
-        <section id="contact" className="py-16 px-4 bg-white border-t border-[#e6f0fa]">
+        <section
+          id="contact"
+          className="py-16 px-4 bg-white border-t border-[#e6f0fa]"
+        >
           <div className="max-w-2xl mx-auto text-center">
             <h2 className="text-3xl font-bold text-[#0f6cbd] mb-4">Contact</h2>
-            <p className="text-lg text-gray-600 mb-6">Have questions or want to get in touch? Fill out the form below and our team will respond promptly.</p>
+            <p className="text-lg text-gray-600 mb-6">
+              Have questions or want to get in touch? Fill out the form below
+              and our team will respond promptly.
+            </p>
             <form className="flex flex-col gap-4 items-center">
-              <input type="text" placeholder="Your Name" className="w-full max-w-md px-4 py-3 rounded-xl border border-[#d1e4f7] bg-[#f7fafd] focus:outline-none focus:border-[#0f6cbd] focus:ring-2 focus:ring-[#0f6cbd]/20 transition" />
-              <input type="email" placeholder="Your Email" className="w-full max-w-md px-4 py-3 rounded-xl border border-[#d1e4f7] bg-[#f7fafd] focus:outline-none focus:border-[#0f6cbd] focus:ring-2 focus:ring-[#0f6cbd]/20 transition" />
-              <textarea placeholder="Your Message" rows={4} className="w-full max-w-md px-4 py-3 rounded-xl border border-[#d1e4f7] bg-[#f7fafd] focus:outline-none focus:border-[#0f6cbd] focus:ring-2 focus:ring-[#0f6cbd]/20 transition" />
-              <button type="submit" className="bg-[#1976d2] text-white font-semibold rounded-xl px-8 py-3 hover:bg-[#155a8a] transition mt-2">Send Message</button>
+              <input
+                type="text"
+                placeholder="Your Name"
+                className="w-full max-w-md px-4 py-3 rounded-xl border border-[#d1e4f7] bg-[#f7fafd] focus:outline-none focus:border-[#0f6cbd] focus:ring-2 focus:ring-[#0f6cbd]/20 transition"
+              />
+              <input
+                type="email"
+                placeholder="Your Email"
+                className="w-full max-w-md px-4 py-3 rounded-xl border border-[#d1e4f7] bg-[#f7fafd] focus:outline-none focus:border-[#0f6cbd] focus:ring-2 focus:ring-[#0f6cbd]/20 transition"
+              />
+              <textarea
+                placeholder="Your Message"
+                rows={4}
+                className="w-full max-w-md px-4 py-3 rounded-xl border border-[#d1e4f7] bg-[#f7fafd] focus:outline-none focus:border-[#0f6cbd] focus:ring-2 focus:ring-[#0f6cbd]/20 transition"
+              />
+              <button
+                type="submit"
+                className="bg-[#1976d2] text-white font-semibold rounded-xl px-8 py-3 hover:bg-[#155a8a] transition mt-2"
+              >
+                Send Message
+              </button>
             </form>
           </div>
         </section>

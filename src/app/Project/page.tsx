@@ -39,7 +39,7 @@ function Project() {
     if (activeTab === "tasks-tab") {
       if (project) return <TasksView projectId={project?.id} />;
     } else if (activeTab === "members-tab") {
-      return <MembersManagement />;
+      if (project) return <MembersManagement projectId={project?.id} />;
     } else if (activeTab === "reports-tab") {
       return <>reports</>;
     } else if (activeTab === "settings-tab") {
