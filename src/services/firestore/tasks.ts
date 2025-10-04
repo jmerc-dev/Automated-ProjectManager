@@ -12,7 +12,6 @@ import {
   setDoc,
 } from "firebase/firestore";
 import { getTaskIndex, incTaskIndex } from "./projects";
-import type { Dependency } from "@syncfusion/ej2-react-gantt";
 
 export async function createTask(projectId: string, newTask: Task) {
   try {

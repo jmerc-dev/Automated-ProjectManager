@@ -5,6 +5,7 @@ import notifIcon from "../../assets/images/notification.png";
 import helpIcon from "../../assets/images/help.png";
 import TasksView from "./Tasks/page";
 import homeIcon from "../../assets/images/home.png";
+import settingIcon from "../../assets/images/settings.png";
 import { useState, useEffect } from "react";
 import { useNavigate, useParams } from "react-router-dom";
 import type { Project } from "../../types/project";
@@ -13,6 +14,7 @@ import NavDropdown from "../../components/nav-dropdown";
 import { getProjectById } from "../../services/firestore/projects";
 import TitleInput from "../../components/title-input";
 import MembersManagement from "./Members/page";
+import ProjectSettings from "./Settings/page";
 
 function Project() {
   const [activeTab, setActiveTab] = useState("tasks-tab");
@@ -40,6 +42,8 @@ function Project() {
       return <MembersManagement />;
     } else if (activeTab === "reports-tab") {
       return <>reports</>;
+    } else if (activeTab === "settings-tab") {
+      if (project) return <ProjectSettings projectId={project?.id} />;
     }
   };
 
@@ -122,6 +126,17 @@ function Project() {
           onClick={() => setActiveTab("reports-tab")}
         >
           <img src={reportsIcon} className="h-8 w-8 p-1 my-2" />
+        </button>
+        {/* Settings Tab Button */}
+        <button
+          className={
+            activeTab === "settings-tab"
+              ? "flex justify-center border-1"
+              : "flex justify-center border border-transparent"
+          }
+          onClick={() => setActiveTab("settings-tab")}
+        >
+          <img src={settingIcon} className="h-8 w-8 p-1 my-2" />
         </button>
       </aside>
       <main className="p-3 border-1 border-gray-200">{renderContent()}</main>

@@ -1,8 +1,18 @@
 import { db } from "../firebase/config";
-import { setDoc } from "firebase/firestore";
+import { addDoc, doc } from "firebase/firestore";
 import type { Member } from "../../types/member";
 
 export async function createMember(projectId: string, member: Member) {
+  try {
+    const memberRef = doc(
+      db,
+      "projects",
+      projectId,
+      "member",
+      String(member.id)
+    );
+  } catch (e) {}
+
   //   try {
   //     const memberRef = doc(db, "projects", projectId, "member", String(newTaskId));
   //     const docRef = await setDoc(collection(db, "projects"), {
@@ -17,3 +27,5 @@ export async function createMember(projectId: string, member: Member) {
   //     console.error("Error adding member");
   //   }
 }
+
+export async function getAllMember() {}
