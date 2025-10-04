@@ -147,7 +147,7 @@ export default function CollaborationSettings({
               <tr className="bg-[#f4f8fb] text-gray-700 sticky top-0 z-10">
                 <th className="py-3 px-4 text-left font-semibold">Name</th>
                 <th className="py-3 px-4 text-left font-semibold">Email</th>
-                <th className="py-3 px-4 text-left font-semibold">access</th>
+                <th className="py-3 px-4 text-left font-semibold">Access</th>
                 <th className="py-3 px-4 text-center font-semibold">Actions</th>
               </tr>
             </thead>

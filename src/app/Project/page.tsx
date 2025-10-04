@@ -48,33 +48,46 @@ function Project() {
   };
 
   return (
-    <div className="grid bg-white [grid-template-rows:auto_1fr] overflow-hidden [grid-template-columns:50px_1fr] h-screen font-display">
-      <nav className=" col-span-2">
-        <div className="grid [grid-template-columns:50px_1fr_auto]  text-black">
-          <div className="bg-white border-r-1 border-gray-400">
-            <button className="hover:bg-gray-300" onClick={handleHomeClick}>
-              <img src={homeIcon} className="p-3" />
+    <div className="grid bg-white [grid-template-rows:auto_1fr] overflow-hidden [grid-template-columns:auto_1fr] h-screen font-display">
+      <nav className="col-span-2 sticky top-0 z-30 w-full bg-white/70 backdrop-blur-md shadow-sm border-b border-gray-200">
+        <div className="grid [grid-template-columns:56px_1fr_auto] text-black items-center min-h-[60px]">
+          {/* Home Button */}
+          <div className="flex items-center justify-center h-full border-r border-gray-200 bg-white/80">
+            <button
+              className="rounded-xl p-2 transition hover:bg-[#e6f0fa] focus:outline-none focus:ring-2 focus:ring-[#0f6cbd]/40"
+              onClick={handleHomeClick}
+              aria-label="Home"
+            >
+              <img src={homeIcon} className="w-7 h-7" />
             </button>
           </div>
-          <div className="font-semibold flex align-middle pl-2">
-            <div className="text-sm mt-auto mb-auto font-bold text-blue-500">
-              <div>AutoProject</div>
-            </div>
-            <div className="w-full flex align-middle mt-auto mb-auto ml-[100px]">
+          {/* App Name & TitleInput */}
+          <div className="flex items-center gap-6 pl-4">
+            <span className="text-lg font-bold text-[#0f6cbd] tracking-tight drop-shadow-sm select-none">
+              AutoProject
+            </span>
+            <div className="w-full max-w-lg">
               {project ? (
                 <TitleInput project={project} setProject={setProject} />
               ) : (
-                <p>Loading...</p>
+                <span className="text-gray-400">Loading...</span>
               )}
             </div>
           </div>
-          <div className="flex justify-end space-x-5 m-3 [&>div]:bg-transparent [&>div]:hover:bg-gray-300  [&>div]:rounded-full [&>div]:cursor-pointer [&>div]:p-1 [&>div>img]:w-6">
-            <div>
-              <img src={notifIcon} />
-            </div>
-            <div>
-              <img src={helpIcon} />
-            </div>
+          {/* Right-side Icons */}
+          <div className="flex items-center justify-end gap-3 pr-4">
+            <button
+              className="rounded-full p-2 bg-white/70 hover:bg-[#e6f0fa] transition shadow-sm focus:outline-none focus:ring-2 focus:ring-[#0f6cbd]/30"
+              aria-label="Notifications"
+            >
+              <img src={notifIcon} className="w-6 h-6" />
+            </button>
+            <button
+              className="rounded-full p-2 bg-white/70 hover:bg-[#e6f0fa] transition shadow-sm focus:outline-none focus:ring-2 focus:ring-[#0f6cbd]/30"
+              aria-label="Help"
+            >
+              <img src={helpIcon} className="w-6 h-6" />
+            </button>
             <NavDropdown
               actions={{
                 Logout: () => {
@@ -83,60 +96,76 @@ function Project() {
                 },
               }}
             >
-              <img src={user?.photoURL || ""} className="rounded-xl h-6" />
+              <img
+                src={user?.photoURL || ""}
+                className="rounded-full w-7 h-7 object-cover border border-gray-200 shadow-sm"
+              />
             </NavDropdown>
           </div>
         </div>
       </nav>
       <aside
-        className={
-          "border-r-1 h-full border-r-gray-400 flex flex-col bg-white text-center *:hover:bg-gray-300 *:cursor-pointer"
-        }
+        className="border-r h-full border-r-gray-200 flex flex-col bg-white text-center py-4 px-1 shadow-sm"
+        style={{ minWidth: 56 }}
       >
         {/* Task Tab Button */}
         <button
-          className={
-            activeTab === "tasks-tab"
-              ? "flex justify-center border-1"
-              : "flex justify-center border border-transparent"
-          }
+          className={`flex justify-center items-center my-1 rounded-xl transition-all duration-150 p-1.5 mx-auto w-12 h-12 shadow-sm
+            ${
+              activeTab === "tasks-tab"
+                ? "bg-[#e6f0fa] border-2 border-[#0f6cbd] shadow-md"
+                : "hover:bg-[#f4f8fb] border border-transparent"
+            }
+          `}
+          aria-label="Tasks"
           onClick={() => setActiveTab("tasks-tab")}
         >
-          <img src={taskIcon} className="h-8 w-8 p-1 my-2" />
+          <img src={taskIcon} className="h-7 w-7" />
         </button>
 
         {/* Members Tab Button */}
         <button
-          className={
-            activeTab === "members-tab"
-              ? "flex justify-center border-1"
-              : "flex justify-center border border-transparent"
-          }
+          className={`flex justify-center items-center my-1 rounded-xl transition-all duration-150 p-1.5 mx-auto w-12 h-12 shadow-sm
+            ${
+              activeTab === "members-tab"
+                ? "bg-[#e6f0fa] border-2 border-[#0f6cbd] shadow-md"
+                : "hover:bg-[#f4f8fb] border border-transparent"
+            }
+          `}
+          aria-label="Members"
           onClick={() => setActiveTab("members-tab")}
         >
-          <img src={membersIcon} className="h-8 w-8 p-1 my-2" />
+          <img src={membersIcon} className="h-7 w-7" />
         </button>
+
         {/* Reports Tab Button */}
         <button
-          className={
-            activeTab === "reports-tab"
-              ? "flex justify-center border-1"
-              : "flex justify-center border border-transparent"
-          }
+          className={`flex justify-center items-center my-1 rounded-xl transition-all duration-150 p-1.5 mx-auto w-12 h-12 shadow-sm
+            ${
+              activeTab === "reports-tab"
+                ? "bg-[#e6f0fa] border-2 border-[#0f6cbd] shadow-md"
+                : "hover:bg-[#f4f8fb] border border-transparent"
+            }
+          `}
+          aria-label="Reports"
           onClick={() => setActiveTab("reports-tab")}
         >
-          <img src={reportsIcon} className="h-8 w-8 p-1 my-2" />
+          <img src={reportsIcon} className="h-7 w-7" />
         </button>
+
         {/* Settings Tab Button */}
         <button
-          className={
-            activeTab === "settings-tab"
-              ? "flex justify-center border-1"
-              : "flex justify-center border border-transparent"
-          }
+          className={`flex justify-center items-center my-1 rounded-xl transition-all duration-150 p-1.5 mx-auto w-12 h-12 shadow-sm
+            ${
+              activeTab === "settings-tab"
+                ? "bg-[#e6f0fa] border-2 border-[#0f6cbd] shadow-md"
+                : "hover:bg-[#f4f8fb] border border-transparent"
+            }
+          `}
+          aria-label="Settings"
           onClick={() => setActiveTab("settings-tab")}
         >
-          <img src={settingIcon} className="h-8 w-8 p-1 my-2" />
+          <img src={settingIcon} className="h-7 w-7" />
         </button>
       </aside>
       <main className="p-3 border-1 border-gray-200">{renderContent()}</main>

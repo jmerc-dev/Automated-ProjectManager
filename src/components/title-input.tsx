@@ -18,7 +18,7 @@ export default function TitleInput({ project, setProject }: TitleInputProps) {
     <input
       type="text"
       placeholder="Project Name"
-      className="font-bold outline-0 text-base h-10 border border-transparent rounded-lg p-1 hover:bg-gray-300 hover:cursor-pointer focus:hover:bg-transparent focus:hover:cursor-auto ring-1 ring-transparent focus:ring-blue-400"
+      className="font-bold text-base w-auto h-11 px-4 py-2 rounded-xl border border-gray-300 bg-white focus:outline-none focus:border-[#0f6cbd] focus:ring-2 focus:ring-[#0f6cbd]/20 transition placeholder:text-gray-400 hover:bg-gray-100 hover:cursor-pointer focus:cursor-text"
       value={draftName ?? ""}
       onChange={(e) => setDraftName(e.target.value)}
       onClick={() => console.log(project.name)}
