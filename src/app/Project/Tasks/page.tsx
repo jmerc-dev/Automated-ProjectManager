@@ -245,7 +245,11 @@ function TasksView({ projectId }: TasksViewProps) {
               deletedTasks.forEach((task: any) =>
                 deleteTask(projectId, task.taskData.docId)
               );
-            } else if (args.requestType === "rowDropped") {
+            } else if (
+              args.requestType === "rowDropped" ||
+              args.requestType === "indented" ||
+              args.requestType === "outdented"
+            ) {
               // Change parent id here depending on where it was dropped
               const droppedRow = args.data;
               const droppedTaskDocId = droppedRow[0].taskData.docId;
