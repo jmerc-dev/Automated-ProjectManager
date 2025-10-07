@@ -82,7 +82,7 @@ export async function updateTask(
       await updateTaskNotes(projectId, taskId, value);
       break;
     case CoreTaskFields.parentId:
-      console.log("Handling task parentId.");
+      await updateTaskParentId(projectId, taskId, value);
       break;
     default:
       console.log("Unknown field received:", field);
@@ -141,6 +141,17 @@ export async function updateTaskDependency(
   const docRef = doc(db, "projects", projectId, "tasks", String(taskId));
   await updateDoc(docRef, {
     dependency: newDependency,
+  });
+}
+
+export async function updateTaskParentId(
+  projectId: string,
+  taskId: string,
+  newParentId: number
+) {
+  const docRef = doc(db, "projects", projectId, "tasks", String(taskId));
+  await updateDoc(docRef, {
+    parentId: newParentId,
   });
 }
 

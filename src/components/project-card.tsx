@@ -30,13 +30,6 @@ export default function ProjectCard({
             Created: {project.createdAt.toLocaleDateString()}
           </div>
         </div>
-        <div
-          className="flex justify-end mt-2"
-          onClick={(e) => e.stopPropagation()}
-          onKeyDown={(e) => e.stopPropagation()}
-        >
-          <DropdownMenu />
-        </div>
       </div>
     </div>
   );

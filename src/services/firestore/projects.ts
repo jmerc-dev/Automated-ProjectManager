@@ -1,6 +1,12 @@
 import { db } from "../firebase/config";
 import type { Project } from "../../types/project";
-import { Timestamp, doc, getDoc, updateDoc } from "firebase/firestore";
+import {
+  Timestamp,
+  deleteDoc,
+  doc,
+  getDoc,
+  updateDoc,
+} from "firebase/firestore";
 import { useAuth } from "../firebase/auth-context";
 
 import {
@@ -106,8 +112,10 @@ export async function getProjectsByOwner(userId: string | undefined) {
 }
 
 // Delete Project
-
-// Archive Project
+export async function deleteProject(projectId: string) {
+  const projectRef = doc(db, "projects", projectId);
+  await deleteDoc(projectRef);
+}
 
 // Last task ID
 export async function getTaskIndex(projectId: string) {
@@ -128,4 +136,25 @@ export async function incTaskIndex(projectId: string, lastTaskId: number) {
       updatedAt: new Date(),
     });
   }
+}
+
+export async function getProjectsByMemberEmail(userEmail: string) {
+  const projectsRef = collection(db, "projects");
+  const projectsSnap = await getDocs(projectsRef);
+  const associatedProjects: any[] = [];
+
+  for (const projectDoc of projectsSnap.docs) {
+    const membersRef = collection(db, `projects/${projectDoc.id}/members`);
+    const q = query(membersRef, where("emailAddress", "==", userEmail));
+    const membersSnap = await getDocs(q);
+
+    if (!membersSnap.empty) {
+      associatedProjects.push({
+        id: projectDoc.id,
+        ...projectDoc.data(),
+      });
+    }
+  }
+
+  return associatedProjects;
 }

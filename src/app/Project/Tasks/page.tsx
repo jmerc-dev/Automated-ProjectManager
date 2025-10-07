@@ -28,6 +28,8 @@ import {
 } from "../../../services/firestore/tasks";
 
 import { changedTaskFields } from "../../../util/task-processing";
+import { onMembersSnapshot } from "../../../services/firestore/members";
+import type { Member } from "../../../types/member";
 
 interface TasksViewProps {
   projectId?: string;
@@ -37,7 +39,7 @@ function TasksView({ projectId }: TasksViewProps) {
   const [tasks, setTasks] = useState<Task[]>([]);
   const ganttRef = useRef<GanttComponent>(null);
   const currentTaskToEdit = useRef<any>(null);
-
+  const [members, setMembers] = useState<Member[]>([]);
   const editOptions: EditSettingsModel = {
     allowAdding: true,
     allowEditing: true,
@@ -58,7 +60,14 @@ function TasksView({ projectId }: TasksViewProps) {
     };
 
     loadTasks();
+    if (!projectId) return;
+    const unsubscribe = onMembersSnapshot(projectId, setMembers);
+    return () => unsubscribe();
   }, []);
+
+  useEffect(() => {
+    //console.log("Tasks updated: ", tasks);
+  }, [tasks]);
 
   async function updateRowsOnAdd(
     parentId: string | null,
@@ -103,6 +112,13 @@ function TasksView({ projectId }: TasksViewProps) {
     dependency: "dependency",
     notes: "notes",
     order: "order",
+    resourceInfo: "assignedMembers",
+  };
+
+  const resourceFields = {
+    id: "id",
+    name: "name",
+    group: "role",
   };
 
   const toolbarOptions = [
@@ -121,7 +137,9 @@ function TasksView({ projectId }: TasksViewProps) {
         <GanttComponent
           ref={ganttRef}
           key={projectId}
-          enablePersistence={true}
+          enablePersistence={false}
+          resources={members}
+          resourceFields={resourceFields}
           workWeek={[
             "Sunday",
             "Monday",
@@ -136,7 +154,6 @@ function TasksView({ projectId }: TasksViewProps) {
             { field: "name", headerText: "Task Name", width: 200 },
             { field: "startDate", headerText: "Start Date", width: 100 },
             { field: "duration", headerText: "Duration", width: 100 },
-            { field: "order", headerText: "Order", width: 100 },
           ]}
           taskFields={taskFields}
           dataSource={tasks}
@@ -168,8 +185,6 @@ function TasksView({ projectId }: TasksViewProps) {
             //console.log("taskbar edited: ", String(args.requestType));
             if (args.requestType === "add") {
               getTaskIndex(projectId).then((taskIndex: number) => {
-                // TODO:
-                //    Get added task & Get The whole task
                 const newTask: Task = {
                   ...args.data.taskData,
                   createdAt: new Date(),
@@ -177,7 +192,6 @@ function TasksView({ projectId }: TasksViewProps) {
                   docId: taskIndex,
                   assignedMembers: [],
                 } as Task;
-                //const oldAllTasks = ganttRef.current?.flatData;
 
                 // For ordering purposes only
                 const allTasks: Task[] =
@@ -226,12 +240,22 @@ function TasksView({ projectId }: TasksViewProps) {
               Object.entries(changes).forEach(([key, value]) => {
                 updateTask(projectId, docId, key, value);
               });
-
-              console.log("update complete");
             } else if (args.requestType === "delete") {
               const deletedTasks: any = args.data;
               deletedTasks.forEach((task: any) =>
                 deleteTask(projectId, task.taskData.docId)
+              );
+            } else if (args.requestType === "rowDropped") {
+              // Change parent id here depending on where it was dropped
+              const droppedRow = args.data;
+              const droppedTaskDocId = droppedRow[0].taskData.docId;
+              const droppedTaskParentId = droppedRow[0].taskData.parentId;
+
+              updateTask(
+                projectId,
+                String(droppedTaskDocId),
+                "parentId",
+                droppedTaskParentId
               );
             }
           }}

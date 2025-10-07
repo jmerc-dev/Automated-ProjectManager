@@ -99,7 +99,7 @@ export default function CollaborationSettings({
   return (
     <div className="max-w-2xl">
       <h2 className="text-2xl font-semibold text-[#0f6cbd] mb-6">
-        Collaborator Settings
+        Collaborator
       </h2>
       <div className="mb-8">
         <h3 className="font-medium mb-2">Add Collaborator</h3>

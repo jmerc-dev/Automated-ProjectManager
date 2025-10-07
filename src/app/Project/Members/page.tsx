@@ -15,7 +15,6 @@ interface MembersManagementProps {
 export default function MembersManagement({
   projectId,
 }: MembersManagementProps) {
-  // Helper to get initials from name
   function getInitials(name: string) {
     return name
       .split(" ")
