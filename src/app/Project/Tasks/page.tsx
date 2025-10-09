@@ -41,6 +41,8 @@ function TasksView({ projectId }: TasksViewProps) {
   const ganttRef = useRef<GanttComponent>(null);
   const currentTaskToEdit = useRef<any>(null);
   const [members, setMembers] = useState<Member[]>([]);
+  const [tasksLoaded, setTasksLoaded] = useState(false);
+  const [membersLoaded, setMembersLoaded] = useState(false);
   const editOptions: EditSettingsModel = {
     allowAdding: true,
     allowEditing: true,
@@ -50,29 +52,47 @@ function TasksView({ projectId }: TasksViewProps) {
   };
 
   useEffect(() => {
-    const loadTasks = async () => {
-      if (!projectId) return;
+    // const loadTasks = async () => {
+    //   if (!projectId) return;
 
-      const rawTasks = await getAllTasks(projectId);
-      rawTasks.sort((a, b) => {
-        return a.order - b.order;
-      });
-      setTasks(rawTasks);
-    };
+    //   const rawTasks = await getAllTasks(projectId);
+    //   rawTasks.sort((a, b) => {
+    //     return a.order - b.order;
+    //   });
+    //   setTasks(rawTasks);
+    // };
 
     //loadTasks();
     if (!projectId) return;
-    const unsubscribeTasks = listenToTasks(projectId, setTasks);
-    const unsubscribeMembers = onMembersSnapshot(projectId, setMembers);
+    const unsubscribeTasks = listenToTasks(projectId, setTasks, setTasksLoaded);
+    const unsubscribeMembers = onMembersSnapshot(
+      projectId,
+      setMembers,
+      setMembersLoaded
+    );
+
     return () => {
       unsubscribeMembers();
       unsubscribeTasks();
     };
-  }, []);
+  }, [projectId]);
 
-  useEffect(() => {
-    //console.log("Tasks updated: ", tasks);
-  }, [tasks]);
+  // useEffect(() => {
+  //   if (tasksLoaded && membersLoaded) {
+  //     // Both are loaded, process here
+  //     // Example: bind assignedMembers to member objects
+  //     const processedTasks = tasks.map((task) => ({
+  //       ...task,
+  //       assignedMembers: Array.isArray(task.assignedMembers)
+  //         ? task.assignedMembers
+  //             .map((id) => members.find((m) => m.id === id))
+  //             .filter(Boolean)
+  //         : [],
+  //     }));
+  //     setTasks(processedTasks);
+  //     // You can now safely work with processedTasks
+  //   }
+  // }, [tasksLoaded, membersLoaded, tasks, members]);
 
   async function updateRowsOnAdd(
     parentId: string | null,
@@ -185,8 +205,6 @@ function TasksView({ projectId }: TasksViewProps) {
               currentTaskToEdit.current = {
                 ...args.rowData,
               };
-
-              console.log("Editing Task: ", currentTaskToEdit.current);
             }
           }}
           actionComplete={(args) => {

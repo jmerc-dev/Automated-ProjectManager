@@ -70,7 +70,8 @@ export async function deleteMember(projectId: string, memberId: string) {
 
 export function onMembersSnapshot(
   projectId: string,
-  callback: (members: Member[]) => void
+  callback: (members: Member[]) => void,
+  loadedCallback?: (loaded: boolean) => void
 ) {
   const membersCol = collection(db, "projects", projectId, "members");
   return onSnapshot(membersCol, (snapshot: QuerySnapshot<DocumentData>) => {
@@ -78,5 +79,7 @@ export function onMembersSnapshot(
       (doc) => ({ id: doc.id, ...doc.data() } as Member)
     );
     callback(members);
+
+    if (loadedCallback) loadedCallback(true);
   });
 }

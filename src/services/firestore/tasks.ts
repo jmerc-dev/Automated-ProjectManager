@@ -49,7 +49,8 @@ export async function getAllTasks(projectId: string) {
 
 export function listenToTasks(
   projectId: string,
-  callback: (tasks: Task[]) => void
+  callback: (tasks: Task[]) => void,
+  loadedCallback?: (loaded: boolean) => void
 ) {
   const tasksCol = collection(db, "projects", projectId, "tasks");
   return onSnapshot(tasksCol, (snapshot) => {
@@ -63,6 +64,8 @@ export function listenToTasks(
       };
     });
     callback(tasks as Task[]);
+
+    if (loadedCallback) loadedCallback(true);
   });
 }
 
