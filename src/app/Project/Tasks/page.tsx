@@ -157,6 +157,7 @@ function TasksView({ projectId }: TasksViewProps) {
           ]}
           taskFields={taskFields}
           dataSource={tasks}
+          taskType="FixedDuration"
           height="800px"
           width="1820px"
           gridLines={"Both"}
@@ -179,6 +180,8 @@ function TasksView({ projectId }: TasksViewProps) {
               currentTaskToEdit.current = {
                 ...args.rowData,
               };
+
+              console.log("Editing Task: ", currentTaskToEdit.current);
             }
           }}
           actionComplete={(args) => {
@@ -226,13 +229,9 @@ function TasksView({ projectId }: TasksViewProps) {
 
               const newTask = {
                 ...args.data.taskData,
-                assignedMembers:
-                  rawNewTaskData.assignedMembers?.map(
-                    (member: any) => member.id
-                  ) || [],
               } as Task;
 
-              console.log("Current Task to edit: ", currentTaskToEdit.current);
+              // console.log("Current Task to edit: ", currentTaskToEdit.current);
 
               const previousTaskState = {
                 docId: currentTaskToEdit?.current?.taskData.docId,
@@ -243,16 +242,12 @@ function TasksView({ projectId }: TasksViewProps) {
                 startDate: currentTaskToEdit?.current?.startDate,
                 name: currentTaskToEdit?.current?.name,
                 duration: currentTaskToEdit?.current?.duration,
-                assignedMembers:
-                  currentTaskToEdit?.current?.assignedMembers?.map(
-                    (member: any) => member.id
-                  ) ?? [],
                 //parentId: currentTaskToEdit?.current?.parentId,
                 //order: currentTaskToEdit?.current?.order,
               } as Task;
 
-              // console.log("Previous Task: ", previousTaskState);
-              // console.log("New Task: ", newTask);
+              console.log("Previous Task: ", previousTaskState);
+              console.log("New Task: ", newTask);
 
               const changes = changedTaskFields(previousTaskState, newTask);
               const docId = newTask.docId;
@@ -261,6 +256,14 @@ function TasksView({ projectId }: TasksViewProps) {
               Object.entries(changes).forEach(([key, value]) => {
                 updateTask(projectId, docId, key, value);
               });
+
+              // members changed in here
+              updateTask(
+                projectId,
+                String(newTask.docId),
+                "assignedMembers",
+                newTask.assignedMembers?.map((m: any) => ({ id: m.id })) || []
+              );
             } else if (args.requestType === "delete") {
               const deletedTasks: any = args.data;
               deletedTasks.forEach((task: any) =>
