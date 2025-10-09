@@ -10,6 +10,7 @@ import {
   deleteDoc,
   doc,
   setDoc,
+  onSnapshot,
 } from "firebase/firestore";
 import { getTaskIndex, incTaskIndex } from "./projects";
 
@@ -44,6 +45,25 @@ export async function getAllTasks(projectId: string) {
     };
   });
   return tasks as Task[];
+}
+
+export function listenToTasks(
+  projectId: string,
+  callback: (tasks: Task[]) => void
+) {
+  const tasksCol = collection(db, "projects", projectId, "tasks");
+  return onSnapshot(tasksCol, (snapshot) => {
+    const tasks = snapshot.docs.map((doc) => {
+      const docData = doc.data();
+      return {
+        id: doc.id,
+        docId: doc.id,
+        ...docData,
+        startDate: docData.startDate?.toDate?.() || new Date(),
+      };
+    });
+    callback(tasks as Task[]);
+  });
 }
 
 export async function deleteTask(projectId: string, taskId: string) {

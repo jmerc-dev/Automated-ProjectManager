@@ -23,6 +23,7 @@ import {
   createTask,
   deleteTask,
   getAllTasks,
+  listenToTasks,
   updateTask,
   updateTaskOrder,
 } from "../../../services/firestore/tasks";
@@ -59,10 +60,14 @@ function TasksView({ projectId }: TasksViewProps) {
       setTasks(rawTasks);
     };
 
-    loadTasks();
+    //loadTasks();
     if (!projectId) return;
-    const unsubscribe = onMembersSnapshot(projectId, setMembers);
-    return () => unsubscribe();
+    const unsubscribeTasks = listenToTasks(projectId, setTasks);
+    const unsubscribeMembers = onMembersSnapshot(projectId, setMembers);
+    return () => {
+      unsubscribeMembers();
+      unsubscribeTasks();
+    };
   }, []);
 
   useEffect(() => {
