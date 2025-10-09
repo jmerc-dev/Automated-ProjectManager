@@ -308,6 +308,31 @@ function TasksView({ projectId }: TasksViewProps) {
                 "parentId",
                 droppedTaskParentId
               );
+
+              // Find all siblings (including the dropped task)
+              const siblings = ganttRef.current?.flatData
+                .filter((t: any) => t.taskData.parentId === droppedTaskParentId)
+                .map((t: any) => t.taskData);
+
+              // Sort siblings by their position in the Gantt chart
+              siblings?.sort((a, b) => a.index - b.index);
+
+              // Update order for each sibling
+              siblings?.forEach((task: any, idx: number) => {
+                if (task.order !== idx) {
+                  updateTask(projectId, String(task.docId), "order", idx);
+                  console.log(
+                    "Updated order for task ",
+                    task.docId,
+                    " to ",
+                    idx
+                  );
+                }
+              });
+
+              // console.log(siblings?.sort((a, b) => a.index - b.index));
+
+              // console.log("Row dropped: ", args);
             }
           }}
         >

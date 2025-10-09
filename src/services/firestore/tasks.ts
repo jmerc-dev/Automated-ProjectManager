@@ -61,8 +61,9 @@ export function listenToTasks(
         docId: doc.id,
         ...docData,
         startDate: docData.startDate?.toDate?.() || new Date(),
-      };
+      } as Task;
     });
+    tasks.sort((a, b) => (a.order ?? 0) - (b.order ?? 0));
     callback(tasks as Task[]);
 
     if (loadedCallback) loadedCallback(true);
@@ -198,8 +199,10 @@ export async function updateTaskOrder(
 ) {
   const docRef = doc(db, "projects", projectId, "tasks", String(taskId));
   await updateDoc(docRef, {
-    notes: order,
+    order: order,
   });
+
+  console.log("Updated order to:", order);
 }
 
 export async function updateTaskMembers(
