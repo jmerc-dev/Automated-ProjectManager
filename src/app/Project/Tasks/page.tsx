@@ -222,7 +222,18 @@ function TasksView({ projectId }: TasksViewProps) {
                 return;
               }
 
-              const newTask = args.data.taskData;
+              const rawNewTaskData = args.data.taskData;
+
+              const newTask = {
+                ...args.data.taskData,
+                assignedMembers:
+                  rawNewTaskData.assignedMembers?.map(
+                    (member: any) => member.id
+                  ) || [],
+              } as Task;
+
+              console.log("Current Task to edit: ", currentTaskToEdit.current);
+
               const previousTaskState = {
                 docId: currentTaskToEdit?.current?.taskData.docId,
                 id: currentTaskToEdit?.current?.id,
@@ -232,10 +243,20 @@ function TasksView({ projectId }: TasksViewProps) {
                 startDate: currentTaskToEdit?.current?.startDate,
                 name: currentTaskToEdit?.current?.name,
                 duration: currentTaskToEdit?.current?.duration,
+                assignedMembers:
+                  currentTaskToEdit?.current?.assignedMembers?.map(
+                    (member: any) => member.id
+                  ) ?? [],
+                //parentId: currentTaskToEdit?.current?.parentId,
+                //order: currentTaskToEdit?.current?.order,
               } as Task;
+
+              // console.log("Previous Task: ", previousTaskState);
+              // console.log("New Task: ", newTask);
 
               const changes = changedTaskFields(previousTaskState, newTask);
               const docId = newTask.docId;
+
               if (!changes) return;
               Object.entries(changes).forEach(([key, value]) => {
                 updateTask(projectId, docId, key, value);

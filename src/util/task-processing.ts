@@ -24,7 +24,27 @@ export function changedTaskFields(oldTask: Task, newTask: Task) {
   if (newTask.dependency != oldTask.dependency) {
     changes.dependency = newTask.dependency;
   }
+
+  if (
+    newTask.assignedMembers?.length === oldTask.assignedMembers?.length &&
+    newTask.assignedMembers?.every(
+      (val, index) => val === oldTask.assignedMembers?.[index]
+    )
+  ) {
+    console.log("No changes in assigned members");
+  }
+
+  // TODO: save the assigned member ids on firestore as well
+  //
+  //
+  //
+  //
+  //
+  //
+  //
+
   return changes;
 }
 
 // TODO: row ordering here
+export function reorderRows() {}

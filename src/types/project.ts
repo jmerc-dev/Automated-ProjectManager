@@ -11,4 +11,5 @@ export interface Project {
   createdAt: Date;
   updatedAt: Date;
   taskIndex: number;
+  projectRoles?: string[];
 }

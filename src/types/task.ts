@@ -26,6 +26,7 @@ export const CoreTaskFields: any = {
   order: "order",
   notes: "notes",
   parentId: "parentId",
+  assignedMembers: "assignedMembers",
 } as const;
 
 export type CoreTaskFieldsType =

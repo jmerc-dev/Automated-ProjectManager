@@ -84,6 +84,9 @@ export async function updateTask(
     case CoreTaskFields.parentId:
       await updateTaskParentId(projectId, taskId, value);
       break;
+    case CoreTaskFields.assignedMembers:
+      await updateTaskMembers(projectId, taskId, value);
+      break;
     default:
       console.log("Unknown field received:", field);
   }
@@ -174,6 +177,17 @@ export async function updateTaskOrder(
   const docRef = doc(db, "projects", projectId, "tasks", String(taskId));
   await updateDoc(docRef, {
     notes: order,
+  });
+}
+
+export async function updateTaskMembers(
+  projectId: string,
+  taskId: string,
+  assignedMembers: string[]
+) {
+  const docRef = doc(db, "projects", projectId, "tasks", String(taskId));
+  await updateDoc(docRef, {
+    assignedMembers: assignedMembers,
   });
 }
 

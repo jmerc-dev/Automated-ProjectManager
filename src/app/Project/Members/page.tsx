@@ -52,6 +52,11 @@ export default function MembersManagement({
       return;
     }
 
+    if (members.some((m) => m.emailAddress === newEmail)) {
+      alert("This email is already a member.");
+      return;
+    }
+
     addMember(projectId, {
       name: newFullName,
       emailAddress: newEmail,
