@@ -1,14 +1,18 @@
 import type { Project } from "../types/project";
 import DropdownMenu from "./dropdown";
+import leaderIcon from "../assets/images/leader.png";
+import memberIcon from "../assets/images/member.png";
 
 interface ProjectCardProps {
   project: Project;
   onCardClick: () => void | Promise<void>;
+  level?: "member" | "leader";
 }
 
 export default function ProjectCard({
   project,
   onCardClick,
+  level,
 }: ProjectCardProps) {
   return (
     <div className="h-full">
@@ -28,6 +32,10 @@ export default function ProjectCard({
           </div>
           <div className="text-xs text-gray-500 mb-2">
             Created: {project.createdAt.toLocaleDateString()}
+          </div>
+          <div className="ml-auto text-sm *:w-5">
+            {level === "leader" && <img src={leaderIcon} alt="Leader" />}
+            {level === "member" && <img src={memberIcon} alt="Member" />}
           </div>
         </div>
       </div>

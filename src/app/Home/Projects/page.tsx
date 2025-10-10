@@ -2,6 +2,7 @@ import ProjectCard from "../../../components/project-card";
 import {
   getProjectsByOwner,
   createProject,
+  getProjectsByMemberEmail,
 } from "../../../services/firestore/projects";
 import Modal from "../../../components/modal";
 import { useState, useEffect } from "react";
@@ -14,6 +15,8 @@ import {
   useNavigate,
 } from "react-router-dom";
 import { useAuth } from "../../../services/firebase/auth-context";
+import OwnedProjects from "./Owned/page";
+import AssociatedProjects from "./Associated/page";
 
 export default function Projects() {
   const { user } = useAuth();
@@ -21,6 +24,8 @@ export default function Projects() {
   const [projects, setProjects] = useState<Project[] | undefined>([]);
   const [projectName, setProjectName] = useState<string>("");
   const [projectDescription, setprojectDescription] = useState<string>("");
+  const [activeTab, setActiveTab] = useState<"owned" | "associated">("owned");
+  const [associatedProjects, setAssociatedProjects] = useState<Project[]>([]);
   const navigate = useNavigate();
   // Load Projects
   useEffect(() => {
@@ -29,8 +34,15 @@ export default function Projects() {
       setProjects(results);
       console.log(results);
     }
+    async function loadAssociated() {
+      if (user?.email) {
+        const results = await getProjectsByMemberEmail(user.email);
+        setAssociatedProjects(results ?? []);
+      }
+    }
     if (user?.uid) load();
-  }, [user?.uid]);
+    if (user?.email) loadAssociated();
+  }, [user?.uid, user?.email]);
 
   const handleCreateProject = () => {
     const newProject = {
@@ -66,20 +78,34 @@ export default function Projects() {
           + New Project
         </button>
       </div>
-      <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4">
-        {/*<<<<< for each project renderer */}
-        {projects != undefined && projects?.length > 0 ? (
-          projects?.map((project) => (
-            <ProjectCard
-              key={project.id}
-              project={project}
-              onCardClick={() => navigate(`/project/${project.id}`)}
-            />
-          ))
+      {/* Tabs */}
+      <div className="flex gap-2 mb-4">
+        <button
+          className={`px-4 py-2 rounded-xl font-semibold text-sm transition ${
+            activeTab === "owned"
+              ? "bg-[#e6f0fa] text-[#0f6cbd] border border-[#b3d1f7]"
+              : "bg-white text-gray-700 border border-gray-200 hover:bg-[#f7fafd]"
+          }`}
+          onClick={() => setActiveTab("owned")}
+        >
+          Owned
+        </button>
+        <button
+          className={`px-4 py-2 rounded-xl font-semibold text-sm transition ${
+            activeTab === "associated"
+              ? "bg-[#e6f0fa] text-[#0f6cbd] border border-[#b3d1f7]"
+              : "bg-white text-gray-700 border border-gray-200 hover:bg-[#f7fafd]"
+          }`}
+          onClick={() => setActiveTab("associated")}
+        >
+          Associated
+        </button>
+      </div>
+      <div>
+        {activeTab === "owned" ? (
+          <OwnedProjects projects={projects ?? []} />
         ) : (
-          <p className="col-span-full text-center text-gray-400 py-10">
-            No projects found.
-          </p>
+          <AssociatedProjects projectsAssociated={associatedProjects ?? []} />
         )}
       </div>
       <Modal
