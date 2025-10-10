@@ -12,7 +12,10 @@ import {
   RowDD,
   Dependency,
 } from "@syncfusion/ej2-react-gantt";
-import type { EditSettingsModel } from "@syncfusion/ej2-react-gantt";
+import type {
+  EditDialogFieldSettingsModel,
+  EditSettingsModel,
+} from "@syncfusion/ej2-react-gantt";
 import { useEffect, useState, useRef } from "react";
 import type { Task } from "../../../types/task";
 import {
@@ -76,6 +79,10 @@ function TasksView({ projectId }: TasksViewProps) {
       unsubscribeTasks();
     };
   }, [projectId]);
+
+  useEffect(() => {
+    console.log("Members loaded:", members);
+  }, [members]);
 
   // useEffect(() => {
   //   if (tasksLoaded && membersLoaded) {
@@ -143,6 +150,7 @@ function TasksView({ projectId }: TasksViewProps) {
   const resourceFields = {
     id: "id",
     name: "name",
+    unit: "unit",
     group: "role",
   };
 
@@ -154,6 +162,13 @@ function TasksView({ projectId }: TasksViewProps) {
     "Search",
     "Indent",
     "Outdent",
+  ];
+
+  const editDialogFields: EditDialogFieldSettingsModel[] = [
+    { type: "General" },
+    { type: "Dependency" },
+    { type: "Resources" },
+    { type: "Notes" },
   ];
 
   return (
@@ -184,6 +199,7 @@ function TasksView({ projectId }: TasksViewProps) {
           dataSource={tasks}
           taskType="FixedDuration"
           height="800px"
+          editDialogFields={editDialogFields}
           width="1820px"
           gridLines={"Horizontal"}
           allowSelection={true}
@@ -205,6 +221,32 @@ function TasksView({ projectId }: TasksViewProps) {
               currentTaskToEdit.current = {
                 ...args.rowData,
               };
+            }
+
+            if (args.requestType === "beforeOpenEditDialog") {
+              // Find the progress input and disable it
+              setTimeout(() => {
+                const progressInput = document.querySelector(
+                  'input.e-numerictextbox[title="progress"]'
+                );
+                console.log("Progress input field: ", progressInput);
+                if (progressInput) {
+                  progressInput.setAttribute("disabled", "true");
+                }
+
+                const spinDown = document.querySelector(
+                  'span.e-input-group-icon.e-spin-down[title="Decrement value"]'
+                );
+                const spinUp = document.querySelector(
+                  'span.e-input-group-icon.e-spin-up[title="Increment value"]'
+                );
+                [spinDown, spinUp].forEach((el) => {
+                  if (el) {
+                    el.style.pointerEvents = "none";
+                    el.style.opacity = "0.5";
+                  }
+                });
+              }, 0);
             }
           }}
           actionComplete={(args) => {
@@ -244,6 +286,7 @@ function TasksView({ projectId }: TasksViewProps) {
                 createTask(projectId, allTasks[newTaskIndex]);
               });
             } else if (args.requestType === "save") {
+              console.log("Saving task edits...");
               if (!currentTaskToEdit?.current) {
                 return;
               }

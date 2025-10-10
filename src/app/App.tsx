@@ -16,6 +16,7 @@ function App() {
         <Route path="/project" element={<Project />} />
         <Route path="/test" element={<Test />} />
         <Route path="/project/:id" element={<Project />} />
+        {/* <Route path="/mytasks/:id" element={<Tasks />} /> */}
       </Routes>
     </Router>
   );
