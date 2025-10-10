@@ -49,6 +49,7 @@ export async function updateMember(
   data: Partial<Member>
 ) {
   try {
+    console.log("Updating member:", projectId, memberId, data);
     const memberRef = doc(db, "projects", projectId, "members", memberId);
     await updateDoc(memberRef, data);
     return memberRef;

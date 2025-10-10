@@ -47,6 +47,8 @@ export default function MembersManagement({
   const [newEmail, setNewEmail] = useState("");
   const [newRole, setnewRole] = useState("");
   const [newPhoneNumber, setnewPhoneNumber] = useState("");
+  const [newTeamId, setNewTeamId] = useState<string>("None");
+  const [newLevel, setNewLevel] = useState<"leader" | "member">("member");
   const [members, setMembers] = useState<Member[]>([]);
 
   const [teams, setTeams] = useState<Team[]>([]);
@@ -75,27 +77,31 @@ export default function MembersManagement({
       return;
     }
 
-    // addMember(projectId, {
-    //   name: newFullName,
-    //   emailAddress: newEmail,
-    //   role: newRole,
-    //   phoneNumber: newPhoneNumber,
-    // } as Omit<Member, "id">).then((id) => {
-    //   setMembers([
-    //     ...members,
-    //     {
-    //       id: id,
-    //       name: newFullName,
-    //       emailAddress: newEmail,
-    //       role: newRole,
-    //       phoneNumber: newPhoneNumber,
-    //     },
-    //   ]);
-    //   setNewFullName("");
-    //   setNewEmail("");
-    //   setnewRole("");
-    //   setnewPhoneNumber("");
-    // });
+    addMember(projectId, {
+      name: newFullName,
+      emailAddress: newEmail,
+      role: newRole,
+      phoneNumber: newPhoneNumber,
+      teamId: newTeamId === "None" ? undefined : newTeamId,
+      level: newLevel,
+    } as Omit<Member, "id">).then((id) => {
+      setMembers([
+        ...members,
+        {
+          id: id,
+          name: newFullName,
+          emailAddress: newEmail,
+          role: newRole,
+          phoneNumber: newPhoneNumber,
+          level: newLevel,
+          teamId: newTeamId === "None" ? undefined : newTeamId,
+        },
+      ]);
+      setNewFullName("");
+      setNewEmail("");
+      setnewRole("");
+      setnewPhoneNumber("");
+    });
     setIsModalOpen(false);
   };
 
@@ -258,17 +264,23 @@ export default function MembersManagement({
             {/* Team select */}
             <select
               className="rounded-2xl border border-[#d1e4f7] bg-white/60 px-4 py-2 text-gray-900 font-medium shadow focus:outline-none focus:border-[#0f6cbd] focus:ring-2 focus:ring-[#0f6cbd]/30 transition"
-              disabled
-              defaultValue="Design Team"
+              defaultValue="None"
+              onChange={(e) => setNewTeamId(e.target.value)}
             >
-              <option>Design Team</option>
-              <option>Dev Team</option>
+              <option value="None">Select Team</option>
+              {teams.map((team) => {
+                return (
+                  <option key={team.id} value={team.id}>
+                    {team.name}
+                  </option>
+                );
+              })}
             </select>
             {/* Access select */}
             <select
               className="rounded-2xl border border-[#d1e4f7] bg-white/60 px-4 py-2 text-gray-900 font-medium shadow focus:outline-none focus:border-[#0f6cbd] focus:ring-2 focus:ring-[#0f6cbd]/30 transition"
-              disabled
-              defaultValue="Read"
+              defaultValue="Member"
+              onChange={(e) => setNewLevel(e.target.value as any)}
             >
               <option>Leader</option>
               <option>Member</option>
@@ -286,9 +298,7 @@ export default function MembersManagement({
                   <th className="py-3 px-4 text-left font-semibold">Phone</th>
                   <th className="py-3 px-4 text-center font-semibold">Role</th>
                   <th className="py-3 px-4 text-center font-semibold">Team</th>
-                  <th className="py-3 px-4 text-center font-semibold">
-                    Access
-                  </th>
+                  <th className="py-3 px-4 text-center font-semibold">Level</th>
                   <th className="py-3 px-4 text-center font-semibold">
                     Actions
                   </th>
@@ -357,21 +367,29 @@ export default function MembersManagement({
                           {/* Team select placeholder */}
                           <select
                             className="border rounded px-2 py-1 text-sm w-24"
-                            disabled
+                            value={editMember.teamId || "None"}
+                            onChange={(e) =>
+                              handleEditChange("teamId", e.target.value)
+                            }
                           >
-                            <option>Design Team</option>
-                            <option>Dev Team</option>
+                            <option>None</option>
+                            {teams.map((team) => (
+                              <option key={team.id} value={team.id}>
+                                {team.name}
+                              </option>
+                            ))}
                           </select>
                         </td>
                         <td className="py-3 px-4 text-center">
-                          {/* Access select placeholder */}
                           <select
                             className="border rounded px-2 py-1 text-sm w-20"
-                            disabled
+                            value={editMember.level || "Member"}
+                            onChange={(e) =>
+                              handleEditChange("level", e.target.value)
+                            }
                           >
-                            <option>Read</option>
-                            <option>Write</option>
-                            <option>Admin</option>
+                            <option value={"Leader"}>Leader</option>
+                            <option value={"Member"}>Member</option>
                           </select>
                         </td>
                         <td className="py-3 px-4 flex gap-2 justify-center items-center">
@@ -419,15 +437,14 @@ export default function MembersManagement({
                           </span>
                         </td>
                         <td className="py-3 px-4 text-center">
-                          {/* Team placeholder */}
                           <span className="inline-block bg-[#e6f0fa] text-[#0f6cbd] px-3 py-1 rounded-full text-xs font-semibold shadow-sm">
-                            Design Team
+                            {teams.find((team) => team.id === m.teamId)?.name ??
+                              "None"}
                           </span>
                         </td>
                         <td className="py-3 px-4 text-center">
-                          {/* Access placeholder */}
                           <span className="inline-block bg-gray-100 text-gray-700 px-3 py-1 rounded-full text-xs font-semibold shadow-sm">
-                            Read
+                            {m.level}
                           </span>
                         </td>
                         <td className="py-3 px-4 flex gap-2 justify-center items-center">
@@ -468,7 +485,7 @@ export default function MembersManagement({
       </div>
 
       {/* Team CRUD - Right Section (right) */}
-      <aside className="w-[340px] min-w-[280px] bg-gradient-to-br from-[#e6f0fa] via-[#f7fafd] to-white rounded-3xl border-2 border-[#b3d1f7] shadow-lg p-7 flex flex-col gap-7 relative overflow-hidden order-2">
+      <aside className="w-[340px] min-w-[280px] bg-gradient-to-br from-[#e6f0fa] via-[#f7fafd] to-white rounded-2xl border border-[#0f6cbd] shadow p-7 flex flex-col gap-7 relative overflow-hidden order-2">
         <div className="absolute top-0 right-0 w-24 h-24 bg-[#0f6cbd]/10 rounded-bl-full pointer-events-none" />
         <h3 className="text-2xl font-extrabold text-[#0f6cbd] mb-2 tracking-tight flex items-center gap-2">
           <svg
@@ -489,7 +506,7 @@ export default function MembersManagement({
         <div className="flex flex-col gap-5">
           <div className="flex gap-2">
             <input
-              className="border border-[#b3d1f7] rounded-xl px-3 py-2 text-sm flex-1 focus:outline-none focus:ring-2 focus:ring-[#0f6cbd]/30 bg-white/80 shadow-sm placeholder:text-[#0f6cbd]/40"
+              className="border border-[#b3d1f7] rounded-xl px-3 py-2 text-sm flex-1 focus:outline-none focus:ring-2 focus:ring-[#0f6cbd]/30 bg-white/80 shadow placeholder:text-[#0f6cbd]/40"
               type="text"
               placeholder="New team name"
               value={newTeamName}
@@ -519,16 +536,16 @@ export default function MembersManagement({
               Add
             </button>
           </div>
-          <ul className="flex flex-col gap-3">
+          <ul className="flex flex-col gap-3 h-140 overflow-y-scroll ">
             {/* Example team items */}
             {teams.map((team) =>
               editTeamId === team.id ? (
                 <li
                   key={team.id}
-                  className="flex items-center justify-between bg-white/90 rounded-xl px-4 py-3 shadow border border-[#d1e4f7]"
+                  className="flex items-center justify-between bg-white rounded-xl px-4 py-3 border border-[#b3d1f7]"
                 >
                   <input
-                    className="border border-[#b3d1f7] rounded-lg px-2 py-1 text-sm font-semibold text-[#0f6cbd] flex-1 mr-2"
+                    className="border border-[#b3d1f7] rounded-lg px-2 py-1 text-sm font-semibold text-[#0f6cbd] flex-1 mr-2 bg-white"
                     value={editTeamName}
                     onChange={(e) => setEditTeamName(e.target.value)}
                     autoFocus
@@ -542,7 +559,7 @@ export default function MembersManagement({
                       ✔
                     </button>
                     <button
-                      className="bg-gray-100 text-gray-700 px-2 py-1 rounded-lg text-xs font-semibold hover:bg-[#e6f0fa] shadow"
+                      className="bg-[#e6f0fa] text-[#0f6cbd] px-2 py-1 rounded-lg text-xs font-semibold hover:bg-[#b3d1f7] shadow"
                       title="Cancel"
                       onClick={handleCancelEditTeam}
                     >
@@ -553,7 +570,7 @@ export default function MembersManagement({
               ) : (
                 <li
                   key={team.id}
-                  className="flex items-center justify-between bg-white/90 rounded-xl px-4 py-3 shadow border border-[#d1e4f7] hover:bg-[#e6f0fa]/80 transition"
+                  className="flex items-center justify-between bg-white rounded-xl px-4 py-3 border border-[#b3d1f7] hover:bg-[#e6f0fa] transition"
                 >
                   <span className="font-semibold text-[#0f6cbd] flex items-center gap-2">
                     <svg width="18" height="18" fill="none" viewBox="0 0 24 24">
@@ -567,7 +584,7 @@ export default function MembersManagement({
                   </span>
                   <div className="flex gap-2">
                     <button
-                      className="bg-[#e6f0fa] text-[#0f6cbd] px-2 py-1 rounded-lg text-xs font-semibold hover:bg-[#d1e4f7] shadow"
+                      className="bg-[#e6f0fa] text-[#0f6cbd] px-2 py-1 rounded-lg text-xs font-semibold hover:bg-[#b3d1f7] shadow"
                       title="Edit"
                       onClick={() => handleEditTeam(team)}
                     >
