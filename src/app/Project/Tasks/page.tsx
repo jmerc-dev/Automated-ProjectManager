@@ -30,20 +30,30 @@ import {
   updateTask,
   updateTaskOrder,
 } from "../../../services/firestore/tasks";
+import type { GanttMember } from "../../../types/member";
 
 import { changedTaskFields } from "../../../util/task-processing";
-import { onMembersSnapshot } from "../../../services/firestore/members";
-import type { Member } from "../../../types/member";
+import { onGanttMembersSnapshot } from "../../../services/firestore/members";
 
 interface TasksViewProps {
   projectId?: string;
 }
 
+// const sampleMembers: GanttMember[] = [
+//   {
+//     id: "XoscICPVHZDAzqPIXN8R",
+//     name: "Justine Moiselle Mercado",
+//     role: "Writer",
+//     unit: 100,
+//     teamName: "4YWEABsyIheIuYJV192R",
+//   },
+// ];
+
 function TasksView({ projectId }: TasksViewProps) {
   const [tasks, setTasks] = useState<Task[]>([]);
   const ganttRef = useRef<GanttComponent>(null);
   const currentTaskToEdit = useRef<any>(null);
-  const [members, setMembers] = useState<Member[]>([]);
+  const [members, setMembers] = useState<GanttMember[]>([]);
   const [tasksLoaded, setTasksLoaded] = useState(false);
   const [membersLoaded, setMembersLoaded] = useState(false);
   const editOptions: EditSettingsModel = {
@@ -55,20 +65,9 @@ function TasksView({ projectId }: TasksViewProps) {
   };
 
   useEffect(() => {
-    // const loadTasks = async () => {
-    //   if (!projectId) return;
-
-    //   const rawTasks = await getAllTasks(projectId);
-    //   rawTasks.sort((a, b) => {
-    //     return a.order - b.order;
-    //   });
-    //   setTasks(rawTasks);
-    // };
-
-    //loadTasks();
     if (!projectId) return;
     const unsubscribeTasks = listenToTasks(projectId, setTasks, setTasksLoaded);
-    const unsubscribeMembers = onMembersSnapshot(
+    const unsubscribeMembers = onGanttMembersSnapshot(
       projectId,
       setMembers,
       setMembersLoaded
@@ -81,58 +80,8 @@ function TasksView({ projectId }: TasksViewProps) {
   }, [projectId]);
 
   useEffect(() => {
-    console.log("Members loaded:", members);
-  }, [members]);
-
-  // useEffect(() => {
-  //   if (tasksLoaded && membersLoaded) {
-  //     // Both are loaded, process here
-  //     // Example: bind assignedMembers to member objects
-  //     const processedTasks = tasks.map((task) => ({
-  //       ...task,
-  //       assignedMembers: Array.isArray(task.assignedMembers)
-  //         ? task.assignedMembers
-  //             .map((id) => members.find((m) => m.id === id))
-  //             .filter(Boolean)
-  //         : [],
-  //     }));
-  //     setTasks(processedTasks);
-  //     // You can now safely work with processedTasks
-  //   }
-  // }, [tasksLoaded, membersLoaded, tasks, members]);
-
-  async function updateRowsOnAdd(
-    parentId: string | null,
-    referenceTaskId: string | null,
-    position: "above" | "below"
-  ) {
-    if (!projectId) return;
-    const siblings = tasks.filter((t) => t.parentId === parentId);
-    const refIndex = referenceTaskId
-      ? siblings.findIndex((t) => t.id === referenceTaskId)
-      : siblings.length;
-
-    const insertIndex = position === "above" ? refIndex : refIndex + 1;
-
-    // Increment order of siblings at/after insertIndex
-    for (let i = insertIndex; i < siblings.length; i++) {
-      siblings[i].order += 1;
-
-      console.log(siblings[i].id, "|Order: ", siblings[i].order);
-      await updateTaskOrder(
-        projectId,
-        String(siblings[i].docId),
-        siblings[i].order
-      );
-    }
-
-    setTasks((prevTasks) =>
-      prevTasks.map((t) => {
-        const updated = siblings.find((s) => s.id === t.id);
-        return updated ? updated : t;
-      })
-    );
-  }
+    console.log("Members updated: ", members);
+  }, [membersLoaded]);
 
   const taskFields: any = {
     id: "id",
@@ -150,8 +99,7 @@ function TasksView({ projectId }: TasksViewProps) {
   const resourceFields = {
     id: "id",
     name: "name",
-    unit: "unit",
-    group: "role",
+    group: "teamName",
   };
 
   const toolbarOptions = [
@@ -214,7 +162,7 @@ function TasksView({ projectId }: TasksViewProps) {
             };
           }}
           taskbarEdited={(args) => {
-            console.log("old data: ", currentTaskToEdit.current);
+            //console.log("old data: ", currentTaskToEdit.current);
           }}
           actionBegin={(args) => {
             if (args.requestType === "beforeOpenEditDialog") {
@@ -229,7 +177,7 @@ function TasksView({ projectId }: TasksViewProps) {
                 const progressInput = document.querySelector(
                   'input.e-numerictextbox[title="progress"]'
                 );
-                console.log("Progress input field: ", progressInput);
+                //console.log("Progress input field: ", progressInput);
                 if (progressInput) {
                   progressInput.setAttribute("disabled", "true");
                 }
@@ -240,7 +188,7 @@ function TasksView({ projectId }: TasksViewProps) {
                 const spinUp = document.querySelector(
                   'span.e-input-group-icon.e-spin-up[title="Increment value"]'
                 );
-                [spinDown, spinUp].forEach((el) => {
+                [spinDown, spinUp].forEach((el: any) => {
                   if (el) {
                     el.style.pointerEvents = "none";
                     el.style.opacity = "0.5";
@@ -286,16 +234,13 @@ function TasksView({ projectId }: TasksViewProps) {
                 createTask(projectId, allTasks[newTaskIndex]);
               });
             } else if (args.requestType === "save") {
-              console.log("Saving task edits...");
               if (!currentTaskToEdit?.current) {
                 return;
               }
 
-              const rawNewTaskData = args.data.taskData;
-
               const newTask = {
                 ...args.data.taskData,
-              } as Task;
+              } as any;
 
               // console.log("Current Task to edit: ", currentTaskToEdit.current);
 
@@ -312,8 +257,8 @@ function TasksView({ projectId }: TasksViewProps) {
                 //order: currentTaskToEdit?.current?.order,
               } as Task;
 
-              console.log("Previous Task: ", previousTaskState);
-              console.log("New Task: ", newTask);
+              // console.log("Previous Task: ", previousTaskState);
+              // console.log("New Task: ", newTask);
 
               const changes = changedTaskFields(previousTaskState, newTask);
               const docId = newTask.docId;
@@ -328,8 +273,23 @@ function TasksView({ projectId }: TasksViewProps) {
                 projectId,
                 String(newTask.docId),
                 "assignedMembers",
-                newTask.assignedMembers?.map((m: any) => ({ id: m.id })) || []
+                newTask.assignedMembers?.map((m: any) => ({
+                  id: m.id,
+                  unit: m.unit,
+                })) || []
               );
+
+              // updateTask(
+              //   projectId,
+              //   String(newTask.docId),
+              //   "unit",
+              //   newTask.assignedMembers?.unit
+              // );
+
+              // Update units of members too
+              //console.log("Previous Members: ", currentTaskToEdit.current);
+              console.log("New Members: ", members);
+              console.log("Assigned Members: ", newTask.assignedMembers);
             } else if (args.requestType === "delete") {
               const deletedTasks: any = args.data;
               deletedTasks.forEach((task: any) =>

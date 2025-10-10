@@ -4,6 +4,15 @@ export interface Member {
   role: string;
   emailAddress: string;
   phoneNumber: string;
-  teamId?: string;
+  teamName?: string;
   level: "Leader" | "Member";
+  unit?: number; // Optional unit property
+}
+
+export interface GanttMember {
+  id: string;
+  name: string;
+  unit: number; // Allocation percentage (0-100)
+  role: string;
+  teamName?: string;
 }

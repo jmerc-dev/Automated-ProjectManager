@@ -47,7 +47,7 @@ export default function MembersManagement({
   const [newEmail, setNewEmail] = useState("");
   const [newRole, setnewRole] = useState("");
   const [newPhoneNumber, setnewPhoneNumber] = useState("");
-  const [newTeamId, setNewTeamId] = useState<string>("None");
+  const [newMemberTeamName, setNewMemberTeamName] = useState<string>("None");
   const [newLevel, setNewLevel] = useState<"Leader" | "Member">("Member");
   const [members, setMembers] = useState<Member[]>([]);
 
@@ -65,7 +65,7 @@ export default function MembersManagement({
       !newRole.trim() ||
       !newPhoneNumber.trim() ||
       !newLevel.trim() ||
-      newTeamId.trim() === "None"
+      newMemberTeamName.trim() === "None"
     ) {
       alert("Please fill in all fields.");
       return;
@@ -86,7 +86,7 @@ export default function MembersManagement({
       emailAddress: newEmail,
       role: newRole,
       phoneNumber: newPhoneNumber,
-      teamId: newTeamId === "None" ? undefined : newTeamId,
+      teamName: newTeamName === "None" ? undefined : newMemberTeamName,
       level: newLevel,
     } as Omit<Member, "id">).then((id) => {
       setMembers([
@@ -98,7 +98,8 @@ export default function MembersManagement({
           role: newRole,
           phoneNumber: newPhoneNumber,
           level: newLevel,
-          teamId: newTeamId === "None" ? undefined : newTeamId,
+          teamName:
+            newMemberTeamName === "None" ? undefined : newMemberTeamName,
         },
       ]);
       setNewFullName("");
@@ -125,7 +126,7 @@ export default function MembersManagement({
     if (searchType === "team") {
       return (
         teams
-          .find((t) => t.id === m.teamId)
+          .find((t) => t.name === m.teamName)
           ?.name.toLowerCase()
           .includes(searchValue.toLowerCase()) || false
       );
@@ -192,14 +193,14 @@ export default function MembersManagement({
     setEditTeamName("");
   }
 
-  function handleDeleteTeam(teamId: string) {
-    if (members.some((m) => m.teamId === teamId)) {
+  function handleDeleteTeam(teamId: Team) {
+    if (members.some((m) => m.teamName === teamId.name)) {
       alert("Cannot delete team with existing members.");
       return;
     }
 
     if (confirm("Are you sure you want to delete this team?")) {
-      deleteTeam(projectId, teamId);
+      deleteTeam(projectId, teamId.id);
     }
   }
 
@@ -252,7 +253,7 @@ export default function MembersManagement({
             setNewEmail("");
             setnewRole("");
             setnewPhoneNumber("");
-            setNewTeamId("None");
+            setNewMemberTeamName("None");
             setNewLevel("Member");
           }}
           onConfirm={handleAddMember}
@@ -305,12 +306,12 @@ export default function MembersManagement({
             <select
               className="rounded-2xl border border-[#d1e4f7] bg-white/60 px-4 py-2 text-gray-900 font-medium shadow focus:outline-none focus:border-[#0f6cbd] focus:ring-2 focus:ring-[#0f6cbd]/30 transition"
               defaultValue="None"
-              onChange={(e) => setNewTeamId(e.target.value)}
+              onChange={(e) => setNewMemberTeamName(e.target.value)}
             >
               <option value="None">Select Team</option>
               {teams.map((team) => {
                 return (
-                  <option key={team.id} value={team.id}>
+                  <option key={team.id} value={team.name}>
                     {team.name}
                   </option>
                 );
@@ -407,14 +408,14 @@ export default function MembersManagement({
                           {/* Team select placeholder */}
                           <select
                             className="border rounded px-2 py-1 text-sm w-24"
-                            value={editMember.teamId || "None"}
+                            value={editMember.teamName || "None"}
                             onChange={(e) =>
-                              handleEditChange("teamId", e.target.value)
+                              handleEditChange("teamName", e.target.value)
                             }
                           >
                             <option value={"None"}>None</option>
                             {teams.map((team) => (
-                              <option key={team.id} value={team.id}>
+                              <option key={team.id} value={team.name}>
                                 {team.name}
                               </option>
                             ))}
@@ -478,8 +479,7 @@ export default function MembersManagement({
                         </td>
                         <td className="py-3 px-4 text-center">
                           <span className="inline-block bg-[#e6f0fa] text-[#0f6cbd] px-3 py-1 rounded-full text-xs font-semibold shadow-sm">
-                            {teams.find((team) => team.id === m.teamId)?.name ??
-                              "None"}
+                            {m.teamName ?? "None"}
                           </span>
                         </td>
                         <td className="py-3 px-4 text-center">
@@ -632,7 +632,7 @@ export default function MembersManagement({
                     </button>
                     <button
                       className="bg-[#ffeaea] text-[#d43f3a] px-2 py-1 rounded-lg text-xs font-semibold hover:bg-[#ffd6d6] shadow"
-                      onClick={() => handleDeleteTeam(team.id)}
+                      onClick={() => handleDeleteTeam(team)}
                     >
                       🗑
                     </button>

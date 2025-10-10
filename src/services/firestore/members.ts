@@ -14,11 +14,10 @@ import {
 } from "firebase/firestore";
 import type { DocumentData } from "firebase/firestore";
 import type { Member } from "../../types/member";
+import type { GanttMember } from "../../types/member";
 
 const membersCollection = (projectId: string) =>
   collection(db, `projects/${projectId}/members`);
-
-const projectsRef = collection(db, "projects");
 
 export async function addMember(
   projectId: string,
@@ -26,7 +25,7 @@ export async function addMember(
 ): Promise<string> {
   try {
     const memberRef = membersCollection(projectId);
-    const docRef = await addDoc(memberRef, { ...member });
+    const docRef = await addDoc(memberRef, { ...member, unit: 100 });
     updateProjectMembersField(projectId, "add", member.emailAddress);
     return docRef.id;
   } catch (e) {
@@ -161,10 +160,35 @@ export function onMembersSnapshot(
   const membersCol = collection(db, "projects", projectId, "members");
   return onSnapshot(membersCol, (snapshot: QuerySnapshot<DocumentData>) => {
     const members = snapshot.docs.map(
-      (doc) => ({ id: doc.id, ...doc.data() } as Member)
+      (doc) => ({ id: doc.id, ...doc.data(), unit: 100 } as Member)
     );
     callback(members);
 
+    if (loadedCallback) loadedCallback(true);
+  });
+}
+
+export function onGanttMembersSnapshot(
+  projectId: string,
+  callback: (members: GanttMember[]) => void,
+  loadedCallback?: (loaded: boolean) => void
+) {
+  const membersCol = collection(db, "projects", projectId, "members");
+  return onSnapshot(membersCol, (snapshot: QuerySnapshot<DocumentData>) => {
+    const members = snapshot.docs.map((doc) => {
+      const memberData = { ...doc.data(), id: doc.id } as Member;
+
+      const ganttFormattedMember: GanttMember = {
+        id: memberData.id,
+        name: memberData.name,
+        unit: memberData.unit || 100,
+        role: memberData.role,
+        teamName: memberData.teamName,
+      };
+
+      return ganttFormattedMember;
+    });
+    callback(members);
     if (loadedCallback) loadedCallback(true);
   });
 }
