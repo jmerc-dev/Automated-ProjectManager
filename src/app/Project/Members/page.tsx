@@ -105,9 +105,9 @@ export default function MembersManagement({
     setIsModalOpen(false);
   };
 
-  const [searchType, setSearchType] = useState<"name" | "email" | "role">(
-    "name"
-  );
+  const [searchType, setSearchType] = useState<
+    "name" | "email" | "role" | "team" | "level"
+  >("name");
   const [searchValue, setSearchValue] = useState("");
 
   const filteredMembers = members.filter((m) => {
@@ -118,6 +118,17 @@ export default function MembersManagement({
       return m.emailAddress.toLowerCase().includes(searchValue.toLowerCase());
     if (searchType === "role")
       return m.role.toLowerCase().includes(searchValue.toLowerCase());
+    if (searchType === "team") {
+      return (
+        teams
+          .find((t) => t.id === m.teamId)
+          ?.name.toLowerCase()
+          .includes(searchValue.toLowerCase()) || false
+      );
+    }
+    if (searchType === "level") {
+      return m.level.toLowerCase().includes(searchValue.toLowerCase());
+    }
     return true;
   });
 
@@ -168,6 +179,11 @@ export default function MembersManagement({
   }
 
   function handleDeleteTeam(teamId: string) {
+    if (members.some((m) => m.teamId === teamId)) {
+      alert("Cannot delete team with existing members.");
+      return;
+    }
+
     if (confirm("Are you sure you want to delete this team?")) {
       deleteTeam(projectId, teamId);
     }
@@ -191,6 +207,8 @@ export default function MembersManagement({
               <option value="name">Name</option>
               <option value="email">Email</option>
               <option value="role">Role</option>
+              <option value="team">Team</option>
+              <option value="level">Level</option>
             </select>
             <input
               className="w-full md:w-64 px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-[#0f6cbd] text-sm"
@@ -214,7 +232,15 @@ export default function MembersManagement({
           open={isModalOpen}
           setIsOpen={setIsModalOpen}
           title="Add New Member"
-          onClose={() => setIsModalOpen(false)}
+          onClose={() => {
+            setIsModalOpen(false);
+            setNewFullName("");
+            setNewEmail("");
+            setnewRole("");
+            setnewPhoneNumber("");
+            setNewTeamId("None");
+            setNewLevel("member");
+          }}
           onConfirm={handleAddMember}
         >
           <form className="flex flex-col gap-4 p-2">
@@ -536,7 +562,7 @@ export default function MembersManagement({
               Add
             </button>
           </div>
-          <ul className="flex flex-col gap-3 h-140 overflow-y-scroll ">
+          <ul className="flex flex-col gap-3 h-140 overflow-y-auto ">
             {/* Example team items */}
             {teams.map((team) =>
               editTeamId === team.id ? (
