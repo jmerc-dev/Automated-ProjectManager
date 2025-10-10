@@ -11,7 +11,10 @@ import { useNavigate, useParams } from "react-router-dom";
 import type { Project } from "../../types/project";
 import { useAuth } from "../../services/firebase/auth-context";
 import NavDropdown from "../../components/nav-dropdown";
-import { getProjectById } from "../../services/firestore/projects";
+import {
+  getProjectById,
+  onProjectSnapshot,
+} from "../../services/firestore/projects";
 import TitleInput from "../../components/title-input";
 import MembersManagement from "./Members/page";
 import ProjectSettings from "./Settings/page";
@@ -32,7 +35,15 @@ function Project() {
       const result = await getProjectById(id);
       setProject(result ?? null);
     }
-    loadProject(String(id));
+    //loadProject(String(id));
+
+    const unsubscribeProject = onProjectSnapshot(String(id), (proj) => {
+      setProject(proj);
+    });
+
+    return () => {
+      unsubscribeProject();
+    };
   }, [id]);
 
   const renderContent = () => {
@@ -68,7 +79,17 @@ function Project() {
             </span>
             <div className="w-full max-w-lg">
               {project ? (
-                <TitleInput project={project} setProject={setProject} />
+                <h1
+                  className="text-base font-bold text-[#0f6cbd] tracking-tight bg-gradient-to-r from-[#e6f0fa] via-white to-[#f7fafd] px-3 py-1 rounded-xl shadow-sm border border-[#b3d1f7] select-none"
+                  style={{
+                    letterSpacing: "0.02em",
+                    boxShadow: "0 1px 4px 0 rgba(15,108,189,0.07)",
+                    display: "inline-block",
+                    minWidth: "120px",
+                  }}
+                >
+                  {project.name}
+                </h1>
               ) : (
                 <span className="text-gray-400">Loading...</span>
               )}

@@ -18,6 +18,7 @@ import {
   serverTimestamp,
 } from "firebase/firestore";
 import type { User } from "firebase/auth";
+import { onSnapshot } from "firebase/firestore";
 
 const projectsRef = collection(db, "projects");
 
@@ -44,10 +45,22 @@ export async function createProject(project: Project, user: any) {
 }
 
 //Generic function to update project
-export async function updateProject(project: Project, key: string) {
-  switch (key) {
-    case "name":
-      updateProjectName(project);
+// export async function updateProject(project: Project, key: string) {
+//   switch (key) {
+//     case "name":
+//       updateProjectName(project);
+//   }
+// }
+
+export async function updateProject(
+  projectId: string,
+  updates: Partial<Project>
+) {
+  if (projectId) {
+    updateDoc(doc(db, "projects", projectId), {
+      ...updates,
+      updatedAt: new Date(),
+    });
   }
 }
 
@@ -157,4 +170,36 @@ export async function getProjectsByMemberEmail(userEmail: string) {
   }
 
   return associatedProjects;
+}
+
+export function onProjectSnapshot(
+  projectId: string,
+  callback: (project: Project | null) => void
+) {
+  const specificProjectRef = doc(db, "projects", projectId);
+  return onSnapshot(specificProjectRef, (projectSnap) => {
+    const data = projectSnap.data();
+    if (projectSnap.exists() && data) {
+      callback({
+        id: projectSnap.id,
+        name: data.name,
+        description: data.description,
+        ownerID: data.ownerID,
+        members: data.members ?? [],
+        progress: data.progress,
+        status: data.status,
+        expectedEndDate: data.expectedEndDate
+          ? (data.expectedEndDate as Timestamp).toDate()
+          : undefined,
+        createdAt: data.createdAt
+          ? (data.createdAt as Timestamp).toDate()
+          : undefined,
+        updatedAt: data.updatedAt
+          ? (data.updatedAt as Timestamp).toDate()
+          : undefined,
+      } as Project);
+    } else {
+      callback(null);
+    }
+  });
 }
