@@ -160,6 +160,10 @@ function TasksView({ projectId }: TasksViewProps) {
             currentTaskToEdit.current = {
               ...args.data,
             };
+
+            if (args.taskBarEditAction === "ProgressResizing") {
+              args.cancel = true; // Prevent progress bar editing
+            }
           }}
           taskbarEdited={(args) => {
             //console.log("old data: ", currentTaskToEdit.current);

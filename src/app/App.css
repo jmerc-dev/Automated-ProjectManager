@@ -6,6 +6,10 @@
   --color-primary-light: #449ed9;
   --color-primary-dark: #09477e;
 }
+.e-progress-resize-gripper {
+  display: none !important;
+  pointer-events: none !important;
+}
 
 @import "@syncfusion/ej2-base/styles/fluent2.css";
 @import "@syncfusion/ej2-buttons/styles/fluent2.css";
