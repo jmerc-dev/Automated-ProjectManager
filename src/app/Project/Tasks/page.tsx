@@ -157,7 +157,7 @@ function TasksView({ projectId }: TasksViewProps) {
   ];
 
   return (
-    <div className="w-full h-[700px] max-h-[500px] min-w-[500px] border-gray-300">
+    <div className="w-full h-[700px] max-h-[500px] min-w-[500px] max-w-[1820px] border-gray-300">
       {projectId && (
         <GanttComponent
           ref={ganttRef}
@@ -185,7 +185,7 @@ function TasksView({ projectId }: TasksViewProps) {
           taskType="FixedDuration"
           height="800px"
           width="1820px"
-          gridLines={"Both"}
+          gridLines={"Horizontal"}
           allowSelection={true}
           editSettings={editOptions}
           toolbar={toolbarOptions}

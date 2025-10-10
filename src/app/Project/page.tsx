@@ -49,7 +49,7 @@ function Project() {
 
   return (
     <div className="grid bg-white [grid-template-rows:auto_1fr] overflow-hidden [grid-template-columns:auto_1fr] h-screen font-display">
-      <nav className="col-span-2 sticky top-0 z-30 w-full bg-white/70 backdrop-blur-md shadow-sm border-b border-gray-200">
+      <nav className="col-span-2 sticky top-0 z-30 w-screen bg-white/70 backdrop-blur-md shadow-sm border-b border-gray-200">
         <div className="grid [grid-template-columns:56px_1fr_auto] text-black items-center min-h-[60px]">
           {/* Home Button */}
           <div className="flex items-center justify-center h-full border-r border-gray-200 bg-white/80">
@@ -168,7 +168,9 @@ function Project() {
           <img src={settingIcon} className="h-7 w-7" />
         </button>
       </aside>
-      <main className="p-3 border-1 border-gray-200">{renderContent()}</main>
+      <main className="p-3 border-1 border-gray-200 w-full">
+        {renderContent()}
+      </main>
     </div>
   );
 }

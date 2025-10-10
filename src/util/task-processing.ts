@@ -1,3 +1,4 @@
+import type { Member } from "../types/member";
 import type { Task } from "../types/task";
 
 export function changedTaskFields(oldTask: Task, newTask: Task) {

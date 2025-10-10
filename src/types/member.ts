@@ -4,4 +4,6 @@ export interface Member {
   role: string;
   emailAddress: string;
   phoneNumber: string;
+  teamId?: string;
+  level: "leader" | "member";
 }
