@@ -5,5 +5,5 @@ export interface Member {
   emailAddress: string;
   phoneNumber: string;
   teamId?: string;
-  level: "leader" | "member";
+  level: "Leader" | "Member";
 }

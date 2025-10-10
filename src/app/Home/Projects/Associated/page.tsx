@@ -20,9 +20,22 @@ export default function AssociatedProjects({
 
   return (
     <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4">
-      <p className="col-span-full text-center text-gray-400 py-10">
-        It seems like there's nothing here yet.
-      </p>
+      {projectsAssociated != undefined && projectsAssociated?.length > 0 ? (
+        projectsAssociated
+          ?.filter((project) => project.ownerID !== user?.uid) // Exclude owned projects
+          .map((project) => (
+            <ProjectCard
+              key={project.id}
+              project={project}
+              onCardClick={() => handleCardClick(project.id)}
+              isAssociated={true}
+            />
+          ))
+      ) : (
+        <p className="col-span-full text-center text-gray-400 py-10">
+          It seems like there's nothing here yet.
+        </p>
+      )}
     </div>
   );
 }

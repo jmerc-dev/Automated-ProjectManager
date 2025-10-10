@@ -2,7 +2,8 @@ import ProjectCard from "../../../components/project-card";
 import {
   getProjectsByOwner,
   createProject,
-  getProjectsByMemberEmail,
+  onProjectsByMemberEmailSnapshot,
+  onProjectByOwnerSnapshot,
 } from "../../../services/firestore/projects";
 import Modal from "../../../components/modal";
 import { useState, useEffect } from "react";
@@ -32,16 +33,23 @@ export default function Projects() {
     async function load() {
       const results = await getProjectsByOwner(user?.uid);
       setProjects(results);
-      console.log(results);
     }
-    async function loadAssociated() {
-      if (user?.email) {
-        const results = await getProjectsByMemberEmail(user.email);
-        setAssociatedProjects(results ?? []);
-      }
-    }
+
     if (user?.uid) load();
-    if (user?.email) loadAssociated();
+
+    const unsubscribeProjectsByOwner = onProjectByOwnerSnapshot(
+      user?.uid,
+      setProjects
+    );
+    const unsubscribeProjectsbyMemberEmail = onProjectsByMemberEmailSnapshot(
+      user?.email ?? "",
+      setAssociatedProjects
+    );
+
+    return () => {
+      unsubscribeProjectsbyMemberEmail();
+      // unsubscribeProjectsByOwner();
+    };
   }, [user?.uid, user?.email]);
 
   const handleCreateProject = () => {

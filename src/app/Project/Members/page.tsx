@@ -48,7 +48,7 @@ export default function MembersManagement({
   const [newRole, setnewRole] = useState("");
   const [newPhoneNumber, setnewPhoneNumber] = useState("");
   const [newTeamId, setNewTeamId] = useState<string>("None");
-  const [newLevel, setNewLevel] = useState<"leader" | "member">("member");
+  const [newLevel, setNewLevel] = useState<"Leader" | "Member">("Member");
   const [members, setMembers] = useState<Member[]>([]);
 
   const [teams, setTeams] = useState<Team[]>([]);
@@ -63,9 +63,13 @@ export default function MembersManagement({
       !newFullName.trim() ||
       !newEmail.trim() ||
       !newRole.trim() ||
-      !newPhoneNumber.trim()
-    )
+      !newPhoneNumber.trim() ||
+      !newLevel.trim() ||
+      newTeamId.trim() === "None"
+    ) {
+      alert("Please fill in all fields.");
       return;
+    }
 
     if (!emailRegex.test(newEmail)) {
       alert("Please enter a valid email address.");
@@ -142,7 +146,17 @@ export default function MembersManagement({
   }
 
   function handleEditSave(idx: number) {
-    updateMember(projectId, editMember.id!, editMember as Member);
+    const oldEmailAddress = members[idx].emailAddress;
+    // console.log("Old email address:", oldEmailAddress);
+    // console.log("New email address:", editMember.emailAddress);
+    updateMember(
+      projectId,
+      editMember.id!,
+      editMember as Member,
+      oldEmailAddress
+    ).catch((e) => {
+      console.log("Error updating member:", e);
+    });
 
     setMembers((prev) =>
       prev.map((m, i) => (i === idx ? { ...m, ...editMember } : m))
@@ -239,7 +253,7 @@ export default function MembersManagement({
             setnewRole("");
             setnewPhoneNumber("");
             setNewTeamId("None");
-            setNewLevel("member");
+            setNewLevel("Member");
           }}
           onConfirm={handleAddMember}
         >
@@ -305,11 +319,11 @@ export default function MembersManagement({
             {/* Access select */}
             <select
               className="rounded-2xl border border-[#d1e4f7] bg-white/60 px-4 py-2 text-gray-900 font-medium shadow focus:outline-none focus:border-[#0f6cbd] focus:ring-2 focus:ring-[#0f6cbd]/30 transition"
-              defaultValue="Member"
+              defaultValue="member"
               onChange={(e) => setNewLevel(e.target.value as any)}
             >
-              <option>Leader</option>
-              <option>Member</option>
+              <option value="Leader">Leader</option>
+              <option value="Member">Member</option>
             </select>
           </form>
         </Modal>
@@ -398,7 +412,7 @@ export default function MembersManagement({
                               handleEditChange("teamId", e.target.value)
                             }
                           >
-                            <option>None</option>
+                            <option value={"None"}>None</option>
                             {teams.map((team) => (
                               <option key={team.id} value={team.id}>
                                 {team.name}
@@ -409,7 +423,7 @@ export default function MembersManagement({
                         <td className="py-3 px-4 text-center">
                           <select
                             className="border rounded px-2 py-1 text-sm w-20"
-                            value={editMember.level || "Member"}
+                            value={editMember.level || "member"}
                             onChange={(e) =>
                               handleEditChange("level", e.target.value)
                             }
@@ -490,7 +504,7 @@ export default function MembersManagement({
                                   "Are you sure you want to remove this member?"
                                 )
                               ) {
-                                deleteMember(projectId, m.id);
+                                deleteMember(projectId, m.id, m.emailAddress);
                                 setMembers((prev) =>
                                   prev.filter((_, i) => i !== idx)
                                 );

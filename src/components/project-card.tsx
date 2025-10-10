@@ -2,18 +2,47 @@ import type { Project } from "../types/project";
 import DropdownMenu from "./dropdown";
 import leaderIcon from "../assets/images/leader.png";
 import memberIcon from "../assets/images/member.png";
+import { getUserById } from "../services/firestore/user";
+import { useEffect, useState } from "react";
+import type { Member } from "../types/member";
+import { getMemberByEmail } from "../services/firestore/members";
 
 interface ProjectCardProps {
   project: Project;
   onCardClick: () => void | Promise<void>;
-  level?: "member" | "leader";
+  isAssociated?: boolean;
 }
 
 export default function ProjectCard({
   project,
   onCardClick,
-  level,
+  isAssociated,
 }: ProjectCardProps) {
+  const [member, setMember] = useState<Member | null>(null);
+  const [ownerName, setOwnerName] = useState<string>("");
+  useEffect(() => {
+    async function fetchOwnerName() {
+      if (project.ownerID) {
+        const user = await getUserById(project.ownerID);
+        setOwnerName(user?.displayName || "");
+      }
+    }
+
+    async function fetchMember() {
+      if (project.members && project.members.length > 0) {
+        const memberData = await getMemberByEmail(
+          project.id,
+          project.members[0]
+        );
+        setMember(memberData);
+      }
+    }
+    if (isAssociated) {
+      fetchOwnerName();
+      fetchMember();
+    }
+  }, [project.ownerID]);
+
   return (
     <div className="h-full">
       <div
@@ -33,10 +62,21 @@ export default function ProjectCard({
           <div className="text-xs text-gray-500 mb-2">
             Created: {project.createdAt.toLocaleDateString()}
           </div>
-          <div className="ml-auto text-sm *:w-5">
-            {level === "leader" && <img src={leaderIcon} alt="Leader" />}
-            {level === "member" && <img src={memberIcon} alt="Member" />}
-          </div>
+          {isAssociated && (
+            <div className="flex flex-row justify-between">
+              <div className="text-xs text-gray-500 mb-2">
+                Owner: {ownerName}
+              </div>
+              <div className="ml-auto text-sm *:w-5">
+                {member?.level === "Leader" && (
+                  <img src={leaderIcon} alt="Leader" />
+                )}
+                {member?.level === "Member" && (
+                  <img src={memberIcon} alt="Member" />
+                )}
+              </div>
+            </div>
+          )}
         </div>
       </div>
     </div>

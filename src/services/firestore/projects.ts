@@ -7,7 +7,6 @@ import {
   getDoc,
   updateDoc,
 } from "firebase/firestore";
-import { useAuth } from "../firebase/auth-context";
 
 import {
   collection,
@@ -17,7 +16,6 @@ import {
   where,
   serverTimestamp,
 } from "firebase/firestore";
-import type { User } from "firebase/auth";
 import { onSnapshot } from "firebase/firestore";
 
 const projectsRef = collection(db, "projects");
@@ -44,14 +42,6 @@ export async function createProject(project: Project, user: any) {
   }
 }
 
-//Generic function to update project
-// export async function updateProject(project: Project, key: string) {
-//   switch (key) {
-//     case "name":
-//       updateProjectName(project);
-//   }
-// }
-
 export async function updateProject(
   projectId: string,
   updates: Partial<Project>
@@ -59,15 +49,6 @@ export async function updateProject(
   if (projectId) {
     updateDoc(doc(db, "projects", projectId), {
       ...updates,
-      updatedAt: new Date(),
-    });
-  }
-}
-
-async function updateProjectName(project: Project) {
-  if (project) {
-    updateDoc(doc(db, "projects", project.id), {
-      name: project.name,
       updatedAt: new Date(),
     });
   }
@@ -94,6 +75,37 @@ export async function getProjectById(projectId: string) {
   } else {
     return null;
   }
+}
+
+export async function onProjectByOwnerSnapshot(
+  userId: string | undefined,
+  callback: (projects: Project[]) => void
+) {
+  if (!userId) {
+    console.log("Error: User is not logged in");
+    return;
+  }
+
+  const q = query(projectsRef, where("ownerID", "==", userId));
+  return onSnapshot(q, (snapshot) => {
+    const projects = snapshot.docs.map((doc) => {
+      const data = doc.data();
+      return {
+        id: doc.id,
+        name: data.name,
+        description: data.description,
+        ownerID: data.ownerID,
+        members: data.members ?? [],
+        progress: data.progress,
+        status: data.status,
+        expectedEndDate: (data.expectedEndDate as Timestamp).toDate(),
+        createdAt: (data.createdAt as Timestamp).toDate(),
+        updatedAt: (data.updatedAt as Timestamp).toDate(),
+        taskIndex: data.taskIndex,
+      } as Project;
+    });
+    callback(projects);
+  });
 }
 
 /* Get all projects of a specified user */
@@ -151,25 +163,39 @@ export async function incTaskIndex(projectId: string, lastTaskId: number) {
   }
 }
 
-export async function getProjectsByMemberEmail(userEmail: string) {
-  const projectsRef = collection(db, "projects");
-  const projectsSnap = await getDocs(projectsRef);
-  const associatedProjects: any[] = [];
-
-  for (const projectDoc of projectsSnap.docs) {
-    const membersRef = collection(db, `projects/${projectDoc.id}/members`);
-    const q = query(membersRef, where("emailAddress", "==", userEmail));
-    const membersSnap = await getDocs(q);
-
-    if (!membersSnap.empty) {
-      associatedProjects.push({
-        id: projectDoc.id,
-        ...projectDoc.data(),
-      });
-    }
-  }
-
-  return associatedProjects;
+export function onProjectsByMemberEmailSnapshot(
+  userEmail: string,
+  callback: (projects: Project[]) => void
+) {
+  const q = query(
+    collection(db, "projects"),
+    where("members", "array-contains", userEmail)
+  );
+  return onSnapshot(q, (snapshot) => {
+    const projects = snapshot.docs.map((doc) => {
+      const data = doc.data();
+      return {
+        id: doc.id,
+        name: data.name,
+        description: data.description,
+        ownerID: data.ownerID,
+        members: data.members ?? [],
+        progress: data.progress,
+        status: data.status,
+        expectedEndDate: data.expectedEndDate
+          ? (data.expectedEndDate as Timestamp).toDate()
+          : undefined,
+        createdAt: data.createdAt
+          ? (data.createdAt as Timestamp).toDate()
+          : undefined,
+        updatedAt: data.updatedAt
+          ? (data.updatedAt as Timestamp).toDate()
+          : undefined,
+        taskIndex: data.taskIndex,
+      } as Project;
+    });
+    callback(projects);
+  });
 }
 
 export function onProjectSnapshot(
