@@ -19,7 +19,7 @@ import TitleInput from "../../components/title-input";
 import MembersManagement from "./Members/page";
 import ProjectSettings from "./Settings/page";
 
-function Project() {
+function ProjectView() {
   const [activeTab, setActiveTab] = useState("tasks-tab");
   const { user, logout } = useAuth();
   const navigate = useNavigate();
@@ -196,4 +196,4 @@ function Project() {
   );
 }
 
-export default Project;
+export default ProjectView;

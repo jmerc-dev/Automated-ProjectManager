@@ -1,8 +1,10 @@
-import Project from "./Project/page";
+import ProjectView from "./Project/page";
 import Home from "./Home/page";
 import Landing from "./Landing/page";
 import { Test } from "./test";
 import Tasks from "./Project/Tasks/page";
+import MyTasks from "./MemberViews/My-Tasks/page";
+import TeamTasks from "./MemberViews/Teams-Tasks/page";
 import "./App.css";
 import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
 
@@ -13,10 +15,11 @@ function App() {
         <Route path="/" element={<Landing />} />
         <Route path="/home" element={<Home />} />
         <Route path="/tasks" element={<Tasks />} />
-        <Route path="/project" element={<Project />} />
+        <Route path="/project" element={<ProjectView />} />
         <Route path="/test" element={<Test />} />
-        <Route path="/project/:id" element={<Project />} />
-        {/* <Route path="/mytasks/:id" element={<Tasks />} /> */}
+        <Route path="/project/:id" element={<ProjectView />} />
+        <Route path="/mytasks/:id" element={<MyTasks />} />
+        <Route path="/teamtasks/:id" element={<TeamTasks />} />
       </Routes>
     </Router>
   );
