@@ -8,6 +8,7 @@ interface ModalChildren {
   onClose: () => void;
   setIsOpen: Dispatch<SetStateAction<boolean>>;
   onConfirm: () => void;
+  isViewOnly?: boolean;
 }
 
 export default function Modal({
@@ -17,6 +18,7 @@ export default function Modal({
   setIsOpen,
   onClose,
   onConfirm,
+  isViewOnly,
 }: ModalChildren) {
   if (!open) return null;
 
@@ -33,20 +35,31 @@ export default function Modal({
         <div className="mb-2 animate-fade-in-slow">{children}</div>
 
         <div className="flex justify-end gap-3 mt-2">
-          <button
-            onClick={onClose}
-            className="px-5 py-2 text-[#0f6cbd] bg-gray-100 rounded-lg font-semibold hover:bg-gray-200 focus:outline-none focus:ring-2 focus:ring-[#0f6cbd] focus:ring-opacity-50 transition"
-          >
-            Cancel
-          </button>
-          <button
-            onClick={() => {
-              onConfirm();
-            }}
-            className="bg-[#0f6cbd] hover:bg-[#155a8a] text-white font-semibold py-2 px-6 rounded-lg shadow transition border border-[#0f6cbd]"
-          >
-            Confirm
-          </button>
+          {isViewOnly ? (
+            <button
+              onClick={onClose}
+              className="px-5 py-2 text-[#0f6cbd] bg-gray-100 rounded-lg font-semibold hover:bg-gray-200 focus:outline-none focus:ring-2 focus:ring-[#0f6cbd] focus:ring-opacity-50 hover:bg-gray-300 transition"
+            >
+              Close
+            </button>
+          ) : (
+            <div>
+              <button
+                onClick={onClose}
+                className="px-5 py-2 text-[#0f6cbd] bg-gray-100 rounded-lg font-semibold hover:bg-gray-200 focus:outline-none focus:ring-2 focus:ring-[#0f6cbd] focus:ring-opacity-50 transition"
+              >
+                Cancel
+              </button>
+              <button
+                onClick={() => {
+                  onConfirm();
+                }}
+                className="bg-[#0f6cbd] hover:bg-[#155a8a] text-white font-semibold py-2 px-6 rounded-lg shadow transition border border-[#0f6cbd]"
+              >
+                Confirm
+              </button>
+            </div>
+          )}
         </div>
       </div>
     </>,
