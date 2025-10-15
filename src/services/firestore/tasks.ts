@@ -70,6 +70,44 @@ export function listenToTasks(
   });
 }
 
+export function listenToTasksByAssignedMember(
+  projectId: string,
+  memberId: string,
+  callback: (tasks: Task[]) => void,
+  loadedCallback?: (loaded: boolean) => void
+) {
+  const tasksCol = collection(db, "projects", projectId, "tasks");
+  return onSnapshot(tasksCol, (snapshot) => {
+    const tasks = snapshot.docs
+      .map((doc) => {
+        const docData = doc.data();
+        //console.log("Assigned Members:", docData.assignedMembers);
+        return {
+          id: doc.id,
+          docId: doc.id,
+          ...docData,
+          startDate: docData.startDate?.toDate?.() || new Date(),
+          assignedMembers: docData.assignedMembers.map((id: string) => ({
+            id,
+          })),
+        } as Task;
+      })
+      .filter((task) => {
+        //console.log("Checking task:", task.assignedMembers?.[0].id.id);
+        return task.assignedMembers?.some((member) => {
+          //console.log("Comparing member:", member.id.id, "with", memberId);
+          // make sure to fix this in the future with proper typing
+          const memberNow: any = member;
+          return memberNow.id.id === memberId;
+        });
+      });
+    //console.log("All tasks:", tasks);
+    callback(tasks as Task[]);
+
+    if (loadedCallback) loadedCallback(true);
+  });
+}
+
 export async function deleteTask(projectId: string, taskId: string) {
   const docRef = doc(db, "projects", projectId, "tasks", String(taskId));
   await deleteDoc(docRef);
