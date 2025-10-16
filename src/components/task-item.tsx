@@ -3,37 +3,64 @@ import type { Task } from "../types/task";
 import Modal from "./modal";
 import { useEffect, useState } from "react";
 import SendButton from "../assets/images/send.png";
+import { useAuth } from "../services/firebase/auth-context";
+import TaskComment from "./task-comment";
+import { addCommentToTask } from "../services/firestore/comments";
 
 interface TaskItemProps {
   task: Task;
+  projectId?: string;
   //comments: Comment[];
 }
 
-export default function TaskItem({ task }: TaskItemProps) {
+export default function TaskItem({ task, projectId }: TaskItemProps) {
   // Example comments array for modal
   const exampleComments: Comment[] = [
     {
       id: "c1",
-      memberName: "Alex",
+      authorName: "Alex",
       text: "Hey team, I'm waiting for the requirements doc from Sam before I can start.",
-      date: "2025-10-14",
+      createdAt: new Date(),
     },
     {
       id: "c2",
-      memberName: "Sam",
+      authorName: "Sam",
       text: "Uploading the requirements doc now!",
-      date: "2025-10-14",
+      createdAt: new Date(),
     },
     {
       id: "c3",
-      memberName: "Jamie",
+      authorName: "Jamie",
       text: "Let me know if you need anything else.",
-      date: "2025-10-15",
+      createdAt: new Date(),
     },
   ];
-
+  const { user } = useAuth();
   const [showCommentsModal, setShowCommentsModal] = useState(false);
   const [thisTask, setThisTask] = useState<Task>(task);
+  const [comments, setComments] = useState<Comment[]>(exampleComments);
+  const [modalCommentInput, setModalCommentInput] = useState("");
+
+  function handleAddComment() {
+    if (modalCommentInput.trim() && projectId && user) {
+      addCommentToTask(projectId, task.id, {
+        authorName: user?.displayName || "Unknown",
+        authorId: user?.uid || "unknown",
+        text: modalCommentInput.trim(),
+      }).then((id) => {
+        setComments((prevComments) => [
+          ...prevComments,
+          {
+            id: id,
+            authorName: user?.displayName || "Unknown",
+            text: modalCommentInput.trim(),
+            createdAt: new Date(),
+          },
+        ]);
+        setModalCommentInput("");
+      });
+    }
+  }
 
   useEffect(() => {
     setThisTask(task);
@@ -61,13 +88,13 @@ export default function TaskItem({ task }: TaskItemProps) {
           <span className="text-xs text-gray-500">
             Start:{" "}
             <span className="font-medium text-[#0f6cbd]">
-              {task.startDate.toLocaleString() || "N/A"}
+              {new Date(task.startDate as any).toLocaleDateString() || "N/A"}
             </span>
           </span>
           <span className="text-xs text-gray-500">
             End:{" "}
-            <span className="font-medium text-[#0f6cbd]">
-              {task.startDate.toLocaleString() || "N/A"}
+            <span className="font-medium text-[#d1502f]">
+              {new Date(task.startDate as any).toLocaleDateString() || "N/A"}
             </span>
           </span>
         </div>
@@ -137,33 +164,29 @@ export default function TaskItem({ task }: TaskItemProps) {
           onConfirm={() => setShowCommentsModal(false)}
           isViewOnly={true}
         >
-          <ul className="space-y-2">
-            {exampleComments.map((c) => (
-              <li
-                key={c.id}
-                className="bg-[#f7fafd] border border-[#b3d1f7] rounded px-3 py-2 text-sm flex flex-col"
+          <div className="h-[70vh] flex flex-col justify-between">
+            <ul className="space-y-2 mb-4 overflow-y-auto">
+              {comments.map((c) => (
+                <TaskComment key={c.id} comment={c} user={user} />
+              ))}
+            </ul>
+            <div className="flex gap-2 items-center">
+              <input
+                type="text"
+                value={modalCommentInput}
+                onChange={(e) => setModalCommentInput(e.target.value)}
+                placeholder="Add a comment..."
+                className="border border-[#b3d1f7] rounded px-2 py-1 flex-1 text-sm focus:ring-2 focus:ring-[#0f6cbd]/30"
+              />
+              <button
+                className="bg-[#0f6cbd] text-white px-3 py-1 rounded text-sm hover:bg-[#095a9d] transition flex items-center"
+                onClick={handleAddComment}
               >
-                <div className="flex items-center gap-2 mb-1">
-                  <span className="font-semibold text-[#0f6cbd]">
-                    {c.memberName}
-                  </span>
-                  <span className="text-xs text-gray-400">{c.date}</span>
-                </div>
-                <span className="text-gray-700">{c.text}</span>
-              </li>
-            ))}
-          </ul>
+                <img src={SendButton} alt="Send" className="w-4 h-4" />
+              </button>
+            </div>
+          </div>
         </Modal>
-      </div>
-      <div className="mt-3 flex gap-2">
-        <input
-          type="text"
-          placeholder="Add a comment..."
-          className="border border-[#b3d1f7] rounded px-2 py-1 flex-1 text-sm focus:ring-2 focus:ring-[#0f6cbd]/30"
-        />
-        <button className="bg-[#0f6cbd] text-white px-3 py-1 rounded text-sm hover:bg-[#095a9d] transition">
-          <img src={SendButton} alt="Send" className="w-4 h-4" />
-        </button>
       </div>
       {/* Upload Feature */}
       <div className="mt-3 flex items-center gap-2">

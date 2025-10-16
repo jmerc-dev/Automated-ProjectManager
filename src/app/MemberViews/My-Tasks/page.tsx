@@ -9,15 +9,14 @@ import TaskItem from "../../../components/task-item";
 import { listenToTasksByAssignedMember } from "../../../services/firestore/tasks";
 import type { Task } from "../../../types/task";
 import { getProjectMemberByEmail } from "../../../services/firestore/members";
+import UserTasks from "./UserTasks/page";
 
 export default function MyTasks() {
   const navigate = useNavigate();
   const { user, logout } = useAuth();
   const { projectId } = useParams();
   const [myIdOnProject, setMyIdOnProject] = useState<string | null>(null);
-  const [activeTab, setActiveTab] = useState<"mytasks" | "completed">(
-    "mytasks"
-  );
+  const [activeTab, setActiveTab] = useState<"mytasks">("mytasks");
   const [tasks, setTasks] = useState<Task[]>([]);
 
   const handleHomeClick = () => {
@@ -25,20 +24,6 @@ export default function MyTasks() {
   };
 
   useEffect(() => {
-    // Fetch tasks assigned to the user
-    //
-    //
-    //
-    //
-    //
-    //
-    // TODO: Permission on firebase rules
-    //
-    //
-    //
-    //
-    //
-    //
     if (projectId && myIdOnProject) {
       const unsubscribeMembers = listenToTasksByAssignedMember(
         projectId,
@@ -144,41 +129,11 @@ export default function MyTasks() {
               >
                 My Tasks
               </button>
-              <button
-                className={`px-4 py-2 rounded-l-lg font-semibold text-left transition ${
-                  activeTab === "completed"
-                    ? "bg-[#e6f0fa] text-[#0f6cbd] border-l-4 border-[#0f6cbd]"
-                    : "bg-white text-gray-500 hover:bg-gray-100"
-                }`}
-                onClick={() => setActiveTab("completed")}
-              >
-                Completed
-              </button>
             </div>
             {/* Tab Content */}
             <div className="flex-1 pl-8 pt-2">
               {activeTab === "mytasks" && (
-                <div>
-                  {/* Render My Tasks content here */}
-                  <ul className="space-y-4">
-                    {tasks.length == 0
-                      ? "It seems like there are no tasks assigned to you yet."
-                      : tasks.map((task) => (
-                          <TaskItem key={task.id} task={task} />
-                        ))}
-                    {/* {tasks.map((task) => (
-                      
-                    ))} */}
-                  </ul>
-                </div>
-              )}
-              {activeTab === "completed" && (
-                <div>
-                  {/* Render Completed Tasks content here */}
-                  <span className="text-gray-700">
-                    Your completed tasks will appear here.
-                  </span>
-                </div>
+                <UserTasks tasks={tasks} projectId={projectId} />
               )}
             </div>
           </div>
