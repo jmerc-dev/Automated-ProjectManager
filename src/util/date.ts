@@ -7,3 +7,9 @@ export function formatDateTime(date: string | Date): string {
   const minutes = String(d.getMinutes()).padStart(2, "0");
   return `${month}/${day}/${year} ${hours}:${minutes}`;
 }
+
+export function addDays(date: Date, days: number): Date {
+  const result = new Date(date);
+  result.setDate(result.getDate() + days);
+  return result;
+}

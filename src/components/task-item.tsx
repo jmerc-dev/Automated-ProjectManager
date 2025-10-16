@@ -1,11 +1,13 @@
 import type { Comment } from "../types/comment";
 import type { Task } from "../types/task";
-import Modal from "./modal";
 import { useEffect, useState } from "react";
-import SendButton from "../assets/images/send.png";
 import { useAuth } from "../services/firebase/auth-context";
-import TaskComment from "./task-comment";
-import { addCommentToTask } from "../services/firestore/comments";
+import {
+  addCommentToTask,
+  getRecentComment,
+} from "../services/firestore/comments";
+import { addDays } from "../util/date";
+import TaskCommentsModal from "./task-comment-modal";
 
 interface TaskItemProps {
   task: Task;
@@ -40,10 +42,11 @@ export default function TaskItem({ task, projectId }: TaskItemProps) {
   const [thisTask, setThisTask] = useState<Task>(task);
   const [comments, setComments] = useState<Comment[]>(exampleComments);
   const [modalCommentInput, setModalCommentInput] = useState("");
+  const [lastComment, setLastComment] = useState<Comment | null>(null);
 
   function handleAddComment() {
     if (modalCommentInput.trim() && projectId && user) {
-      addCommentToTask(projectId, task.id, {
+      addCommentToTask(projectId, thisTask.id, {
         authorName: user?.displayName || "Unknown",
         authorId: user?.uid || "unknown",
         text: modalCommentInput.trim(),
@@ -64,11 +67,15 @@ export default function TaskItem({ task, projectId }: TaskItemProps) {
 
   useEffect(() => {
     setThisTask(task);
+
+    getRecentComment(projectId || "", task.id).then((comment) => {
+      setLastComment(comment);
+    });
   }, []);
 
   return (
     <li
-      key={task.id}
+      key={thisTask.id}
       className="bg-gradient-to-r from-[#e6f0fa] via-white to-[#f7fafd] rounded-xl px-5 py-4 shadow border border-[#b3d1f7] flex flex-col"
       style={{
         boxShadow: "0 2px 8px 0 rgba(15,108,189,0.07)",
@@ -85,18 +92,24 @@ export default function TaskItem({ task, projectId }: TaskItemProps) {
       {/* Task Dates and Progress */}
       <div className="flex items-center justify-between mb-2">
         <div className="flex flex-col">
-          <span className="text-xs text-gray-500">
-            Start:{" "}
-            <span className="font-medium text-[#0f6cbd]">
-              {new Date(task.startDate as any).toLocaleDateString() || "N/A"}
+          <div className="flex gap-4 items-center">
+            <span className="text-xs text-gray-500 flex items-center">
+              Start:
+              <span className="font-medium text-[#0f6cbd] ml-1">
+                {new Date(thisTask.startDate as any).toLocaleDateString() ||
+                  "N/A"}
+              </span>
             </span>
-          </span>
-          <span className="text-xs text-gray-500">
-            End:{" "}
-            <span className="font-medium text-[#d1502f]">
-              {new Date(task.startDate as any).toLocaleDateString() || "N/A"}
+            <span className="text-xs text-gray-500 flex items-center">
+              End:
+              <span className="font-medium text-[#d1502f] ml-1">
+                {addDays(
+                  new Date(thisTask.startDate as any),
+                  7
+                ).toLocaleDateString() || "N/A"}
+              </span>
             </span>
-          </span>
+          </div>
         </div>
         <div className="flex flex-col items-end">
           <span className="text-xs text-gray-500 mb-1">Progress</span>
@@ -116,11 +129,11 @@ export default function TaskItem({ task, projectId }: TaskItemProps) {
           Description
         </span>
         <div className="bg-white border border-[#b3d1f7] rounded px-2 py-1 text-sm text-gray-700">
-          {thisTask.notes === "" ? "No description provided." : task.notes}
+          {thisTask.notes === "" ? "No description provided." : thisTask.notes}
         </div>
       </div>
       {/* Comments List */}
-      {/*comments[task.id]?.length > 0 && (
+      {/*comments[thisTask.id]?.length > 0 && (
         <ul className="mt-2 space-y-1 text-sm">
           {comments[task.id].map((c, idx) => (
             <li
@@ -139,12 +152,15 @@ export default function TaskItem({ task, projectId }: TaskItemProps) {
           Recent comment:
         </span>
         <div className="flex items-center gap-2 bg-[#f7fafd] border border-dashed border-[#b3d1f7] rounded px-2 py-1 text-xs text-gray-700">
-          <span className="font-semibold text-[#0f6cbd]">Alex:</span>
-          <span className="italic text-gray-600">
-            Hey team, I'm waiting for the requirements doc from Sam before I can
-            start. Can someone upload it here?
+          <span className="font-semibold text-[#0f6cbd]">
+            {lastComment?.authorName ?? "No recent comments"}
           </span>
-          <span className="text-[10px] text-gray-400 ml-2">2025-10-14</span>
+          <span className="italic text-gray-600">
+            {lastComment?.text ?? "No comments yet."}
+          </span>
+          <span className="text-[10px] text-gray-400 ml-2">
+            {lastComment?.createdAt?.toLocaleDateString() ?? "Unknown date"}
+          </span>
         </div>
       </div>
       {/* Show Comments Button */}
@@ -156,37 +172,16 @@ export default function TaskItem({ task, projectId }: TaskItemProps) {
           Show Comments
         </button>
         {/* Comments Modal */}
-        <Modal
-          open={showCommentsModal}
-          title="All Comments"
-          setIsOpen={setShowCommentsModal}
-          onClose={() => setShowCommentsModal(false)}
-          onConfirm={() => setShowCommentsModal(false)}
-          isViewOnly={true}
-        >
-          <div className="h-[70vh] flex flex-col justify-between">
-            <ul className="space-y-2 mb-4 overflow-y-auto">
-              {comments.map((c) => (
-                <TaskComment key={c.id} comment={c} user={user} />
-              ))}
-            </ul>
-            <div className="flex gap-2 items-center">
-              <input
-                type="text"
-                value={modalCommentInput}
-                onChange={(e) => setModalCommentInput(e.target.value)}
-                placeholder="Add a comment..."
-                className="border border-[#b3d1f7] rounded px-2 py-1 flex-1 text-sm focus:ring-2 focus:ring-[#0f6cbd]/30"
-              />
-              <button
-                className="bg-[#0f6cbd] text-white px-3 py-1 rounded text-sm hover:bg-[#095a9d] transition flex items-center"
-                onClick={handleAddComment}
-              >
-                <img src={SendButton} alt="Send" className="w-4 h-4" />
-              </button>
-            </div>
-          </div>
-        </Modal>
+        <TaskCommentsModal
+          showCommentsModal={showCommentsModal}
+          user={user}
+          modalCommentInput={modalCommentInput}
+          setModalCommentInput={setModalCommentInput}
+          handleAddComment={handleAddComment}
+          setShowCommentsModal={setShowCommentsModal}
+          taskId={thisTask.id}
+          projectId={projectId || ""}
+        />
       </div>
       {/* Upload Feature */}
       <div className="mt-3 flex items-center gap-2">

@@ -13,13 +13,13 @@ export default function TaskComment({ comment, user }: TaskCommentProps) {
       key={comment.id}
       className="bg-[#f7fafd] border border-[#b3d1f7] rounded px-3 py-2 text-sm flex flex-col"
     >
-      <div className="flex items-center gap-2 mb-1">
+      <div className="flex items-center justify-between mb-1">
         <span className="font-semibold text-[#0f6cbd]">
           {comment.authorName === user?.displayName
             ? "You"
             : comment.authorName}
         </span>
-        <span className="text-xs text-gray-400">
+        <span className="text-xs text-gray-400 ml-4">
           {formatDateTime(comment.createdAt)}
         </span>
       </div>
