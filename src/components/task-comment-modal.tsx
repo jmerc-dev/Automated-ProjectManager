@@ -6,29 +6,37 @@ import type { Comment } from "../types/comment";
 import SendButton from "../assets/images/send.png";
 import { listenToTaskComments } from "../services/firestore/comments";
 import { useState } from "react";
+import { addCommentToTask } from "../services/firestore/comments";
 
 interface TaskCommentsModalProps {
   setShowCommentsModal: Dispatch<SetStateAction<boolean>>;
   showCommentsModal: boolean;
   user: User | null;
-  modalCommentInput: string;
-  setModalCommentInput: Dispatch<SetStateAction<string>>;
-  handleAddComment: () => void;
   taskId: string;
   projectId: string;
 }
 
 export default function TaskCommentsModal({
   showCommentsModal,
-  user,
-  modalCommentInput,
-  setModalCommentInput,
-  handleAddComment,
   setShowCommentsModal,
+  user,
   projectId,
   taskId,
 }: TaskCommentsModalProps) {
   const [comments, setComments] = useState<Comment[]>([]);
+  const [modalCommentInput, setModalCommentInput] = useState("");
+
+  function handleAddComment() {
+    console.log("Adding comment:", modalCommentInput);
+    if (modalCommentInput.trim() && projectId && user) {
+      addCommentToTask(projectId, taskId, {
+        authorName: user?.displayName || "Unknown",
+        authorId: user?.uid || "unknown",
+        text: modalCommentInput.trim(),
+      });
+      setModalCommentInput("");
+    }
+  }
 
   useEffect(() => {
     const unsubscribe = listenToTaskComments(
@@ -58,9 +66,15 @@ export default function TaskCommentsModal({
         {comments.length === 0 ? (
           <p className="text-gray-500 text-sm italic">No comments yet.</p>
         ) : (
-          <ul className="space-y-2 mb-4 overflow-y-auto">
+          <ul className="space-y-2 mb-4 overflow-y-auto h-full">
             {comments.map((c) => (
-              <TaskComment key={c.id} comment={c} user={user} />
+              <TaskComment
+                key={c.id}
+                comment={c}
+                user={user}
+                projectId={projectId}
+                taskId={taskId}
+              />
             ))}
           </ul>
         )}
@@ -69,6 +83,12 @@ export default function TaskCommentsModal({
             type="text"
             value={modalCommentInput}
             onChange={(e) => setModalCommentInput(e.target.value)}
+            onKeyDown={(e) => {
+              if (e.key === "Enter") {
+                e.preventDefault();
+                handleAddComment();
+              }
+            }}
             placeholder="Add a comment..."
             className="border border-[#b3d1f7] rounded px-2 py-1 flex-1 text-sm focus:ring-2 focus:ring-[#0f6cbd]/30"
           />

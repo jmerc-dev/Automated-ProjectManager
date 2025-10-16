@@ -40,42 +40,20 @@ export default function TaskItem({ task, projectId }: TaskItemProps) {
   const { user } = useAuth();
   const [showCommentsModal, setShowCommentsModal] = useState(false);
   const [thisTask, setThisTask] = useState<Task>(task);
-  const [comments, setComments] = useState<Comment[]>(exampleComments);
   const [modalCommentInput, setModalCommentInput] = useState("");
   const [lastComment, setLastComment] = useState<Comment | null>(null);
-
-  function handleAddComment() {
-    if (modalCommentInput.trim() && projectId && user) {
-      addCommentToTask(projectId, thisTask.id, {
-        authorName: user?.displayName || "Unknown",
-        authorId: user?.uid || "unknown",
-        text: modalCommentInput.trim(),
-      }).then((id) => {
-        setComments((prevComments) => [
-          ...prevComments,
-          {
-            id: id,
-            authorName: user?.displayName || "Unknown",
-            text: modalCommentInput.trim(),
-            createdAt: new Date(),
-          },
-        ]);
-        setModalCommentInput("");
-      });
-    }
-  }
 
   useEffect(() => {
     setThisTask(task);
 
-    getRecentComment(projectId || "", task.id).then((comment) => {
+    getRecentComment(projectId || "", task.docId).then((comment) => {
       setLastComment(comment);
     });
   }, []);
 
   return (
     <li
-      key={thisTask.id}
+      key={thisTask.docId}
       className="bg-gradient-to-r from-[#e6f0fa] via-white to-[#f7fafd] rounded-xl px-5 py-4 shadow border border-[#b3d1f7] flex flex-col"
       style={{
         boxShadow: "0 2px 8px 0 rgba(15,108,189,0.07)",
@@ -83,7 +61,7 @@ export default function TaskItem({ task, projectId }: TaskItemProps) {
     >
       <div className="flex items-center gap-3 mb-2">
         <span className="inline-flex items-center justify-center w-8 h-8 rounded-full bg-[#0f6cbd]/10 border border-[#b3d1f7] text-[#0f6cbd] font-bold text-lg shadow-sm">
-          {thisTask.id}
+          {thisTask.docId}
         </span>
         <span className="font-semibold text-[#0f6cbd] text-base tracking-tight">
           {thisTask.name}
@@ -175,11 +153,8 @@ export default function TaskItem({ task, projectId }: TaskItemProps) {
         <TaskCommentsModal
           showCommentsModal={showCommentsModal}
           user={user}
-          modalCommentInput={modalCommentInput}
-          setModalCommentInput={setModalCommentInput}
-          handleAddComment={handleAddComment}
           setShowCommentsModal={setShowCommentsModal}
-          taskId={thisTask.id}
+          taskId={thisTask.docId}
           projectId={projectId || ""}
         />
       </div>

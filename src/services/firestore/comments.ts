@@ -8,6 +8,8 @@ import {
   query,
   getDocs,
   limit,
+  updateDoc,
+  deleteDoc,
 } from "firebase/firestore";
 import type { Comment } from "../../types/comment";
 
@@ -40,6 +42,9 @@ export function listenToTaskComments(
       id: doc.id,
       ...(doc.data() as Omit<Comment, "id">),
       createdAt: doc.data().createdAt.toDate(),
+      updatedAt: doc.data().updatedAt
+        ? doc.data().updatedAt.toDate()
+        : undefined,
     }));
     comments.sort((a, b) => a.createdAt.getTime() - b.createdAt.getTime());
     callback(comments);
@@ -62,4 +67,32 @@ export async function getRecentComment(
     createdAt: doc.data().createdAt.toDate(),
   }));
   return comments.length > 0 ? comments[0] : null;
+}
+
+export async function deleteComment(
+  projectId: string,
+  taskId: string,
+  commentId: string
+) {
+  const commentRef = doc(
+    getTaskCommentsCollection(projectId, taskId),
+    commentId
+  );
+  await deleteDoc(commentRef);
+}
+
+export async function updateComment(
+  projectId: string,
+  taskId: string,
+  commentId: string,
+  text: string
+) {
+  const commentRef = doc(
+    getTaskCommentsCollection(projectId, taskId),
+    commentId
+  );
+  await updateDoc(commentRef, {
+    text,
+    updatedAt: new Date(),
+  });
 }
