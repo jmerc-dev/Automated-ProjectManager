@@ -18,6 +18,7 @@ import {
 import TitleInput from "../../components/title-input";
 import MembersManagement from "./Members/page";
 import ProjectSettings from "./Settings/page";
+import Reports from "../Reports/Reports";
 
 function ProjectView() {
   const [activeTab, setActiveTab] = useState("tasks-tab");
@@ -52,7 +53,7 @@ function ProjectView() {
     } else if (activeTab === "members-tab") {
       if (project) return <MembersManagement projectId={project?.id} />;
     } else if (activeTab === "reports-tab") {
-      return <>reports</>;
+      if (project) return <Reports projectId={project?.id} />;
     } else if (activeTab === "settings-tab") {
       if (project) return <ProjectSettings projectId={project?.id} />;
     }
@@ -189,7 +190,7 @@ function ProjectView() {
           <img src={settingIcon} className="h-7 w-7" />
         </button>
       </aside>
-      <main className="p-3 border-1 border-gray-200 w-full">
+      <main className="p-3 border-1 border-gray-200 w-full overflow-y-auto">
         {renderContent()}
       </main>
     </div>

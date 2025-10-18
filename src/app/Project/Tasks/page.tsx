@@ -27,6 +27,7 @@ import {
   deleteTask,
   getAllTasks,
   listenToTasks,
+  updateCriticalTasks,
   updateTask,
   updateTaskOrder,
 } from "../../../services/firestore/tasks";
@@ -119,7 +120,23 @@ function TasksView({ projectId }: TasksViewProps) {
     { type: "Notes" },
   ];
 
+  // const handleGetCriticalTasks = () => {
+  //   if (ganttRef.current) {
+  //     // Access the CriticalPath functionality
+  //     const criticalTasks = ganttRef.current.getCriticalTasks();
+  //     const totalDuration = criticalTasks.reduce(
+  //       (sum, item) => sum + (item.ganttProperties?.duration || 0),
+  //       0
+  //     );
+  //     // console.log("Critical Tasks1:", criticalTasks);
+
+  //     console.log("Critical Tasks2:", totalDuration);
+  //   }
+  // };
+
   return (
+    // handleGetCriticalTasks(),
+
     <div className="w-full h-[700px] max-h-[500px] min-w-[500px] max-w-[1820px] border-gray-300">
       {projectId && (
         <GanttComponent
@@ -282,6 +299,15 @@ function TasksView({ projectId }: TasksViewProps) {
                   unit: m.unit,
                 })) || []
               );
+              const d = ganttRef.current ?  ganttRef.current?.getCriticalTasks().reduce(
+                (sum, item) => sum + (item.ganttProperties?.duration || 0),
+                0) : 0;
+              updateCriticalTasks(
+                projectId,
+                d
+              );
+              console.log("Total Critical Duration: ", d);
+              
 
               // updateTask(
               //   projectId,

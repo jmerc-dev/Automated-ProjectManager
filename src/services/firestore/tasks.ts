@@ -11,6 +11,9 @@ import {
   doc,
   setDoc,
   onSnapshot,
+  limit,
+  orderBy,
+  query,
 } from "firebase/firestore";
 import { getTaskIndex, incTaskIndex } from "./projects";
 
@@ -70,6 +73,55 @@ export function listenToTasks(
   });
 }
 
+export function getCriticalPath(projectId: string, callback: (tasks: number) => void) {
+  const tasksCol = doc(db, "projects", projectId);
+  return onSnapshot(tasksCol, (snapshot) => {
+    const tasks = snapshot.data()?.critical || 0;
+    getCriticalTasks = tasks;
+    callback(tasks);
+    console.log("tasks: ", tasks + " gct: ", getCriticalTasks);
+  });
+}
+export var getCriticalTasks = 0;
+
+export function getProjectStart(projectId: string, callback: (startDate: Date) => void) {
+  const tasksRef = collection(db, "projects", projectId, "tasks");
+  const q = query(tasksRef, orderBy("startDate", "asc"), limit(1));
+  return onSnapshot(q, (snapshot) => {
+    if (!snapshot.empty) {
+      const doc = snapshot.docs[0];
+      const startDate = doc.data()?.startDate?.toDate?.() || new Date();
+      callback(startDate);
+    } else {
+      callback(new Date()); // fallback if no tasks
+    }
+  });
+}
+
+export function getProjectEnd(
+  projectId: string,
+  callback: (startDate: Date) => void
+) {
+  const tasksRef = collection(db, "projects", projectId, "tasks");
+  const q = query(tasksRef, orderBy("startDate", "desc"), limit(1));
+  return onSnapshot(q, (snapshot) => {
+    if (!snapshot.empty) {
+      const doc = snapshot.docs[0];
+       const data = doc.data();
+       const startDate: Date = data?.startDate?.toDate?.() || new Date();
+       const duration: number = data?.duration || 0;
+
+       // 🔹 Compute end date by adding duration (in days)
+       const endDate = new Date(startDate);
+       endDate.setDate(endDate.getDate() + (duration!=0 ? duration-1 : 0));
+
+       callback(endDate);
+    } else {
+      callback(new Date()); // fallback if no tasks
+    }
+  });
+}
+
 export async function deleteTask(projectId: string, taskId: string) {
   const docRef = doc(db, "projects", projectId, "tasks", String(taskId));
   await deleteDoc(docRef);
@@ -109,6 +161,9 @@ export async function updateTask(
       break;
     case CoreTaskFields.assignedMembers:
       await updateTaskMembers(projectId, taskId, value);
+      break;
+    case CoreTaskFields.critical:
+      await updateCriticalTasks(projectId, value);
       break;
     default:
       console.log("Unknown field received:", field);
@@ -213,6 +268,16 @@ export async function updateTaskMembers(
   const docRef = doc(db, "projects", projectId, "tasks", String(taskId));
   await updateDoc(docRef, {
     assignedMembers: assignedMembers,
+  });
+}
+
+export async function updateCriticalTasks(
+  projectId: string,
+  duration: number,
+) {
+  const docRef = doc(db, "projects", projectId);
+  await updateDoc(docRef, {
+    critical: duration,
   });
 }
 

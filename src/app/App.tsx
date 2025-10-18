@@ -5,6 +5,7 @@ import { Test } from "./test";
 import Tasks from "./Project/Tasks/page";
 import MyTasks from "./MemberViews/My-Tasks/page";
 import TeamTasks from "./MemberViews/Teams-Tasks/page";
+import Reports from "./Reports/Reports";
 import "./App.css";
 import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
 
@@ -20,6 +21,7 @@ function App() {
         <Route path="/project/:id" element={<ProjectView />} />
         <Route path="/mytasks/:id" element={<MyTasks />} />
         <Route path="/teamtasks/:id" element={<TeamTasks />} />
+        <Route path="/reports/:id" element={<Reports projectId={""} />} />
       </Routes>
     </Router>
   );
