@@ -13,6 +13,7 @@ import {
   onSnapshot,
 } from "firebase/firestore";
 import { getTaskIndex, incTaskIndex } from "./projects";
+import type { Member } from "../../types/member";
 
 export async function createTask(projectId: string, newTask: Task) {
   try {
@@ -70,6 +71,33 @@ export function listenToTasks(
   });
 }
 
+export function listenToTaskByTeam(
+  projectId: string,
+  teamName: string,
+  callback: (tasks: Task[]) => void
+) {
+  const tasksCol = collection(db, "projects", projectId, "tasks");
+  return onSnapshot(tasksCol, (snapshot) => {
+    const tasks = snapshot.docs
+      .map((doc) => {
+        const docData = doc.data();
+        return {
+          id: doc.id,
+          docId: doc.id,
+          ...docData,
+          startDate: new Date(docData.startDate?.toDate?.()) || new Date(),
+        } as Task;
+      })
+      .filter((task) => {
+        return task.assignedMembers?.some((member) => {
+          const memberNow: any = member;
+          return memberNow.teamName === teamName;
+        });
+      });
+    callback(tasks as Task[]);
+  });
+}
+
 export function listenToTasksByAssignedMember(
   projectId: string,
   memberId: string,
@@ -87,9 +115,10 @@ export function listenToTasksByAssignedMember(
           docId: doc.id,
           ...docData,
           startDate: docData.startDate?.toDate?.() || new Date(),
-          assignedMembers: docData.assignedMembers.map((id: string) => ({
-            id,
-          })),
+          assignedMembers:
+            docData.assignedMembers?.map((id: string) => ({
+              id,
+            })) || [],
         } as Task;
       })
       .filter((task) => {

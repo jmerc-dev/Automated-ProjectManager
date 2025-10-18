@@ -66,23 +66,6 @@ export default function MyTasks() {
             <span className="text-lg font-bold text-[#0f6cbd] tracking-tight drop-shadow-sm select-none">
               AutoProject
             </span>
-            {/* <div className="w-full max-w-lg">
-              {project ? (
-                <h1
-                  className="text-base font-bold text-[#0f6cbd] tracking-tight bg-gradient-to-r from-[#e6f0fa] via-white to-[#f7fafd] px-3 py-1 rounded-xl shadow-sm border border-[#b3d1f7] select-none"
-                  style={{
-                    letterSpacing: "0.02em",
-                    boxShadow: "0 1px 4px 0 rgba(15,108,189,0.07)",
-                    display: "inline-block",
-                    minWidth: "120px",
-                  }}
-                >
-                  {project.name}
-                </h1>
-              ) : (
-                <span className="text-gray-400">Loading...</span>
-              )}
-            </div> */}
           </div>
           {/* Right-side Icons */}
           <div className="flex items-center justify-end gap-3 pr-4">

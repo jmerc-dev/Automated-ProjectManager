@@ -16,6 +16,7 @@ export default function AssociatedProjects({
 
   const handleCardClick = (projectId: string) => {
     navigate(`/mytasks/${projectId}`);
+    console.log("Navigating to project:", projectId);
   };
 
   return (

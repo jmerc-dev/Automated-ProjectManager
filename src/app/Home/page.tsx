@@ -39,12 +39,6 @@ export default function Home() {
 
           {/* Right-side Icons */}
           <div className="flex items-center gap-3">
-            <button className="rounded-full p-2 bg-[#e6f0fa] hover:bg-[#cbe3fa] transition-colors focus:outline-none focus:ring-2 focus:ring-[#0f6cbd]/30">
-              <img src={notifIcon} className="w-6 h-6" />
-            </button>
-            <button className="rounded-full p-2 bg-[#e6f0fa] hover:bg-[#cbe3fa] transition-colors focus:outline-none focus:ring-2 focus:ring-[#0f6cbd]/30">
-              <img src={helpIcon} className="w-6 h-6" />
-            </button>
             <NavDropdown actions={{ Logout: () => logout() }}>
               <img
                 src={user?.photoURL || ""}

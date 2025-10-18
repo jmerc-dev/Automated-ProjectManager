@@ -6,6 +6,7 @@ import { getUserById } from "../services/firestore/user";
 import { useEffect, useState } from "react";
 import type { Member } from "../types/member";
 import { getMemberByEmail } from "../services/firestore/members";
+import { useNavigate } from "react-router-dom";
 
 interface ProjectCardProps {
   project: Project;
@@ -20,6 +21,8 @@ export default function ProjectCard({
 }: ProjectCardProps) {
   const [member, setMember] = useState<Member | null>(null);
   const [ownerName, setOwnerName] = useState<string>("");
+  const navigate = useNavigate();
+
   useEffect(() => {
     async function fetchOwnerName() {
       if (project.ownerID) {
@@ -48,7 +51,16 @@ export default function ProjectCard({
       <div
         className="group flex flex-col justify-between h-full w-full border border-gray-200 bg-white rounded-2xl px-7 py-6 transition-all duration-150 cursor-pointer hover:border-[#0f6cbd] hover:bg-[#f7fafd] focus-within:border-[#0f6cbd]"
         tabIndex={0}
-        onClick={onCardClick}
+        onClick={() => {
+          if (!isAssociated) onCardClick();
+          else {
+            if (member?.level === "Leader") {
+              navigate(`/teamtasks/${project.id}`);
+            } else if (member?.level === "Member") {
+              navigate(`/mytasks/${project.id}`);
+            }
+          }
+        }}
         onKeyDown={(e) => {
           if (e.key === "Enter" || e.key === " ") onCardClick();
         }}

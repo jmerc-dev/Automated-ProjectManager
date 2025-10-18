@@ -8,6 +8,14 @@ export function formatDateTime(date: string | Date): string {
   return `${month}/${day}/${year} ${hours}:${minutes}`;
 }
 
+export function formatDate(date: string | Date): string {
+  const d = new Date(date);
+  const month = String(d.getMonth() + 1).padStart(2, "0");
+  const day = String(d.getDate()).padStart(2, "0");
+  const year = d.getFullYear();
+  return `${month}/${day}/${year}`;
+}
+
 export function addDays(date: Date, days: number): Date {
   const result = new Date(date);
   result.setDate(result.getDate() + days);

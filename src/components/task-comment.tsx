@@ -133,7 +133,7 @@ export default function TaskComment({
           </button>
         </div>
       ) : (
-        <span className="text-gray-700">{comment.text}</span>
+        <span className="text-gray-700 break-words">{comment.text}</span>
       )}
     </li>
   );

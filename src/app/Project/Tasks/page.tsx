@@ -202,7 +202,6 @@ function TasksView({ projectId }: TasksViewProps) {
             }
           }}
           actionComplete={(args) => {
-            //console.log("taskbar edited: ", String(args.requestType));
             if (args.requestType === "add") {
               getTaskIndex(projectId).then((taskIndex: number) => {
                 const newTask: Task = {
@@ -257,12 +256,7 @@ function TasksView({ projectId }: TasksViewProps) {
                 startDate: currentTaskToEdit?.current?.startDate,
                 name: currentTaskToEdit?.current?.name,
                 duration: currentTaskToEdit?.current?.duration,
-                //parentId: currentTaskToEdit?.current?.parentId,
-                //order: currentTaskToEdit?.current?.order,
               } as Task;
-
-              // console.log("Previous Task: ", previousTaskState);
-              // console.log("New Task: ", newTask);
 
               const changes = changedTaskFields(previousTaskState, newTask);
               const docId = newTask.docId;
@@ -280,20 +274,9 @@ function TasksView({ projectId }: TasksViewProps) {
                 newTask.assignedMembers?.map((m: any) => ({
                   id: m.id,
                   unit: m.unit,
+                  teamName: m.teamName,
                 })) || []
               );
-
-              // updateTask(
-              //   projectId,
-              //   String(newTask.docId),
-              //   "unit",
-              //   newTask.assignedMembers?.unit
-              // );
-
-              // Update units of members too
-              //console.log("Previous Members: ", currentTaskToEdit.current);
-              console.log("New Members: ", members);
-              console.log("Assigned Members: ", newTask.assignedMembers);
             } else if (args.requestType === "delete") {
               const deletedTasks: any = args.data;
               deletedTasks.forEach((task: any) =>
