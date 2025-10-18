@@ -1,122 +1,127 @@
-import React, { useState } from "react";
-
-// Mock data for tasks
-const tasks = [
-  {
-    id: 1,
-    description: "Design the login page UI",
-    progress: 80,
-  },
-  {
-    id: 2,
-    description: "Implement authentication logic",
-    progress: 40,
-  },
-  {
-    id: 3,
-    description: "Write unit tests for user module",
-    progress: 10,
-  },
-];
-
-function ProgressBar({ progress }: { progress: number }) {
-  return (
-    <div className="bg-gray-100 rounded-md h-3 w-full border border-gray-200 overflow-hidden shadow-sm">
-      <div
-        className="h-full rounded-md transition-all duration-300"
-        style={{
-          width: `${progress}%`,
-          background: "#0f6cbd",
-        }}
-      />
-    </div>
-  );
-}
-
-function Navbar() {
-  return (
-    <nav className="sticky top-0 z-20 w-full bg-white/80 backdrop-blur-md shadow-sm border-b border-gray-200 mb-8">
-      <div className="flex items-center justify-between px-6 py-3">
-        <span className="text-lg font-bold text-[#0f6cbd] tracking-tight select-none">
-          AutoProject
-        </span>
-        <div className="flex items-center gap-2">
-          {/* Placeholder avatar */}
-          <span className="rounded-full w-8 h-8 bg-gray-200 flex items-center justify-center text-gray-500 font-bold">
-            U
-          </span>
-        </div>
-      </div>
-    </nav>
-  );
-}
+import React, { useEffect, useState } from "react";
+import { useNavigate, useParams } from "react-router-dom";
+import notifIcon from "../../../assets/images/notification.png";
+import helpIcon from "../../../assets/images/help.png";
+import NavDropdown from "../../../components/nav-dropdown";
+import homeIcon from "../../../assets/images/home.png";
+import { useAuth } from "../../../services/firebase/auth-context";
+import TaskItem from "../../../components/task-item";
+import { listenToTasksByAssignedMember } from "../../../services/firestore/tasks";
+import type { Task } from "../../../types/task";
+import { getProjectMemberByEmail } from "../../../services/firestore/members";
+import UserTasks from "./UserTasks/page";
 
 export default function MyTasks() {
-  const [taskStates, setTaskStates] = useState(
-    tasks.map((task) => ({
-      ...task,
-      completed: task.progress === 100,
-    }))
-  );
+  const navigate = useNavigate();
+  const { user, logout } = useAuth();
+  const { projectId } = useParams();
+  const [myIdOnProject, setMyIdOnProject] = useState<string | null>(null);
+  const [activeTab, setActiveTab] = useState<"mytasks">("mytasks");
+  const [tasks, setTasks] = useState<Task[]>([]);
 
-  const handleCompleteToggle = (id: number) => {
-    setTaskStates((prev) =>
-      prev.map((task) =>
-        task.id === id
-          ? {
-              ...task,
-              completed: !task.completed,
-              progress: !task.completed ? 100 : 0,
-            }
-          : task
-      )
-    );
+  const handleHomeClick = () => {
+    navigate("/home");
   };
 
+  useEffect(() => {
+    if (projectId && myIdOnProject) {
+      const unsubscribeMembers = listenToTasksByAssignedMember(
+        projectId,
+        myIdOnProject || "",
+        (tasks) => {
+          setTasks(tasks);
+        }
+      );
+
+      return () => {
+        unsubscribeMembers();
+      };
+    }
+  }, [myIdOnProject]);
+
+  useEffect(() => {
+    if (user && projectId && user.email) {
+      getProjectMemberByEmail(projectId, user?.email).then((member) => {
+        setMyIdOnProject(member?.id || null);
+      });
+    }
+  }, [user]);
+
   return (
-    <>
-      <Navbar />
-      <div className="max-w-lg mx-auto mt-8">
-        <h2 className="mb-6 text-xl font-semibold text-gray-900">My Tasks</h2>
-        <ul className="list-none p-0 m-0">
-          {taskStates.map((task) => (
-            <li
-              key={task.id}
-              className="bg-white border border-gray-200 rounded-lg p-5 mb-4 shadow-sm flex flex-col gap-2"
+    <div className="grid bg-white [grid-template-rows:auto_1fr] overflow-hidden [grid-template-columns:auto_1fr] h-screen font-display">
+      <nav className="col-span-2 sticky top-0 z-30 w-screen container mx-auto bg-white/70 backdrop-blur-md shadow-sm border-b border-gray-200">
+        <div className="grid [grid-template-columns:56px_1fr_auto] text-black items-center min-h-[60px]">
+          {/* Home Button */}
+          <div className="flex items-center justify-center h-full border-r border-gray-200 bg-white/80">
+            <button
+              className="rounded-xl p-2 transition hover:bg-[#e6f0fa] focus:outline-none focus:ring-2 focus:ring-[#0f6cbd]/40"
+              onClick={handleHomeClick}
+              aria-label="Home"
             >
-              <div className="flex items-center gap-3">
-                <input
-                  type="checkbox"
-                  checked={task.completed}
-                  onChange={() => handleCompleteToggle(task.id)}
-                  className="accent-[#0f6cbd] w-4 h-4"
-                />
-                <span
-                  className={`font-medium text-base ${
-                    task.completed
-                      ? "text-gray-400 line-through"
-                      : "text-gray-800"
-                  }`}
-                >
-                  {task.description}
-                </span>
-              </div>
-              <ProgressBar progress={task.progress} />
-              <div className="flex justify-between items-center">
-                <span className="text-xs text-gray-500">
-                  {task.progress}% complete
-                </span>
-                <button
-                  className="text-xs text-[#0f6cbd] hover:underline"
-                  // onClick={handleShowComments} // To be implemented
-                >
-                  Comments
-                </button>
-              </div>
-            </li>
-          ))}
-        </ul>
-      </div>
-    </>
+              <img src={homeIcon} className="w-7 h-7" />
+            </button>
+          </div>
+          {/* App Name & TitleInput */}
+          <div className="flex items-center gap-6 pl-4">
+            <span className="text-lg font-bold text-[#0f6cbd] tracking-tight drop-shadow-sm select-none">
+              AutoProject
+            </span>
+          </div>
+          {/* Right-side Icons */}
+          <div className="flex items-center justify-end gap-3 pr-4">
+            <button
+              className="rounded-full p-2 bg-white/70 hover:bg-[#e6f0fa] transition shadow-sm focus:outline-none focus:ring-2 focus:ring-[#0f6cbd]/30"
+              aria-label="Notifications"
+            >
+              <img src={notifIcon} className="w-6 h-6" />
+            </button>
+            <button
+              className="rounded-full p-2 bg-white/70 hover:bg-[#e6f0fa] transition shadow-sm focus:outline-none focus:ring-2 focus:ring-[#0f6cbd]/30"
+              aria-label="Help"
+            >
+              <img src={helpIcon} className="w-6 h-6" />
+            </button>
+            <NavDropdown
+              actions={{
+                Logout: () => {
+                  logout();
+                  navigate("/");
+                },
+              }}
+            >
+              <img
+                src={user?.photoURL || ""}
+                className="rounded-full w-7 h-7 object-cover border border-gray-200 shadow-sm"
+              />
+            </NavDropdown>
+          </div>
+        </div>
+      </nav>
+      <aside className="bg-white w-screen border-b border-gray-200">
+        <div className="container mx-auto">
+          <div className="flex pt-4 pb-2 min-h-[250px]">
+            {/* Vertical Tabs */}
+            <div className="flex flex-col gap-2 pr-8 border-r border-gray-200 min-w-[140px]">
+              <button
+                className={`px-4 py-2 rounded-l-lg font-semibold text-left transition ${
+                  activeTab === "mytasks"
+                    ? "bg-[#e6f0fa] text-[#0f6cbd] border-l-4 border-[#0f6cbd]"
+                    : "bg-white text-gray-500 hover:bg-gray-100"
+                }`}
+                onClick={() => setActiveTab("mytasks")}
+              >
+                My Tasks
+              </button>
+            </div>
+            {/* Tab Content */}
+            <div className="flex-1 pl-8 pt-2">
+              {activeTab === "mytasks" && (
+                <UserTasks tasks={tasks} projectId={projectId} />
+              )}
+            </div>
+          </div>
+        </div>
+      </aside>
+    </div>
   );
 }

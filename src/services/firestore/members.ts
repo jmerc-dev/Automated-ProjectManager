@@ -90,7 +90,6 @@ export async function getMemberByEmail(
     const member = snapshot.docs.find(
       (doc) => doc.data().emailAddress === emailAddress
     );
-    console.log(member?.data());
     return member ? ({ id: member.id, ...member.data() } as Member) : null;
   } catch (e) {
     console.error("Error fetching member by email:", e);
@@ -165,6 +164,19 @@ export function onMembersSnapshot(
     callback(members);
 
     if (loadedCallback) loadedCallback(true);
+  });
+}
+
+export function getProjectMemberByEmail(
+  projectId: string,
+  emailAddress: string
+) {
+  const membersCol = collection(db, "projects", projectId, "members");
+  return getDocs(membersCol).then((snapshot) => {
+    const member = snapshot.docs.find(
+      (doc) => doc.data().emailAddress === emailAddress
+    );
+    return member ? ({ id: member.id, ...member.data() } as Member) : null;
   });
 }
 

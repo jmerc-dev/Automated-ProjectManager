@@ -247,6 +247,7 @@ export default function MembersManagement({
           open={isModalOpen}
           setIsOpen={setIsModalOpen}
           title="Add New Member"
+          isViewOnly={false}
           onClose={() => {
             setIsModalOpen(false);
             setNewFullName("");

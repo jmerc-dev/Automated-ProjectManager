@@ -19,9 +19,9 @@ function App() {
         <Route path="/project" element={<ProjectView />} />
         <Route path="/test" element={<Test />} />
         <Route path="/project/:id" element={<ProjectView />} />
-        <Route path="/mytasks/:id" element={<MyTasks />} />
-        <Route path="/teamtasks/:id" element={<TeamTasks />} />
         <Route path="/reports/:id" element={<Reports projectId={""} />} />
+        <Route path="/mytasks/:projectId" element={<MyTasks />} />
+        <Route path="/teamtasks/:projectId" element={<TeamTasks />} />
       </Routes>
     </Router>
   );

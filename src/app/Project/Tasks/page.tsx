@@ -219,7 +219,6 @@ function TasksView({ projectId }: TasksViewProps) {
             }
           }}
           actionComplete={(args) => {
-            //console.log("taskbar edited: ", String(args.requestType));
             if (args.requestType === "add") {
               getTaskIndex(projectId).then((taskIndex: number) => {
                 const newTask: Task = {
@@ -274,12 +273,7 @@ function TasksView({ projectId }: TasksViewProps) {
                 startDate: currentTaskToEdit?.current?.startDate,
                 name: currentTaskToEdit?.current?.name,
                 duration: currentTaskToEdit?.current?.duration,
-                //parentId: currentTaskToEdit?.current?.parentId,
-                //order: currentTaskToEdit?.current?.order,
               } as Task;
-
-              // console.log("Previous Task: ", previousTaskState);
-              // console.log("New Task: ", newTask);
 
               const changes = changedTaskFields(previousTaskState, newTask);
               const docId = newTask.docId;
@@ -297,6 +291,7 @@ function TasksView({ projectId }: TasksViewProps) {
                 newTask.assignedMembers?.map((m: any) => ({
                   id: m.id,
                   unit: m.unit,
+                  teamName: m.teamName,
                 })) || []
               );
               const d = ganttRef.current ?  ganttRef.current?.getCriticalTasks().reduce(

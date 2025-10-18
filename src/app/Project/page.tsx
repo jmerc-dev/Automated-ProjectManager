@@ -15,7 +15,6 @@ import {
   getProjectById,
   onProjectSnapshot,
 } from "../../services/firestore/projects";
-import TitleInput from "../../components/title-input";
 import MembersManagement from "./Members/page";
 import ProjectSettings from "./Settings/page";
 import Reports from "../Reports/Reports";

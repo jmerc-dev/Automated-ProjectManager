@@ -16,6 +16,7 @@ import {
   query,
 } from "firebase/firestore";
 import { getTaskIndex, incTaskIndex } from "./projects";
+import type { Member } from "../../types/member";
 
 export async function createTask(projectId: string, newTask: Task) {
   try {
@@ -72,7 +73,6 @@ export function listenToTasks(
     if (loadedCallback) loadedCallback(true);
   });
 }
-
 export function getCriticalPath(projectId: string, callback: (tasks: number) => void) {
   const tasksCol = doc(db, "projects", projectId);
   return onSnapshot(tasksCol, (snapshot) => {
@@ -119,6 +119,72 @@ export function getProjectEnd(
     } else {
       callback(new Date()); // fallback if no tasks
     }
+    });
+}
+
+export function listenToTaskByTeam(
+  projectId: string,
+  teamName: string,
+  callback: (tasks: Task[]) => void
+) {
+  const tasksCol = collection(db, "projects", projectId, "tasks");
+  return onSnapshot(tasksCol, (snapshot) => {
+    const tasks = snapshot.docs
+      .map((doc) => {
+        const docData = doc.data();
+        return {
+          id: doc.id,
+          docId: doc.id,
+          ...docData,
+          startDate: new Date(docData.startDate?.toDate?.()) || new Date(),
+        } as Task;
+      })
+      .filter((task) => {
+        return task.assignedMembers?.some((member) => {
+          const memberNow: any = member;
+          return memberNow.teamName === teamName;
+        });
+      });
+    callback(tasks as Task[]);
+  });
+}
+
+export function listenToTasksByAssignedMember(
+  projectId: string,
+  memberId: string,
+  callback: (tasks: Task[]) => void,
+  loadedCallback?: (loaded: boolean) => void
+) {
+  const tasksCol = collection(db, "projects", projectId, "tasks");
+  return onSnapshot(tasksCol, (snapshot) => {
+    const tasks = snapshot.docs
+      .map((doc) => {
+        const docData = doc.data();
+        //console.log("Assigned Members:", docData.assignedMembers);
+        return {
+          id: doc.id,
+          docId: doc.id,
+          ...docData,
+          startDate: docData.startDate?.toDate?.() || new Date(),
+          assignedMembers:
+            docData.assignedMembers?.map((id: string) => ({
+              id,
+            })) || [],
+        } as Task;
+      })
+      .filter((task) => {
+        //console.log("Checking task:", task.assignedMembers?.[0].id.id);
+        return task.assignedMembers?.some((member) => {
+          //console.log("Comparing member:", member.id.id, "with", memberId);
+          // make sure to fix this in the future with proper typing
+          const memberNow: any = member;
+          return memberNow.id.id === memberId;
+        });
+      });
+    //console.log("All tasks:", tasks);
+    callback(tasks as Task[]);
+
+    if (loadedCallback) loadedCallback(true);
   });
 }
 
