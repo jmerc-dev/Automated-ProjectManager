@@ -35,8 +35,6 @@ export async function createProject(project: Project, user: any) {
       updatedAt: new Date(),
       taskIndex: 0,
     });
-
-    console.log("created project successfuly: ", docRef.id);
   } catch (e) {
     console.error("Error adding project");
   }
