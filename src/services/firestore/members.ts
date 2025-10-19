@@ -87,9 +87,10 @@ export async function getMemberByEmail(
   try {
     const membersCol = collection(db, "projects", projectId, "members");
     const snapshot = await getDocs(membersCol);
-    const member = snapshot.docs.find(
-      (doc) => doc.data().emailAddress === emailAddress
-    );
+    const member = snapshot.docs.find((doc) => {
+      return doc.data().emailAddress === emailAddress;
+    });
+
     return member ? ({ id: member.id, ...member.data() } as Member) : null;
   } catch (e) {
     console.error("Error fetching member by email:", e);

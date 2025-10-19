@@ -12,11 +12,9 @@ export default function AssociatedProjects({
 }: AssociatedProjectsProps) {
   const navigate = useNavigate();
   const { user } = useAuth();
-  const userEmail = user?.email;
 
   const handleCardClick = (projectId: string) => {
     navigate(`/mytasks/${projectId}`);
-    console.log("Navigating to project:", projectId);
   };
 
   return (
