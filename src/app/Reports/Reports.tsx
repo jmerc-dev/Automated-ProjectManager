@@ -113,84 +113,101 @@ export default function Reports({ projectId }: ReportsManagementProps) {
   ];
 
   return (
-    // getCriticalPath(projectId),
-    <div
-      className="w-full p-6 space-y-8"
-      style={{ padding: "20px", border: "1px solid #ccc", borderRadius: "8px" }}
-    >
-      <h2>Project Reports</h2>
-      <p>Here is the detailed report for the project:</p>
-      <ul>
-        <li>
-          <strong>Project Name:</strong> Example Project
-        </li>
-        <li>
-          <strong>Start Date:</strong> {get_ProjectStart?.toLocaleDateString()}
-        </li>
-        <li>
-          <strong>End Date:</strong> {get_ProjectEnd?.toLocaleDateString()}
-        </li>
-        <li>
-          <strong>Status:</strong> On Track
-        </li>
-        <li>
-          <strong>Tasks Completed:</strong> 75%
-        </li>
-      </ul>
-      {/* </div>, */}
+    <div className="w-full px-8 py-6 space-y-8 bg-white rounded-2xl shadow-lg border border-gray-100">
+      <div className="mb-6">
+        <h2 className="text-2xl font-bold text-[#0f6cbd] mb-1 tracking-tight">
+          Project Reports
+        </h2>
+        <p className="text-gray-500 mb-4">Detailed report for your project:</p>
+        <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4 bg-gradient-to-r from-[#e6f0fa] via-white to-[#f7fafd] rounded-xl p-4 border border-[#b3d1f7]">
+          <div>
+            <span className="text-sm text-gray-500">Project Name</span>
+            <div className="font-bold text-[#0f6cbd] text-lg">
+              Example Project
+            </div>
+          </div>
+          <div>
+            <span className="text-sm text-gray-500">Start Date</span>
+            <div className="font-bold text-gray-700 text-lg">
+              {get_ProjectStart?.toLocaleDateString()}
+            </div>
+          </div>
+          <div>
+            <span className="text-sm text-gray-500">End Date</span>
+            <div className="font-bold text-gray-700 text-lg">
+              {get_ProjectEnd?.toLocaleDateString()}
+            </div>
+          </div>
+          <div>
+            <span className="text-sm text-gray-500">Status</span>
+            <div className="font-bold text-green-600 text-lg">On Track</div>
+          </div>
+          <div>
+            <span className="text-sm text-gray-500">Tasks Completed</span>
+            <div className="font-bold text-blue-600 text-lg">75%</div>
+          </div>
+        </div>
+      </div>
 
-      <div className="w-full p-6 space-y-8">
-        {/* KPI Summary */}
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
-          {kpis.map((kpi, index) => (
-            <div key={index} className="bg-white rounded-xl shadow-md p-4">
-              <p className="text-sm text-gray-500">{kpi.title}</p>
-              <p className="text-2xl font-semibold mt-1">
-                {kpi.value}
-                <span className="text-base text-gray-500 ml-1">{kpi.unit}</span>
-              </p>
-              {kpi.title === "Overall Progress" && (
-                <ProgressBar value={kpi.value} />
-              )}
+      {/* KPI Summary */}
+      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
+        {kpis.map((kpi, index) => (
+          <div
+            key={index}
+            className="bg-gradient-to-br from-[#e6f0fa] to-white rounded-xl shadow border border-[#b3d1f7] p-5 flex flex-col items-start"
+          >
+            <span className="text-xs text-gray-500 mb-1 font-medium tracking-wide">
+              {kpi.title}
+            </span>
+            <span className="text-3xl font-bold text-[#0f6cbd] mb-2">
+              {kpi.value}
+              <span className="text-base text-gray-500 ml-1">{kpi.unit}</span>
+            </span>
+            {kpi.title === "Overall Progress" && (
+              <ProgressBar value={kpi.value} />
+            )}
+          </div>
+        ))}
+      </div>
+
+      {/* Task Completion Trend Chart */}
+      <div className="bg-gradient-to-br from-[#e6f0fa] to-white rounded-xl shadow border border-[#b3d1f7] p-6">
+        <h3 className="text-lg font-bold text-[#0f6cbd] mb-4">
+          Task Completion Trend
+        </h3>
+        <div className="h-64">
+          <ResponsiveContainer width="100%" height="100%">
+            <BarChart data={chartData}>
+              <CartesianGrid strokeDasharray="3 3" />
+              <XAxis dataKey="name" tick={{ fontSize: 12 }} />
+              <YAxis tick={{ fontSize: 12 }} />
+              <Tooltip />
+              <Bar dataKey="tasks" fill="#0f6cbd" radius={[6, 6, 0, 0]} />
+            </BarChart>
+          </ResponsiveContainer>
+        </div>
+      </div>
+
+      {/* Milestone Summary */}
+      <div className="bg-gradient-to-br from-[#e6f0fa] to-white rounded-xl shadow border border-[#b3d1f7] p-6">
+        <h3 className="text-lg font-bold text-[#0f6cbd] mb-4">
+          Project Milestones Summary
+        </h3>
+        <div className="space-y-4">
+          {milestoneData.map((milestone, index) => (
+            <div key={index} className="border-b border-gray-200 pb-3">
+              <div className="flex justify-between items-center mb-1">
+                <span className="font-semibold text-gray-700">
+                  {milestone.name}
+                </span>
+                <span className="text-xs text-gray-500">{milestone.date}</span>
+              </div>
+              <ProgressBar value={milestone.progress} />
+              <span className="text-xs text-gray-500 mt-1 block">
+                {milestone.progress}% complete
+              </span>
             </div>
           ))}
-        </div>
-
-        {/* Gantt / Progress Overview */}
-        <div className="bg-white rounded-xl shadow-md p-4">
-          <h3 className="text-lg font-semibold mb-4">Task Completion Trend</h3>
-          <div className="h-72">
-            <ResponsiveContainer width="100%" height="100%">
-              <BarChart data={chartData}>
-                <CartesianGrid strokeDasharray="3 3" />
-                <XAxis dataKey="name" />
-                <YAxis />
-                <Tooltip />
-                <Bar dataKey="tasks" fill="#2563eb" radius={[4, 4, 0, 0]} />
-              </BarChart>
-            </ResponsiveContainer>
-          </div>
-        </div>
-
-        {/* Milestone Summary */}
-        <div className="bg-white rounded-xl shadow-md p-4">
-          <h3 className="text-lg font-semibold mb-4">
-            Project Milestones Summary
-          </h3>
-          <div className="space-y-4">
-            {milestoneData.map((milestone, index) => (
-              <div key={index} className="border-b pb-2">
-                <div className="flex justify-between">
-                  <p className="font-medium">{milestone.name}</p>
-                  <p className="text-sm text-gray-500">{milestone.date}</p>
-                </div>
-                <ProgressBar value={milestone.progress} />
-                <p className="text-xs text-gray-500 mt-1">
-                  {milestone.progress}% complete
-                </p>
-              </div>
-            ))}
-          </div>
         </div>
       </div>
     </div>

@@ -18,6 +18,8 @@
     "@syncfusion/ej2-react-gantt": "^31.1.18",
     "@tailwindcss/vite": "^4.1.11",
     "firebase": "^12.1.0",
+    "html2canvas": "^1.4.1",
+    "jspdf": "^3.0.3",
     "react": "^18.1.1",
     "react-dom": "^18.1.1",
     "react-router-dom": "^7.9.1",
