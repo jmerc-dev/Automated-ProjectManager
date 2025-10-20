@@ -48,9 +48,13 @@ export default function Projects() {
 
     return () => {
       unsubscribeProjectsbyMemberEmail();
-      // unsubscribeProjectsByOwner();
+      //unsubscribeProjectsByOwner();
     };
   }, [user?.uid, user?.email]);
+
+  useEffect(() => {
+    console.log("Associated Projects:", associatedProjects);
+  }, [associatedProjects]);
 
   const handleCreateProject = () => {
     const newProject = {

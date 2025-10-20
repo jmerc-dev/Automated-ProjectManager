@@ -77,7 +77,7 @@ export async function getProjectById(projectId: string) {
   }
 }
 
-export async function onProjectByOwnerSnapshot(
+export function onProjectByOwnerSnapshot(
   userId: string | undefined,
   callback: (projects: Project[]) => void
 ) {

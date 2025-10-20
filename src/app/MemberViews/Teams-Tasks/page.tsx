@@ -12,6 +12,9 @@ import { getMemberByEmail } from "../../../services/firestore/members";
 import type { Task } from "../../../types/task";
 import { listenToTaskByTeam } from "../../../services/firestore/tasks";
 import type { Project } from "../../../types/project";
+import type { User } from "firebase/auth";
+import { getUserById } from "../../../services/firestore/user";
+import { getProjectById } from "../../../services/firestore/projects";
 
 export default function TeamTasks() {
   const [activeTab, setActiveTab] = useState<"myteam-tasks" | "other-reports">(
@@ -20,6 +23,7 @@ export default function TeamTasks() {
 
   const [me, setMe] = useState<Member | null>(null);
   const [teamTasks, setTeamTasks] = useState<Task[]>([]);
+  const [projectOwner, setProjectOwner] = useState<User | null>(null);
 
   const projectId = useParams().projectId;
   const [project, setProject] = useState<Project | null>(null);
@@ -38,11 +42,17 @@ export default function TeamTasks() {
     });
 
     if (projectId && me?.teamName) {
+      console.log("here");
       const unsubscribeToTeamTasks = listenToTaskByTeam(
         projectId,
         me.teamName,
         setTeamTasks
       );
+
+      getProjectById(projectId).then((proj) => {
+        setProject(proj);
+      });
+
       return () => {
         unsubscribeToTeamTasks();
       };
@@ -50,8 +60,14 @@ export default function TeamTasks() {
   }, [projectId, me?.teamName]);
 
   useEffect(() => {
-    console.log("Team Tasks: ", teamTasks);
-  }, [teamTasks]);
+    if (project) {
+      getUserById(project.ownerID).then((ownerUser) => {
+        if (ownerUser) {
+          setProjectOwner(ownerUser);
+        }
+      });
+    }
+  }, [project]);
 
   /*
   
@@ -114,20 +130,43 @@ export default function TeamTasks() {
       </nav>
       {/* Vertical Tabs Sidebar */}
       <aside className="bg-white w-screen border-b border-gray-200">
-        <div className="container mx-auto">
-          <div className="flex pt-4 pb-2 min-h-[250px]">
+        <div className="container mx-auto h-full">
+          <div className="flex pt-4 pb-2 min-h-[250px] h-full">
             {/* Vertical Tabs */}
             <div className="flex flex-col gap-2 pr-8 border-r border-gray-200 min-w-[140px]">
-              <button
-                className={`px-4 py-2 rounded-l-lg font-semibold text-left transition ${
-                  activeTab === "myteam-tasks"
-                    ? "bg-[#e6f0fa] text-[#0f6cbd] border-l-4 border-[#0f6cbd]"
-                    : "bg-white text-gray-500 hover:bg-gray-100"
-                }`}
-                onClick={() => setActiveTab("myteam-tasks")}
-              >
-                My Team Tasks
-              </button>
+              <div>
+                <button
+                  className={`px-4 py-2 rounded-l-lg font-semibold text-left transition ${
+                    activeTab === "myteam-tasks"
+                      ? "bg-[#e6f0fa] text-[#0f6cbd] border-l-4 border-[#0f6cbd]"
+                      : "bg-white text-gray-500 hover:bg-gray-100"
+                  }`}
+                  onClick={() => setActiveTab("myteam-tasks")}
+                >
+                  My Team Tasks
+                </button>
+              </div>
+
+              <div className="flex items-center gap-3 mt-auto">
+                <div className="flex flex-col">
+                  <span className="text-lg font-semibold text-[#0f6cbd] leading-normal">
+                    {project?.name}
+                  </span>
+                  <div className="mt-1 flex items-center gap-2 text-sm text-gray-600">
+                    <img
+                      src={projectOwner?.photoURL || ""}
+                      alt={projectOwner?.displayName || "Owner"}
+                      className="w-6 h-6 rounded-full object-cover border border-gray-200"
+                    />
+                    <span className="font-medium">
+                      {projectOwner?.displayName}
+                    </span>
+                    <span className="text-xs text-gray-400">
+                      • Project Owner
+                    </span>
+                  </div>
+                </div>
+              </div>
             </div>
             {/* Tab Content */}
             <div className="flex-1 pl-8 pt-2">
