@@ -19,6 +19,12 @@ export default function MyTeamTasks({ tasks }: MyTeamTasksProps) {
   //   tasks.reduce((sum, t) => sum + t.progress, 0) / tasks.length
   // );
 
+  /*
+    TODO:
+    - Implement clickable tasks so that it shows modal with task details, comments, progress control, approve button, attachments(optional).
+  
+  */
+
   return (
     <>
       {/* Total Progress Bar */}
