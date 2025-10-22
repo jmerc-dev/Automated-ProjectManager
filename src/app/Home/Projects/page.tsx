@@ -126,6 +126,7 @@ export default function Projects() {
         onClose={() => setIsModalOpen(false)}
         onConfirm={handleCreateProject}
         title={"New Project"}
+        isViewOnly={false}
       >
         <form>
           <div className="flex flex-col">

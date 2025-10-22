@@ -27,7 +27,6 @@ export default function TaskCommentsModal({
   const [modalCommentInput, setModalCommentInput] = useState("");
 
   function handleAddComment() {
-    console.log("Adding comment:", modalCommentInput);
     if (modalCommentInput.trim() && projectId && user) {
       addCommentToTask(projectId, taskId, {
         authorName: user?.displayName || "Unknown",
@@ -62,7 +61,7 @@ export default function TaskCommentsModal({
       onConfirm={() => setShowCommentsModal(false)}
       isViewOnly={true}
     >
-      <div className="h-[70vh] flex flex-col justify-between">
+      <div className="h-[70vh] flex flex-col justify-between min-w-[400px] max-w-md">
         {comments.length === 0 ? (
           <p className="text-gray-500 text-sm italic">No comments yet.</p>
         ) : (

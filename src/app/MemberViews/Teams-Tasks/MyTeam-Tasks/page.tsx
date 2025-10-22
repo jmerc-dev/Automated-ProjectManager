@@ -1,6 +1,8 @@
 import { useState } from "react";
 import type { Task } from "../../../../types/task";
 import TaskItemLeader from "../../../../components/tl-task-item";
+import TaskModal from "../../../../components/TaskModal/task-modal";
+import { Dialog } from "@headlessui/react";
 
 interface MyTeamTasksProps {
   tasks: Task[];
@@ -8,6 +10,13 @@ interface MyTeamTasksProps {
 
 export default function MyTeamTasks({ tasks }: MyTeamTasksProps) {
   const [sortOrder, setSortOrder] = useState<"asc" | "desc">("asc");
+
+  const [isModalOpen, setIsModalOpen] = useState(false);
+
+  function handleTaskItemClick() {
+    setIsModalOpen(true);
+  }
+
   // Sort tasks by due date
   // const sortedTasks = [...tasks].sort((a, b) => {
   //   const dateA = new Date(a.due).getTime();
@@ -109,11 +118,23 @@ export default function MyTeamTasks({ tasks }: MyTeamTasksProps) {
           </thead>
           <tbody>
             {tasks.map((task, idx) => (
-              <TaskItemLeader key={task.docId} task={task} idx={idx} />
+              <TaskItemLeader
+                key={task.docId}
+                task={task}
+                idx={idx}
+                onClick={handleTaskItemClick}
+              />
             ))}
           </tbody>
         </table>
       </div>
+      <TaskModal
+        isOpen={isModalOpen}
+        setIsOpen={setIsModalOpen}
+        onClose={() => {
+          setIsModalOpen(false);
+        }}
+      />
     </>
   );
 }

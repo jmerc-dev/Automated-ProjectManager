@@ -1,0 +1,68 @@
+import Modal from "../modal";
+import { useState } from "react";
+import type { Dispatch, SetStateAction } from "react";
+import { Fragment } from "react";
+
+interface TaskModalProps {
+  isOpen: boolean;
+  setIsOpen: Dispatch<SetStateAction<boolean>>;
+  onClose: () => void;
+}
+
+export default function TaskModal({
+  isOpen,
+  setIsOpen,
+  onClose,
+}: TaskModalProps) {
+  const [activeTab, setActiveTab] = useState<"details" | "comments">("details");
+
+  return (
+    <Modal
+      open={isOpen}
+      setIsOpen={setIsOpen}
+      onClose={onClose}
+      onConfirm={() => {}}
+      title={"Task Sample"}
+      isViewOnly={true}
+    >
+      <div className="w-[700px] flex h-[400px]">
+        <div className="flex flex-col w-40 border-r pr-2 mr-4 gap-1">
+          <button
+            className={`px-4 py-2 text-left font-semibold rounded-lg transition border-l-4 ${
+              activeTab === "details"
+                ? "border-[#0f6cbd] bg-[#e6f0fa] text-[#0f6cbd]"
+                : "border-transparent text-gray-500 hover:bg-[#e6f0fa] hover:text-[#0f6cbd]"
+            }`}
+            onClick={() => setActiveTab("details")}
+          >
+            Details
+          </button>
+          <button
+            className={`px-4 py-2 text-left font-semibold rounded-lg transition border-l-4 ${
+              activeTab === "comments"
+                ? "border-[#0f6cbd] bg-[#e6f0fa] text-[#0f6cbd]"
+                : "border-transparent text-gray-500 hover:bg-[#e6f0fa] hover:text-[#0f6cbd]"
+            }`}
+            onClick={() => setActiveTab("comments")}
+          >
+            Comments
+          </button>
+        </div>
+        <div className="flex-1 pl-2">
+          {activeTab === "details" && (
+            <div>
+              {/* Details content here */}
+              <p className="text-gray-700">Task details go here.</p>
+            </div>
+          )}
+          {activeTab === "comments" && (
+            <div>
+              {/* Comments content here */}
+              <p className="text-gray-700">Task comments go here.</p>
+            </div>
+          )}
+        </div>
+      </div>
+    </Modal>
+  );
+}

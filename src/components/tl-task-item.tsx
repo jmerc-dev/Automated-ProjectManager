@@ -1,19 +1,31 @@
 import type { Timestamp } from "firebase/firestore";
 import type { Task } from "../types/task";
 import { formatDate, formatDateTime } from "../util/date";
+import TaskModal from "./TaskModal/task-modal";
+import { useEffect, useState } from "react";
 
 interface TaskItemLeaderProps {
   task: Task;
   idx: number;
+  onClick: () => void;
 }
 
-export default function TaskItemLeader({ task, idx }: TaskItemLeaderProps) {
+export default function TaskItemLeader({
+  task,
+  idx,
+  onClick,
+}: TaskItemLeaderProps) {
+  function handleClick() {
+    onClick();
+  }
+
   return (
     <tr
       key={task.docId}
       className={`transition ${
         idx % 2 === 0 ? "bg-white" : "bg-[#f7fafd]"
       } hover:bg-gray-300 cursor-pointer`}
+      onClick={handleClick}
     >
       <td className="px-6 py-4 font-medium text-[#0f6cbd] text-base rounded-l-xl">
         {task.name}

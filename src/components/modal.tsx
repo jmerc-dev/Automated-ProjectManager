@@ -1,5 +1,5 @@
 import { createPortal } from "react-dom";
-import type { Dispatch, SetStateAction } from "react";
+import { useEffect, type Dispatch, type SetStateAction } from "react";
 
 interface ModalChildren {
   children: React.ReactNode;
@@ -22,18 +22,25 @@ export default function Modal({
 }: ModalChildren) {
   if (!open) return null;
 
+  useEffect(() => {
+    console.log("isOpen", open);
+  }, [open]);
+
   return createPortal(
     <>
       {/* Blur effect and overlay */}
       <div className="fixed z-40 top-0 left-0 right-0 bottom-0 bg-[rgb(0,0,0,.2)] pointer-events-auto transition-all duration-300 shadow-2xl"></div>
       {/* Modal content */}
-      <div className="fixed z-50 bg-white top-1/2 left-1/2 -translate-y-1/2 -translate-x-1/2 min-w-[340px] max-w-lg w-full p-6 border-1 border-[#0f6cbd] border-opacity-20 rounded-2xl shadow-2xl flex flex-col gap-4 animate-modal-pop">
-        <div className="mb-2 text-2xl font-bold text-[#0f6cbd] tracking-tight drop-shadow">
+      <div className="fixed z-50 bg-white top-1/2 left-1/2 -translate-y-1/2 -translate-x-1/2 min-w-[340px] w-auto p-6 border-1 border-[#0f6cbd] border-opacity-20 rounded-2xl shadow-2xl flex flex-col gap-4 animate-modal-pop">
+        <div className="mb-2 text-2xl font-bold text-[#0f6cbd] tracking-tight drop-shadow w-auto">
           <div>{title}</div>
           {isViewOnly && (
             <div>
               <button
-                onClick={onClose}
+                onClick={() => {
+                  onClose();
+                  setIsOpen(false);
+                }}
                 className="absolute top-0 right-0 text-gray-400 hover:text-gray-600 focus:outline-none"
               >
                 <svg
