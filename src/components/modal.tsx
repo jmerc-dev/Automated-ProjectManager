@@ -22,10 +22,6 @@ export default function Modal({
 }: ModalChildren) {
   if (!open) return null;
 
-  useEffect(() => {
-    console.log("isOpen", open);
-  }, [open]);
-
   return createPortal(
     <>
       {/* Blur effect and overlay */}

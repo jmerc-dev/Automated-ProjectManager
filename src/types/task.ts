@@ -1,4 +1,5 @@
 import { Timestamp } from "firebase/firestore";
+import type { GanttMember } from "./member";
 
 export interface Task {
   id: string;
@@ -9,7 +10,7 @@ export interface Task {
   duration: number;
   parentId?: string;
   dependency: string | null;
-  assignedMembers?: string[] | null;
+  assignedMembers?: GanttMember[] | null;
   createdAt?: Date | Timestamp;
   updatedAt?: Date | Timestamp;
   order: number;

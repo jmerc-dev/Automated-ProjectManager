@@ -1,20 +1,30 @@
 import Modal from "../modal";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import type { Dispatch, SetStateAction } from "react";
-import { Fragment } from "react";
+import TaskDetailsPage from "./Details/page";
+import TaskCommentsPage from "./Comments/page";
+import type { Task } from "../../types/task";
 
 interface TaskModalProps {
   isOpen: boolean;
   setIsOpen: Dispatch<SetStateAction<boolean>>;
   onClose: () => void;
+  task: Task;
+  projectId: string;
 }
 
 export default function TaskModal({
   isOpen,
   setIsOpen,
   onClose,
+  task,
+  projectId,
 }: TaskModalProps) {
   const [activeTab, setActiveTab] = useState<"details" | "comments">("details");
+
+  useEffect(() => {
+    console.log("TaskModal opened for task:", task);
+  }, [task]);
 
   return (
     <Modal
@@ -22,7 +32,7 @@ export default function TaskModal({
       setIsOpen={setIsOpen}
       onClose={onClose}
       onConfirm={() => {}}
-      title={"Task Sample"}
+      title={task.name}
       isViewOnly={true}
     >
       <div className="w-[700px] flex h-[400px]">
@@ -52,13 +62,13 @@ export default function TaskModal({
           {activeTab === "details" && (
             <div>
               {/* Details content here */}
-              <p className="text-gray-700">Task details go here.</p>
+              <TaskDetailsPage task={task} projectId={projectId} />
             </div>
           )}
           {activeTab === "comments" && (
             <div>
               {/* Comments content here */}
-              <p className="text-gray-700">Task comments go here.</p>
+              <TaskCommentsPage projectId={projectId} taskId={task.id} />
             </div>
           )}
         </div>

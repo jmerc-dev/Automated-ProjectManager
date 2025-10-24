@@ -42,7 +42,6 @@ export default function TeamTasks() {
     });
 
     if (projectId && me?.teamName) {
-      console.log("here");
       const unsubscribeToTeamTasks = listenToTaskByTeam(
         projectId,
         me.teamName,
@@ -170,8 +169,8 @@ export default function TeamTasks() {
             </div>
             {/* Tab Content */}
             <div className="flex-1 pl-8 pt-2">
-              {activeTab === "myteam-tasks" && (
-                <MyTeamTasks tasks={teamTasks} />
+              {activeTab === "myteam-tasks" && projectId && (
+                <MyTeamTasks tasks={teamTasks} projectId={projectId} />
               )}
             </div>
           </div>

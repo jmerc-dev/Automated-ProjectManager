@@ -2,18 +2,20 @@ import { useState } from "react";
 import type { Task } from "../../../../types/task";
 import TaskItemLeader from "../../../../components/tl-task-item";
 import TaskModal from "../../../../components/TaskModal/task-modal";
-import { Dialog } from "@headlessui/react";
 
 interface MyTeamTasksProps {
   tasks: Task[];
+  projectId: string;
 }
 
-export default function MyTeamTasks({ tasks }: MyTeamTasksProps) {
+export default function MyTeamTasks({ tasks, projectId }: MyTeamTasksProps) {
   const [sortOrder, setSortOrder] = useState<"asc" | "desc">("asc");
 
   const [isModalOpen, setIsModalOpen] = useState(false);
+  const [selectedTask, setSelectedTask] = useState<Task | null>(null);
 
-  function handleTaskItemClick() {
+  function handleTaskItemClick(task: Task) {
+    setSelectedTask(task);
     setIsModalOpen(true);
   }
 
@@ -122,19 +124,24 @@ export default function MyTeamTasks({ tasks }: MyTeamTasksProps) {
                 key={task.docId}
                 task={task}
                 idx={idx}
-                onClick={handleTaskItemClick}
+                onClick={() => handleTaskItemClick(task)}
               />
             ))}
           </tbody>
         </table>
       </div>
-      <TaskModal
-        isOpen={isModalOpen}
-        setIsOpen={setIsModalOpen}
-        onClose={() => {
-          setIsModalOpen(false);
-        }}
-      />
+      {selectedTask && (
+        <TaskModal
+          isOpen={isModalOpen}
+          setIsOpen={setIsModalOpen}
+          onClose={() => {
+            setIsModalOpen(false);
+            selectedTask && setSelectedTask(null);
+          }}
+          projectId={projectId}
+          task={selectedTask}
+        />
+      )}
     </>
   );
 }

@@ -51,6 +51,26 @@ export async function getAllTasks(projectId: string) {
   return tasks as Task[];
 }
 
+export function listenToTask(
+  projectId: string,
+  taskId: string,
+  callback: (task: Task | null) => void
+) {
+  const taskDoc = doc(db, "projects", projectId, "tasks", String(taskId));
+  return onSnapshot(taskDoc, (doc) => {
+    const docData = doc.data();
+    const task = doc.exists()
+      ? ({
+          id: doc.id,
+          docId: doc.id,
+          ...docData,
+          startDate: docData?.startDate?.toDate?.() || new Date(),
+        } as Task)
+      : null;
+    callback(task);
+  });
+}
+
 export function listenToTasks(
   projectId: string,
   callback: (tasks: Task[]) => void,
@@ -73,7 +93,10 @@ export function listenToTasks(
     if (loadedCallback) loadedCallback(true);
   });
 }
-export function getCriticalPath(projectId: string, callback: (tasks: number) => void) {
+export function getCriticalPath(
+  projectId: string,
+  callback: (tasks: number) => void
+) {
   const tasksCol = doc(db, "projects", projectId);
   return onSnapshot(tasksCol, (snapshot) => {
     const tasks = snapshot.data()?.critical || 0;
@@ -84,7 +107,10 @@ export function getCriticalPath(projectId: string, callback: (tasks: number) => 
 }
 export var getCriticalTasks = 0;
 
-export function getProjectStart(projectId: string, callback: (startDate: Date) => void) {
+export function getProjectStart(
+  projectId: string,
+  callback: (startDate: Date) => void
+) {
   const tasksRef = collection(db, "projects", projectId, "tasks");
   const q = query(tasksRef, orderBy("startDate", "asc"), limit(1));
   return onSnapshot(q, (snapshot) => {
@@ -107,19 +133,19 @@ export function getProjectEnd(
   return onSnapshot(q, (snapshot) => {
     if (!snapshot.empty) {
       const doc = snapshot.docs[0];
-       const data = doc.data();
-       const startDate: Date = data?.startDate?.toDate?.() || new Date();
-       const duration: number = data?.duration || 0;
+      const data = doc.data();
+      const startDate: Date = data?.startDate?.toDate?.() || new Date();
+      const duration: number = data?.duration || 0;
 
-       // 🔹 Compute end date by adding duration (in days)
-       const endDate = new Date(startDate);
-       endDate.setDate(endDate.getDate() + (duration!=0 ? duration-1 : 0));
+      // 🔹 Compute end date by adding duration (in days)
+      const endDate = new Date(startDate);
+      endDate.setDate(endDate.getDate() + (duration != 0 ? duration - 1 : 0));
 
-       callback(endDate);
+      callback(endDate);
     } else {
       callback(new Date()); // fallback if no tasks
     }
-    });
+  });
 }
 
 export function listenToTaskByTeam(
@@ -337,10 +363,7 @@ export async function updateTaskMembers(
   });
 }
 
-export async function updateCriticalTasks(
-  projectId: string,
-  duration: number,
-) {
+export async function updateCriticalTasks(projectId: string, duration: number) {
   const docRef = doc(db, "projects", projectId);
   await updateDoc(docRef, {
     critical: duration,

@@ -7,7 +7,7 @@ import {
   deleteMember,
   updateMember,
 } from "../../../services/firestore/members";
-import { onMembersSnapshot } from "../../../services/firestore/members";
+import { listenToProjectMembers } from "../../../services/firestore/members";
 import {
   addTeam,
   deleteTeam,
@@ -32,7 +32,7 @@ export default function MembersManagement({
 
   useEffect(() => {
     const unsubscribeTeams = onTeamsSnapshot(projectId, setTeams);
-    const unsubscribeMember = onMembersSnapshot(projectId, setMembers);
+    const unsubscribeMember = listenToProjectMembers(projectId, setMembers);
     return () => {
       unsubscribeMember();
       unsubscribeTeams();

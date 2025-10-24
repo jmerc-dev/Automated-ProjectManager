@@ -151,7 +151,7 @@ export async function deleteMember(
   }
 }
 
-export function onMembersSnapshot(
+export function listenToProjectMembers(
   projectId: string,
   callback: (members: Member[]) => void,
   loadedCallback?: (loaded: boolean) => void

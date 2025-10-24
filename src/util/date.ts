@@ -21,3 +21,9 @@ export function addDays(date: Date, days: number): Date {
   result.setDate(result.getDate() + days);
   return result;
 }
+
+export function daysLeft(endDate: Date): number {
+  const today = new Date();
+  const timeDiff = endDate.getTime() - today.getTime();
+  return Math.ceil(timeDiff / (1000 * 3600 * 24));
+}
