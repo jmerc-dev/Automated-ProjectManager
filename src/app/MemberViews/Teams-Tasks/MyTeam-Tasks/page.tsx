@@ -1,7 +1,8 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import type { Task } from "../../../../types/task";
 import TaskItemLeader from "../../../../components/tl-task-item";
 import TaskModal from "../../../../components/TaskModal/task-modal";
+import { addDays } from "../../../../util/date";
 
 interface MyTeamTasksProps {
   tasks: Task[];
@@ -13,28 +14,33 @@ export default function MyTeamTasks({ tasks, projectId }: MyTeamTasksProps) {
 
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [selectedTask, setSelectedTask] = useState<Task | null>(null);
+  const [totalProgress, setTotalProgress] = useState<number>(0);
 
   function handleTaskItemClick(task: Task) {
     setSelectedTask(task);
     setIsModalOpen(true);
   }
 
+  useEffect(() => {
+    // Calculate total progress whenever tasks change
+    if (tasks.length > 0) {
+      const progress = Math.round(
+        tasks.reduce((sum, t) => sum + t.progress, 0) / tasks.length
+      );
+      setTotalProgress(progress);
+    } else {
+      setTotalProgress(0);
+    }
+  }, [tasks]);
+
   // Sort tasks by due date
   // const sortedTasks = [...tasks].sort((a, b) => {
-  //   const dateA = new Date(a.due).getTime();
-  //   const dateB = new Date(b.due).getTime();
-  //   return sortOrder === "asc" ? dateA - dateB : dateB - dateA;
+  //   if (b.startDate instanceof Date || a.startDate instanceof Date) {
+  //     const dateA = new Date(addDays(a.startDate, a.duration)).getTime();
+  //     const dateB = new Date(addDays(b.startDate, b.duration)).getTime();
+  //     return sortOrder === "asc" ? dateA - dateB : dateB - dateA;
+  //   }
   // });
-
-  // const totalProgress = Math.round(
-  //   tasks.reduce((sum, t) => sum + t.progress, 0) / tasks.length
-  // );
-
-  /*
-    TODO:
-    - Implement clickable tasks so that it shows modal with task details, comments, progress control, approve button, attachments(optional).
-  
-  */
 
   return (
     <>
@@ -49,7 +55,7 @@ export default function MyTeamTasks({ tasks, projectId }: MyTeamTasksProps) {
           </span>
         </div>
         <div className="w-full h-3 bg-gray-100 rounded-full overflow-hidden border border-[#e6f0fa]">
-          {/* <div
+          <div
             className={`h-full rounded-full ${
               totalProgress === 100
                 ? "bg-gradient-to-r from-green-400 to-green-600"
@@ -58,7 +64,7 @@ export default function MyTeamTasks({ tasks, projectId }: MyTeamTasksProps) {
                 : "bg-gradient-to-r from-yellow-300 to-yellow-500"
             }`}
             style={{ width: `${totalProgress}%` }}
-          /> */}
+          />
         </div>
       </div>
       {/* Filters and Search */}
