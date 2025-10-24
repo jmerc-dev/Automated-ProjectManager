@@ -15,6 +15,10 @@ import {
 import type { DocumentData } from "firebase/firestore";
 import type { Member } from "../../types/member";
 import type { GanttMember } from "../../types/member";
+import type { Notification } from "../../types/notification";
+import { addNotification } from "./notifications";
+import { NotificationType } from "../../types/notification";
+import { getProjectById } from "./projects";
 
 const membersCollection = (projectId: string) =>
   collection(db, `projects/${projectId}/members`);
@@ -27,6 +31,17 @@ export async function addMember(
     const memberRef = membersCollection(projectId);
     const docRef = await addDoc(memberRef, { ...member, unit: 100 });
     updateProjectMembersField(projectId, "add", member.emailAddress);
+
+    getProjectById(projectId).then((project) => {
+      addNotification(projectId, {
+        projectId: projectId,
+        message: `${member.emailAddress} has been added as a member to the project ${project?.name} as a ${member.level}.`,
+        type: NotificationType.MemberAdded,
+        isMemberSpecific: true,
+        targetMembers: [member.emailAddress],
+      } as Notification);
+    });
+
     return docRef.id;
   } catch (e) {
     console.error("Error creating member:", e);
@@ -62,8 +77,6 @@ async function updateProjectMembersField(
           updatedAt: new Date(),
         });
       });
-
-      console.log("Project members updated successfully");
       return;
     } else {
       updateDoc(doc(db, "projects", projectId), {

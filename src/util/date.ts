@@ -27,3 +27,15 @@ export function daysLeft(endDate: Date): number {
   const timeDiff = endDate.getTime() - today.getTime();
   return Math.ceil(timeDiff / (1000 * 3600 * 24));
 }
+
+export function getRelativeTime(date: Date): string {
+  const now = new Date();
+  const diff = Math.floor((now.getTime() - date.getTime()) / 1000); // seconds
+
+  if (diff < 60) return `${diff} sec ago`;
+  if (diff < 3600) return `${Math.floor(diff / 60)} min ago`;
+  if (diff < 86400) return `${Math.floor(diff / 3600)} hr ago`;
+  return `${Math.floor(diff / 86400)} day${
+    Math.floor(diff / 86400) > 1 ? "s" : ""
+  } ago`;
+}

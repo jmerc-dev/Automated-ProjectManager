@@ -40,16 +40,6 @@ interface TasksViewProps {
   projectId?: string;
 }
 
-// const sampleMembers: GanttMember[] = [
-//   {
-//     id: "XoscICPVHZDAzqPIXN8R",
-//     name: "Justine Moiselle Mercado",
-//     role: "Writer",
-//     unit: 100,
-//     teamName: "4YWEABsyIheIuYJV192R",
-//   },
-// ];
-
 function TasksView({ projectId }: TasksViewProps) {
   const [tasks, setTasks] = useState<Task[]>([]);
   const ganttRef = useRef<GanttComponent>(null);
@@ -79,10 +69,6 @@ function TasksView({ projectId }: TasksViewProps) {
       unsubscribeTasks();
     };
   }, [projectId]);
-
-  useEffect(() => {
-    console.log("Members updated: ", members);
-  }, [membersLoaded]);
 
   const taskFields: any = {
     id: "id",
@@ -294,15 +280,17 @@ function TasksView({ projectId }: TasksViewProps) {
                   teamName: m.teamName,
                 })) || []
               );
-              const d = ganttRef.current ?  ganttRef.current?.getCriticalTasks().reduce(
-                (sum, item) => sum + (item.ganttProperties?.duration || 0),
-                0) : 0;
-              updateCriticalTasks(
-                projectId,
-                d
-              );
+              const d = ganttRef.current
+                ? ganttRef.current
+                    ?.getCriticalTasks()
+                    .reduce(
+                      (sum, item) =>
+                        sum + (item.ganttProperties?.duration || 0),
+                      0
+                    )
+                : 0;
+              updateCriticalTasks(projectId, d);
               console.log("Total Critical Duration: ", d);
-              
 
               // updateTask(
               //   projectId,

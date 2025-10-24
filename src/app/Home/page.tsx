@@ -7,15 +7,18 @@ import Projects from "./Projects/page";
 import { useAuth } from "../../services/firebase/auth-context";
 import NavDropdown from "../../components/nav-dropdown";
 
+import { useState } from "react";
+import NotificationItem from "../../components/notification-item";
+import NotifDropdown from "../../components/notif-dropdown";
+
 export default function Home() {
   const navigate = useNavigate();
-
   const { user, logout } = useAuth();
+  const [notifOpen, setNotifOpen] = useState(false);
 
   if (!auth.currentUser) {
     navigate("/");
   }
-
   if (!user) {
     console.log("No user logged in");
     navigate("/");
@@ -39,6 +42,9 @@ export default function Home() {
 
           {/* Right-side Icons */}
           <div className="flex items-center gap-3">
+            {/* Notification Dropdown */}
+
+            {/* User Dropdown */}
             <NavDropdown actions={{ Logout: () => logout() }}>
               <img
                 src={user?.photoURL || ""}

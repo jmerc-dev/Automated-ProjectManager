@@ -10,6 +10,7 @@ import { listenToTasksByAssignedMember } from "../../../services/firestore/tasks
 import type { Task } from "../../../types/task";
 import { getProjectMemberByEmail } from "../../../services/firestore/members";
 import UserTasks from "./UserTasks/page";
+import NotifDropdown from "../../../components/notif-dropdown";
 
 export default function MyTasks() {
   const navigate = useNavigate();
@@ -69,18 +70,7 @@ export default function MyTasks() {
           </div>
           {/* Right-side Icons */}
           <div className="flex items-center justify-end gap-3 pr-4">
-            <button
-              className="rounded-full p-2 bg-white/70 hover:bg-[#e6f0fa] transition shadow-sm focus:outline-none focus:ring-2 focus:ring-[#0f6cbd]/30"
-              aria-label="Notifications"
-            >
-              <img src={notifIcon} className="w-6 h-6" />
-            </button>
-            <button
-              className="rounded-full p-2 bg-white/70 hover:bg-[#e6f0fa] transition shadow-sm focus:outline-none focus:ring-2 focus:ring-[#0f6cbd]/30"
-              aria-label="Help"
-            >
-              <img src={helpIcon} className="w-6 h-6" />
-            </button>
+            {projectId && <NotifDropdown projectId={projectId} />}
             <NavDropdown
               actions={{
                 Logout: () => {
