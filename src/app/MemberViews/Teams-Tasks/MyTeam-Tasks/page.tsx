@@ -33,15 +33,6 @@ export default function MyTeamTasks({ tasks, projectId }: MyTeamTasksProps) {
     }
   }, [tasks]);
 
-  // Sort tasks by due date
-  // const sortedTasks = [...tasks].sort((a, b) => {
-  //   if (b.startDate instanceof Date || a.startDate instanceof Date) {
-  //     const dateA = new Date(addDays(a.startDate, a.duration)).getTime();
-  //     const dateB = new Date(addDays(b.startDate, b.duration)).getTime();
-  //     return sortOrder === "asc" ? dateA - dateB : dateB - dateA;
-  //   }
-  // });
-
   return (
     <>
       {/* Total Progress Bar */}

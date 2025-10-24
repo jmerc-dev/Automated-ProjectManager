@@ -16,27 +16,6 @@ interface TaskItemProps {
 }
 
 export default function TaskItem({ task, projectId }: TaskItemProps) {
-  // Example comments array for modal
-  const exampleComments: Comment[] = [
-    {
-      id: "c1",
-      authorName: "Alex",
-      text: "Hey team, I'm waiting for the requirements doc from Sam before I can start.",
-      createdAt: new Date(),
-    },
-    {
-      id: "c2",
-      authorName: "Sam",
-      text: "Uploading the requirements doc now!",
-      createdAt: new Date(),
-    },
-    {
-      id: "c3",
-      authorName: "Jamie",
-      text: "Let me know if you need anything else.",
-      createdAt: new Date(),
-    },
-  ];
   const { user } = useAuth();
   const [showCommentsModal, setShowCommentsModal] = useState(false);
   const [thisTask, setThisTask] = useState<Task>(task);
@@ -49,7 +28,7 @@ export default function TaskItem({ task, projectId }: TaskItemProps) {
     getRecentComment(projectId || "", task.docId).then((comment) => {
       setLastComment(comment);
     });
-  }, []);
+  }, [task]);
 
   return (
     <li

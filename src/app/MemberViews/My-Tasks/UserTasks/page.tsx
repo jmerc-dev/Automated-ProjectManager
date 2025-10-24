@@ -1,3 +1,4 @@
+import { useEffect, useState } from "react";
 import TaskItem from "../../../../components/task-item";
 import type { Task } from "../../../../types/task";
 
@@ -7,17 +8,23 @@ interface UserTasksProps {
 }
 
 export default function UserTasks({ tasks, projectId }: UserTasksProps) {
+  const [currentTasks, setCurrentTasks] = useState<Task[]>(tasks);
+
+  useEffect(() => {
+    setCurrentTasks(tasks);
+  }, [tasks]);
+
   return (
     <div className="flex flex-row gap-8">
       {/* Main Task List */}
       <div className="flex-1">
         <ul className="space-y-4">
-          {tasks.length == 0 ? (
+          {currentTasks.length == 0 ? (
             <span className="text-gray-500">
               "It seems like there are no tasks assigned to you yet."
             </span>
           ) : (
-            tasks.map((task) => (
+            currentTasks.map((task) => (
               <TaskItem key={task.id} task={task} projectId={projectId} />
             ))
           )}

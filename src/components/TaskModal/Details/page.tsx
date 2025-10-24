@@ -90,6 +90,7 @@ export default function TaskDetailsPage({
             onClick={() => {
               setProgress(100);
               updateTaskProgress(projectId, task.docId, 100);
+              console.log("Task approved:", task.docId);
             }}
           >
             Approve

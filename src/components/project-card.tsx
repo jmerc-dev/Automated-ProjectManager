@@ -7,6 +7,7 @@ import { useEffect, useState } from "react";
 import type { Member } from "../types/member";
 import { getMemberByEmail } from "../services/firestore/members";
 import { useNavigate } from "react-router-dom";
+import { useAuth } from "../services/firebase/auth-context";
 
 interface ProjectCardProps {
   project: Project;
@@ -22,7 +23,7 @@ export default function ProjectCard({
   const [member, setMember] = useState<Member | null>(null);
   const [ownerName, setOwnerName] = useState<string>("");
   const navigate = useNavigate();
-
+  const { user } = useAuth();
   useEffect(() => {
     async function fetchOwnerName() {
       if (project.ownerID) {
@@ -33,10 +34,8 @@ export default function ProjectCard({
 
     async function fetchMember() {
       if (project.members && project.members.length > 0) {
-        const memberData = await getMemberByEmail(
-          project.id,
-          project.members[0]
-        );
+        if (!user?.email) return;
+        const memberData = await getMemberByEmail(project.id, user?.email);
         setMember(memberData);
       }
     }
