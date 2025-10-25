@@ -5,6 +5,7 @@ import type { CoreTaskFieldsType } from "../../types/task";
 import {
   addDoc,
   collection,
+  getDoc,
   getDocs,
   updateDoc,
   deleteDoc,
@@ -16,7 +17,9 @@ import {
   query,
 } from "firebase/firestore";
 import { getTaskIndex, incTaskIndex } from "./projects";
-import type { Member } from "../../types/member";
+import type { GanttMember, Member } from "../../types/member";
+import { addNotification } from "./notifications";
+import { NotificationType } from "../../types/notification";
 
 export async function createTask(projectId: string, newTask: Task) {
   try {
@@ -214,9 +217,53 @@ export function listenToTasksByAssignedMember(
   });
 }
 
-export async function deleteTask(projectId: string, taskId: string) {
+export async function deleteTask(
+  projectId: string,
+  taskId: string,
+  members: Member[]
+) {
+  const task = await getTaskById(projectId, taskId);
+
   const docRef = doc(db, "projects", projectId, "tasks", String(taskId));
+
+  console.log(
+    task?.assignedMembers
+      ?.map(
+        (member) =>
+          members.find(
+            (m) => m.id === (typeof member === "string" ? member : member.id)
+          )?.emailAddress
+      )
+      .filter((email): email is string => typeof email === "string") || []
+  );
   await deleteDoc(docRef);
+
+  await addNotification(projectId, {
+    projectId: projectId,
+    message: `The task "${task?.name}" assigned to you has been deleted.`,
+    type: NotificationType.TaskDeleted,
+    isMemberSpecific: true,
+    targetMembers:
+      task?.assignedMembers
+        ?.map(
+          (member) =>
+            members.find(
+              (m) => m.id === (typeof member === "string" ? member : member.id)
+            )?.emailAddress
+        )
+        .filter((email): email is string => typeof email === "string") || [],
+  });
+}
+
+export async function getTaskById(
+  projectId: string,
+  taskId: string
+): Promise<Task | null> {
+  const docRef = doc(db, "projects", projectId, "tasks", String(taskId));
+  const docSnap = await getDoc(docRef);
+  return docSnap.exists()
+    ? ({ id: docSnap.id, ...docSnap.data() } as Task)
+    : null;
 }
 
 // Update task properties

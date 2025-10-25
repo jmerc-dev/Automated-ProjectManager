@@ -58,7 +58,7 @@ export function listenToNotifications(
   return unsubscribe;
 }
 
-export function markNotificationAsRead(
+export async function markNotificationAsRead(
   projectId: string,
   notificationId: string,
   userEmail: string

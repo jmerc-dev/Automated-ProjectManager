@@ -31,10 +31,13 @@ import {
   updateTask,
   updateTaskOrder,
 } from "../../../services/firestore/tasks";
-import type { GanttMember } from "../../../types/member";
+import type { GanttMember, Member } from "../../../types/member";
 
 import { changedTaskFields } from "../../../util/task-processing";
-import { onGanttMembersSnapshot } from "../../../services/firestore/members";
+import {
+  onGanttMembersSnapshot,
+  onProjectMembersSnapshot,
+} from "../../../services/firestore/members";
 
 interface TasksViewProps {
   projectId?: string;
@@ -45,6 +48,7 @@ function TasksView({ projectId }: TasksViewProps) {
   const ganttRef = useRef<GanttComponent>(null);
   const currentTaskToEdit = useRef<any>(null);
   const [members, setMembers] = useState<GanttMember[]>([]);
+  const [projectMembers, setProjectMembers] = useState<Member[]>([]);
   const [tasksLoaded, setTasksLoaded] = useState(false);
   const [membersLoaded, setMembersLoaded] = useState(false);
   const editOptions: EditSettingsModel = {
@@ -64,11 +68,38 @@ function TasksView({ projectId }: TasksViewProps) {
       setMembersLoaded
     );
 
+    const unsubscribeProjectMembers = onProjectMembersSnapshot(
+      projectId,
+      (projectMembers) => {
+        setProjectMembers(projectMembers);
+      },
+      setMembersLoaded
+    );
+
     return () => {
       unsubscribeMembers();
       unsubscribeTasks();
+      unsubscribeProjectMembers();
     };
   }, [projectId]);
+
+  useEffect(() => {
+    console.log("Project Members: ", projectMembers);
+
+    setMembers(
+      projectMembers.map((member) => ({
+        id: member.id,
+        name: member.name,
+        role: member.role,
+        teamName: member.teamName,
+        unit: member.unit || 100,
+      }))
+    );
+  }, [projectMembers]);
+
+  useEffect(() => {
+    console.log("Gantt Members: ", members);
+  }, [members]);
 
   const taskFields: any = {
     id: "id",
@@ -300,13 +331,10 @@ function TasksView({ projectId }: TasksViewProps) {
               // );
 
               // Update units of members too
-              //console.log("Previous Members: ", currentTaskToEdit.current);
-              console.log("New Members: ", members);
-              console.log("Assigned Members: ", newTask.assignedMembers);
             } else if (args.requestType === "delete") {
               const deletedTasks: any = args.data;
               deletedTasks.forEach((task: any) =>
-                deleteTask(projectId, task.taskData.docId)
+                deleteTask(projectId, task.taskData.docId, projectMembers)
               );
             } else if (
               args.requestType === "rowDropped" ||
@@ -337,12 +365,6 @@ function TasksView({ projectId }: TasksViewProps) {
               siblings?.forEach((task: any, idx: number) => {
                 if (task.order !== idx) {
                   updateTask(projectId, String(task.docId), "order", idx);
-                  console.log(
-                    "Updated order for task ",
-                    task.docId,
-                    " to ",
-                    idx
-                  );
                 }
               });
 

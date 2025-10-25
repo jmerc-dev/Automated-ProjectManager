@@ -1,3 +1,5 @@
+import Task from "../components/task";
+
 export interface Notification {
   id: string;
   projectId: string;
@@ -13,6 +15,7 @@ export interface Notification {
 export const NotificationType: any = {
   // Used in the codebase
   MemberAdded: "member_added",
+  TaskDeleted: "task_deleted",
 
   // New types to be used
   ProjectCreated: "project_created",

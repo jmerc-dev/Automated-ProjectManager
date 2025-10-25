@@ -217,3 +217,20 @@ export function onGanttMembersSnapshot(
     if (loadedCallback) loadedCallback(true);
   });
 }
+
+export function onProjectMembersSnapshot(
+  projectId: string,
+  callback: (members: Member[]) => void,
+  loadedCallback?: (loaded: boolean) => void
+) {
+  const membersCol = collection(db, "projects", projectId, "members");
+  return onSnapshot(membersCol, (snapshot: QuerySnapshot<DocumentData>) => {
+    const members = snapshot.docs.map((doc) => {
+      const memberData = { ...doc.data(), id: doc.id } as Member;
+
+      return memberData;
+    });
+    callback(members);
+    if (loadedCallback) loadedCallback(true);
+  });
+}
