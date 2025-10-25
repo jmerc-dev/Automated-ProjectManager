@@ -225,17 +225,6 @@ export async function deleteTask(
   const task = await getTaskById(projectId, taskId);
 
   const docRef = doc(db, "projects", projectId, "tasks", String(taskId));
-
-  console.log(
-    task?.assignedMembers
-      ?.map(
-        (member) =>
-          members.find(
-            (m) => m.id === (typeof member === "string" ? member : member.id)
-          )?.emailAddress
-      )
-      .filter((email): email is string => typeof email === "string") || []
-  );
   await deleteDoc(docRef);
 
   await addNotification(projectId, {
@@ -402,11 +391,29 @@ export async function updateTaskOrder(
 export async function updateTaskMembers(
   projectId: string,
   taskId: string,
-  assignedMembers: string[]
+  assignedMembers: Member[]
 ) {
   const docRef = doc(db, "projects", projectId, "tasks", String(taskId));
+  console.log("Updating assigned members to:", assignedMembers);
   await updateDoc(docRef, {
-    assignedMembers: assignedMembers,
+    assignedMembers: assignedMembers.map((member) => ({
+      id: member.id,
+      teamName: member.teamName,
+      role: member.role,
+      unit: member.unit,
+    })),
+  });
+
+  const recipients = assignedMembers
+    .map((member) => member.emailAddress)
+    .join(", ");
+
+  addNotification(projectId, {
+    projectId: projectId,
+    message: `The assigned members for task ID "${taskId}" have been updated. The new members are: ${recipients}.`,
+    type: NotificationType.TaskAssigned,
+    isMemberSpecific: true,
+    targetMembers: assignedMembers.map((member) => member.emailAddress),
   });
 }
 
@@ -416,15 +423,3 @@ export async function updateCriticalTasks(projectId: string, duration: number) {
     critical: duration,
   });
 }
-
-// To fix
-// export async function updateTaskParentId(
-//   projectId: string,
-//   taskId: string,
-//   parentId: number
-// ) {
-//   const docRef = doc(db, "projects", projectId, "tasks", String(taskId));
-//   await updateDoc(docRef, {
-//     notes: order,
-//   });
-// }

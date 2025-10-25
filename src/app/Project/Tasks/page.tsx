@@ -84,8 +84,6 @@ function TasksView({ projectId }: TasksViewProps) {
   }, [projectId]);
 
   useEffect(() => {
-    console.log("Project Members: ", projectMembers);
-
     setMembers(
       projectMembers.map((member) => ({
         id: member.id,
@@ -96,10 +94,6 @@ function TasksView({ projectId }: TasksViewProps) {
       }))
     );
   }, [projectMembers]);
-
-  useEffect(() => {
-    console.log("Gantt Members: ", members);
-  }, [members]);
 
   const taskFields: any = {
     id: "id",
@@ -215,7 +209,6 @@ function TasksView({ projectId }: TasksViewProps) {
                 const progressInput = document.querySelector(
                   'input.e-numerictextbox[title="progress"]'
                 );
-                //console.log("Progress input field: ", progressInput);
                 if (progressInput) {
                   progressInput.setAttribute("disabled", "true");
                 }
@@ -279,8 +272,6 @@ function TasksView({ projectId }: TasksViewProps) {
                 ...args.data.taskData,
               } as any;
 
-              // console.log("Current Task to edit: ", currentTaskToEdit.current);
-
               const previousTaskState = {
                 docId: currentTaskToEdit?.current?.taskData.docId,
                 id: currentTaskToEdit?.current?.id,
@@ -305,12 +296,17 @@ function TasksView({ projectId }: TasksViewProps) {
                 projectId,
                 String(newTask.docId),
                 "assignedMembers",
-                newTask.assignedMembers?.map((m: any) => ({
+                newTask.assignedMembers?.map((m: GanttMember) => ({
                   id: m.id,
                   unit: m.unit,
                   teamName: m.teamName,
+                  name: m.name,
+                  emailAddress: projectMembers.find((mem) => mem.id === m.id)
+                    ?.emailAddress,
                 })) || []
               );
+
+              // Recalculate critical path duration
               const d = ganttRef.current
                 ? ganttRef.current
                     ?.getCriticalTasks()

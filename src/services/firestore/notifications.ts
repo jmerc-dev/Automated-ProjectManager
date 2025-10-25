@@ -40,18 +40,20 @@ export function listenToNotifications(
         ...doc.data(),
         createdAt: doc.data().createdAt.toDate(),
       })) as Notification[];
-      notifications.filter((notification) => {
+      const filteredNotifications = notifications.filter((notification) => {
         if (notification.isMemberSpecific) {
+          console.log("Filtering member-specific notification:", notification);
           return notification.targetMembers?.includes(userEmail);
         } else {
           alert("This is still on development.");
-          return true;
+          return false;
         }
       });
-      notifications.sort(
+      filteredNotifications.sort(
         (a, b) => b.createdAt.getTime() - a.createdAt.getTime()
       );
-      callback(notifications);
+
+      callback(filteredNotifications);
     }
   );
 

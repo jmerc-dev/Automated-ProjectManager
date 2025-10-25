@@ -4,6 +4,8 @@ import { useAuth } from "../services/firebase/auth-context";
 import { listenToNotifications } from "../services/firestore/notifications";
 import type { Notification } from "../types/notification";
 import NotificationItem from "./notification-item";
+import Modal from "./modal";
+import NotifModal from "./NotifModal/notif-modal";
 
 interface NotificationDropdownProps {
   projectId: string;
@@ -15,12 +17,22 @@ export default function NotifDropdown({
   const [notifications, setNotifications] = useState<Notification[]>([]);
   const [open, setOpen] = useState<boolean>(false);
   const { user } = useAuth();
+  const [selectedNotification, setSelectedNotification] =
+    useState<Notification | null>(null);
+
+  const [notifModalOpen, setNotifModalOpen] = useState<boolean>(false);
 
   useEffect(() => {
     if (user && user.email) {
       listenToNotifications(projectId, user.email, setNotifications);
     }
   }, [user]);
+
+  function handleNotificationClick(clickedNotification: Notification) {
+    setNotifModalOpen(true);
+    setSelectedNotification(clickedNotification);
+    console.log("Clicked notification:", clickedNotification);
+  }
 
   return (
     <div className="relative inline-block">
@@ -44,12 +56,28 @@ export default function NotifDropdown({
                 </div>
               ) : (
                 notifications.map((notif) => (
-                  <NotificationItem key={notif.id} notification={notif} />
+                  <NotificationItem
+                    key={notif.id}
+                    notification={notif}
+                    handleClick={() => handleNotificationClick(notif)}
+                  />
                 ))
               )}
             </div>
           </div>
         </div>
+      )}
+
+      {selectedNotification && (
+        <NotifModal
+          notification={selectedNotification}
+          notifModalOpen={notifModalOpen}
+          setnotifModalOpen={setNotifModalOpen}
+          onClose={() => {
+            setNotifModalOpen(false);
+            setSelectedNotification(null);
+          }}
+        />
       )}
     </div>
   );

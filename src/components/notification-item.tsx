@@ -8,10 +8,12 @@ import { useState } from "react";
 
 interface NotificationItemProps {
   notification: Notification;
+  handleClick: () => void;
 }
 
 export default function NotificationItem({
   notification,
+  handleClick,
 }: NotificationItemProps) {
   const { user } = useAuth();
   const [thisNotification, setThisNotification] =
@@ -30,7 +32,7 @@ export default function NotificationItem({
   // Assume you pass currentUserEmail as a prop or get it from context
   // For demo, mark as unread if readBy does not include 'me@example.com'
 
-  function handleClick() {
+  function markAsRead() {
     if (isUnread && user?.email) {
       markNotificationAsRead(
         notification.projectId,
@@ -48,7 +50,10 @@ export default function NotificationItem({
           ? "border-[#0f6cbd] hover:bg-gray-300 cursor-pointer"
           : "border-transparent opacity-70 hover:bg-gray-300 cursor-pointer")
       }
-      onClick={handleClick}
+      onClick={() => {
+        markAsRead();
+        handleClick();
+      }}
     >
       {isUnread && (
         <span
@@ -56,10 +61,12 @@ export default function NotificationItem({
           title="Unread"
         />
       )}
-      <div className="font-medium text-[#155a8a]">
+      <div className="font-medium text-[#155a8a] ">
         {NotificationTypeToReadableString(thisNotification.type)}
       </div>
-      <div>{thisNotification.message}</div>
+      <div className="line-clamp-2 overflow-hidden text-ellipsis">
+        {thisNotification.message}
+      </div>
       <div className="text-xs text-gray-400 mt-1">
         {getRelativeTime(thisNotification.createdAt)}
       </div>
