@@ -18,6 +18,7 @@ import {
 import MembersManagement from "./Members/page";
 import ProjectSettings from "./Settings/page";
 import Reports from "../Reports/Reports";
+import NotifDropdown from "../../components/notif-dropdown";
 
 function ProjectView() {
   const [activeTab, setActiveTab] = useState("tasks-tab");
@@ -103,12 +104,7 @@ function ProjectView() {
             >
               <img src={notifIcon} className="w-6 h-6" />
             </button>
-            <button
-              className="rounded-full p-2 bg-white/70 hover:bg-[#e6f0fa] transition shadow-sm focus:outline-none focus:ring-2 focus:ring-[#0f6cbd]/30"
-              aria-label="Help"
-            >
-              <img src={helpIcon} className="w-6 h-6" />
-            </button>
+            {project && <NotifDropdown projectId={project.id} />}
             <NavDropdown
               actions={{
                 Logout: () => {
