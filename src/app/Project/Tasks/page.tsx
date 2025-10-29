@@ -300,6 +300,7 @@ function TasksView({ projectId }: TasksViewProps) {
                   id: m.id,
                   unit: m.unit,
                   teamName: m.teamName,
+                  role: projectMembers.find((mem) => mem.id === m.id)?.role,
                   name: m.name,
                   emailAddress: projectMembers.find((mem) => mem.id === m.id)
                     ?.emailAddress,

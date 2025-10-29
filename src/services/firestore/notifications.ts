@@ -44,7 +44,6 @@ export function listenToNotifications(
       })) as Notification[];
       const filteredNotifications = notifications.filter((notification) => {
         if (notification.isMemberSpecific) {
-          console.log("Filtering member-specific notification:", notification);
           return notification.targetMembers?.includes(userEmail);
         } else {
           alert("This is still on development.");
@@ -87,5 +86,15 @@ export async function notifyProjectOwner(projectId: string, message: string, typ
     targetMembers: [projectOwner?.email || ""],
     type: type,
   });
-
 }
+
+export async function notifyTaskAssignedMembers(projectId: string, message: string, memberEmails: string[], type: NotificationType) {
+  addNotification(projectId, {
+    projectId: projectId,
+    message: message,
+    isMemberSpecific: true,
+    targetMembers: memberEmails,
+    type: type,
+  });
+}
+

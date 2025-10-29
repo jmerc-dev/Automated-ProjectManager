@@ -342,8 +342,6 @@ export async function updateTaskProgress(
     progress: newProgress,
   });
 
-  const recipientsEmail: string[] = []
-
   const task =  await getTaskById(projectId, taskId);
   if (!task) return;
 
@@ -431,4 +429,8 @@ export async function updateCriticalTasks(projectId: string, duration: number) {
   await updateDoc(docRef, {
     critical: duration,
   });
+}
+
+export async function getTaskAssignedMembersEmails(projectId: string, taskId: string) {
+
 }
