@@ -344,7 +344,10 @@ export async function updateTaskProgress(
 
   const recipientsEmail: string[] = []
 
-  notifyProjectOwner(projectId, `The progress of task ID "${taskId}" has been updated to ${newProgress}%.`, NotificationType.TaskUpdated);
+  const task =  await getTaskById(projectId, taskId);
+  if (!task) return;
+
+  notifyProjectOwner(projectId, `The progress of task ID "${task.name}" has been updated to ${newProgress}%.`, NotificationType.TaskUpdated);
 
 
 }
