@@ -17,11 +17,11 @@ export const NotificationType: any = {
   MemberAdded: "member_added",
   TaskDeleted: "task_deleted",
   TaskAssigned: "task_assigned",
+  TaskUpdated: "task_updated",
 
   // New types to be used
   ProjectCreated: "project_created",
   ProjectUpdated: "project_updated",
-  TaskUpdated: "task_updated",
   TaskCompleted: "task_completed",
   TaskOverdue: "task_overdue",
   TaskApproved: "task_approved",

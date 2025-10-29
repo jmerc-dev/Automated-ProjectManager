@@ -16,10 +16,11 @@ import {
   orderBy,
   query,
 } from "firebase/firestore";
-import { getTaskIndex, incTaskIndex } from "./projects";
+import { getProjectById, getTaskIndex, incTaskIndex } from "./projects";
 import type { GanttMember, Member } from "../../types/member";
-import { addNotification } from "./notifications";
+import { addNotification, notifyProjectOwner } from "./notifications";
 import { NotificationType } from "../../types/notification";
+import { getUserById } from "./user";
 
 export async function createTask(projectId: string, newTask: Task) {
   try {
@@ -340,6 +341,12 @@ export async function updateTaskProgress(
   await updateDoc(docRef, {
     progress: newProgress,
   });
+
+  const recipientsEmail: string[] = []
+
+  notifyProjectOwner(projectId, `The progress of task ID "${taskId}" has been updated to ${newProgress}%.`, NotificationType.TaskUpdated);
+
+
 }
 
 export async function updateTaskDependency(
@@ -384,8 +391,6 @@ export async function updateTaskOrder(
   await updateDoc(docRef, {
     order: order,
   });
-
-  console.log("Updated order to:", order);
 }
 
 export async function updateTaskMembers(
@@ -394,7 +399,6 @@ export async function updateTaskMembers(
   assignedMembers: Member[]
 ) {
   const docRef = doc(db, "projects", projectId, "tasks", String(taskId));
-  console.log("Updating assigned members to:", assignedMembers);
   await updateDoc(docRef, {
     assignedMembers: assignedMembers.map((member) => ({
       id: member.id,
@@ -403,6 +407,8 @@ export async function updateTaskMembers(
       unit: member.unit,
     })),
   });
+
+  if (assignedMembers.length === 0) return;
 
   const recipients = assignedMembers
     .map((member) => member.emailAddress)

@@ -10,7 +10,9 @@ import {
   QuerySnapshot,
   arrayUnion,
 } from "firebase/firestore";
-import type { Notification } from "../../types/notification";
+import type { Notification, NotificationType } from "../../types/notification";
+import { getProjectById } from "./projects";
+import { getUserById } from "./user";
 
 const notificationsCollection = (projectId: string) =>
   collection(db, "projects", projectId, "notifications");
@@ -72,4 +74,18 @@ export async function markNotificationAsRead(
   return updateDoc(notificationRef, {
     readBy: arrayUnion(userEmail),
   });
+}
+
+export async function notifyProjectOwner(projectId: string, message: string, type: NotificationType) {
+  const project = await getProjectById(projectId);
+  const projectOwner = await getUserById(project?.ownerID!);
+
+  addNotification(projectId, {
+    projectId: projectId,
+    message: message,
+    isMemberSpecific: true,
+    targetMembers: [projectOwner?.email || ""],
+    type: type,
+  });
+
 }
