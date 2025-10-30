@@ -21,6 +21,7 @@ export async function addNotification(
   projectId: string,
   notification: Omit<Notification, "id" | "createdAt" | "readBy">
 ) {
+  return;``
   const docRef = await addDoc(notificationsCollection(projectId), {
     ...notification,
     createdAt: new Date(),
@@ -34,6 +35,7 @@ export function listenToNotifications(
   userEmail: string,
   callback: (notifications: Notification[]) => void
 ) {
+  
   const unsubscribe = onSnapshot(
     notificationsCollection(projectId),
     (snapshot) => {
