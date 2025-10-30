@@ -48,6 +48,7 @@ function TasksView({ projectId }: TasksViewProps) {
   const ganttRef = useRef<GanttComponent>(null);
   const currentTaskToEdit = useRef<any>(null);
   const [members, setMembers] = useState<GanttMember[]>([]);
+  const [filteredMembers, setFilteredMembers] = useState<GanttMember[]>([]);
   const [projectMembers, setProjectMembers] = useState<Member[]>([]);
   const [tasksLoaded, setTasksLoaded] = useState(false);
   const [membersLoaded, setMembersLoaded] = useState(false);
@@ -83,17 +84,6 @@ function TasksView({ projectId }: TasksViewProps) {
     };
   }, [projectId]);
 
-  useEffect(() => {
-    setMembers(
-      projectMembers.map((member) => ({
-        id: member.id,
-        name: member.name,
-        role: member.role,
-        teamName: member.teamName,
-        unit: member.unit || 100,
-      }))
-    );
-  }, [projectMembers]);
 
   const taskFields: any = {
     id: "id",

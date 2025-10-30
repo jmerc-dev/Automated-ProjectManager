@@ -7,6 +7,7 @@ import {
   getCriticalTasks,
   getProjectEnd,
   getProjectStart,
+  listenToTasks,
 } from "../../services/firestore/tasks";
 import {
   BarChart,
@@ -18,6 +19,9 @@ import {
   ResponsiveContainer,
 } from "recharts";
 import React, { useEffect, useState } from "react";
+import type { Task } from "../../types/task";
+import type { Project } from "../../types/project";
+import { capitalizeWords } from "../../util/string-processing";
 // import { CriticalPath } from "@syncfusion/ej2-gantt/src/gantt/actions/critical-path";
 
 // import handleGetCriticalTasks from "../Project/Tasks/page";
@@ -53,6 +57,12 @@ export default function Reports({ projectId }: ReportsManagementProps) {
   const [getCriticalTasks, setCriticalTasks] = useState(0);
   const [get_ProjectStart, setProjectStart] = useState<Date>();
   const [get_ProjectEnd, setProjectEnd] = useState<Date>();
+  const [tasks, setTask] = useState<Task[]>([]);
+  const [project, setProject] = useState<Project | null>(null);
+
+  // useEffect(() => {
+
+  // }, [tasks]);
 
   useEffect(() => {
     // Subscribe to Firestore updates
@@ -60,14 +70,23 @@ export default function Reports({ projectId }: ReportsManagementProps) {
       setCriticalTasks(tasks);
       console.log("Live critical tasks:", tasks);
     });
+
+    getProjectById(projectId).then((proj) => {
+      setProject(proj);
+    });
+
+    const unsubscribeTasks = listenToTasks(projectId, setTask)
     // Cleanup listener on unmount
-    return () => unsubscribe();
+    return () => {
+      unsubscribe(); 
+      unsubscribeTasks()
+    };
   }, [projectId]);
 
   useEffect(() => {
     const unsubProjectStart = getProjectStart(projectId, (startDate) => {
       setProjectStart(startDate);
-      console.log("Live project start date:", startDate);
+      // console.log("Live project start date:", startDate);
     });
 
     return () => unsubProjectStart();
@@ -76,7 +95,7 @@ export default function Reports({ projectId }: ReportsManagementProps) {
   useEffect(() => {
     const unsubProjectEnd = getProjectEnd(projectId, (startDate) => {
       setProjectEnd(startDate);
-      console.log("Live project start date:", startDate);
+      // console.log("Live project start date:", startDate);
     });
 
     return () => unsubProjectEnd();
@@ -123,7 +142,7 @@ export default function Reports({ projectId }: ReportsManagementProps) {
           <div>
             <span className="text-sm text-gray-500">Project Name</span>
             <div className="font-bold text-[#0f6cbd] text-lg">
-              Example Project
+              {project?.name}
             </div>
           </div>
           <div>
@@ -140,11 +159,13 @@ export default function Reports({ projectId }: ReportsManagementProps) {
           </div>
           <div>
             <span className="text-sm text-gray-500">Status</span>
-            <div className="font-bold text-green-600 text-lg">On Track</div>
+            <div className="font-bold text-green-600 text-lg">{project?.status && capitalizeWords(project?.status)}</div>
           </div>
           <div>
             <span className="text-sm text-gray-500">Tasks Completed</span>
-            <div className="font-bold text-blue-600 text-lg">75%</div>
+            <div className="font-bold text-blue-600 text-lg">{
+              ((tasks.filter((task) => task.progress === 100).length / tasks.length) * 100).toFixed(2)
+            }%</div>
           </div>
         </div>
       </div>
