@@ -248,9 +248,6 @@ function TasksView({ projectId }: TasksViewProps) {
                   (task) => task.id == newTask.id
                 );
                 allTasks[newTaskIndex].docId = String(taskIndex);
-
-                setTasks(allTasks);
-
                 createTask(projectId, allTasks[newTaskIndex]);
               });
             } else if (args.requestType === "save") {
