@@ -19,6 +19,8 @@ import type { Notification } from "../../types/notification";
 import { addNotification } from "./notifications";
 import { NotificationType } from "../../types/notification";
 import { getProjectById } from "./projects";
+import { getAllTasks, updateTask } from "./tasks";
+import { CoreTaskFields } from "../../types/task";
 
 const membersCollection = (projectId: string) =>
   collection(db, `projects/${projectId}/members`);
@@ -142,6 +144,36 @@ export async function updateMember(
       data.emailAddress!,
       oldEmailAddress
     );
+
+    // const tasks = await getAllTasks(projectId);
+    // const memberTasks = tasks.filter((t) => {
+    //   if (t.assignedMembers?.some((m) => m.id === memberId)) {
+    //     return true;
+    //   }
+    //   return false;
+    // });
+
+    // console.log("Member Tasks: ", memberTasks);
+    // memberTasks.forEach(task => {
+
+    //   const updatedAssignedMembers = task.assignedMembers?.map(m => {
+    //     if (m.id === memberId) {
+    //       return {
+    //         ...m,
+    //         teamName: data.teamName || m.teamName,
+    //         role: data.role || m.role,
+    //       };
+    //     }
+    //     else {
+    //       return m;
+    //     }
+    //   });
+
+    //   console.log("Updated Assigned Members: ", updatedAssignedMembers);
+
+    //   updateTask(projectId, task.id, CoreTaskFields.assignedMembers, updatedAssignedMembers || []);
+    // });
+
     return memberRef;
   } catch (e) {
     console.error("Error updating member:", e);
@@ -202,6 +234,10 @@ export function onGanttMembersSnapshot(
   return onSnapshot(membersCol, (snapshot: QuerySnapshot<DocumentData>) => {
     const members = snapshot.docs.map((doc) => {
       const memberData = { ...doc.data(), id: doc.id } as Member;
+      
+      if (memberData.level === "Leader") {
+        return null;
+      }
 
       const ganttFormattedMember: GanttMember = {
         id: memberData.id,
@@ -212,7 +248,7 @@ export function onGanttMembersSnapshot(
       };
 
       return ganttFormattedMember;
-    });
+    }).filter(Boolean) as GanttMember[];
     callback(members);
     if (loadedCallback) loadedCallback(true);
   });

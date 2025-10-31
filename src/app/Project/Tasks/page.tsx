@@ -38,6 +38,7 @@ import {
   onGanttMembersSnapshot,
   onProjectMembersSnapshot,
 } from "../../../services/firestore/members";
+import sampleTasks from "./sampleData";
 
 interface TasksViewProps {
   projectId?: string;
@@ -48,6 +49,7 @@ function TasksView({ projectId }: TasksViewProps) {
   const ganttRef = useRef<GanttComponent>(null);
   const currentTaskToEdit = useRef<any>(null);
   const [members, setMembers] = useState<GanttMember[]>([]);
+  const [filteredMembers, setFilteredMembers] = useState<GanttMember[]>([]);
   const [projectMembers, setProjectMembers] = useState<Member[]>([]);
   const [tasksLoaded, setTasksLoaded] = useState(false);
   const [membersLoaded, setMembersLoaded] = useState(false);
@@ -83,17 +85,6 @@ function TasksView({ projectId }: TasksViewProps) {
     };
   }, [projectId]);
 
-  useEffect(() => {
-    setMembers(
-      projectMembers.map((member) => ({
-        id: member.id,
-        name: member.name,
-        role: member.role,
-        teamName: member.teamName,
-        unit: member.unit || 100,
-      }))
-    );
-  }, [projectMembers]);
 
   const taskFields: any = {
     id: "id",
@@ -153,7 +144,7 @@ function TasksView({ projectId }: TasksViewProps) {
         <GanttComponent
           ref={ganttRef}
           key={projectId}
-          enablePersistence={false}
+          enablePersistence={true}
           resources={members}
           resourceFields={resourceFields}
           workWeek={[
@@ -182,6 +173,12 @@ function TasksView({ projectId }: TasksViewProps) {
           editSettings={editOptions}
           toolbar={toolbarOptions}
           enableCriticalPath={true}
+          selectionSettings={
+            {
+              mode: "Row",
+              type: "Multiple"
+            }
+          }
           allowRowDragAndDrop={true}
           enableContextMenu={true}
           taskbarEditing={(args) => {
@@ -197,6 +194,7 @@ function TasksView({ projectId }: TasksViewProps) {
             //console.log("old data: ", currentTaskToEdit.current);
           }}
           actionBegin={(args) => {
+
             if (args.requestType === "beforeOpenEditDialog") {
               currentTaskToEdit.current = {
                 ...args.rowData,
@@ -230,6 +228,11 @@ function TasksView({ projectId }: TasksViewProps) {
           }}
           actionComplete={(args) => {
             if (args.requestType === "add") {
+
+              // Get parent id of new Task
+              const parentId = args.data.taskData.parentId;
+              const newTaskId = args.data.taskData.id;
+              
               getTaskIndex(projectId).then((taskIndex: number) => {
                 const newTask: Task = {
                   ...args.data.taskData,
@@ -254,15 +257,36 @@ function TasksView({ projectId }: TasksViewProps) {
                     docId: t.taskData?.docId ?? "",
                   })) || [];
                 if (!allTasks) return;
-                const newTaskIndex = allTasks.findIndex(
+
+                const childrenOfParent = allTasks.filter(
+                  (task) => task.parentId === parentId
+                );
+
+                const newTaskIndex = childrenOfParent.findIndex(
                   (task) => task.id == newTask.id
                 );
-                allTasks[newTaskIndex].docId = String(taskIndex);
 
-                setTasks(allTasks);
+                if (newTaskIndex < 0) return;
 
-                createTask(projectId, allTasks[newTaskIndex]);
+                console.log(newTaskIndex);
+                // Continue here...
+
+                childrenOfParent[newTaskIndex].docId = String(taskIndex);
+                for (let i = newTaskIndex + 1; i < childrenOfParent.length; i++) {
+                      childrenOfParent[i].order = i;
+                      updateTaskOrder(
+                        projectId,
+                        String(childrenOfParent[i].docId),
+                        i
+                      );
+                    }
+                createTask(projectId, 
+                  { ...childrenOfParent[newTaskIndex], order: newTaskIndex}).then(() => {
+                    
+                  });
               });
+
+
             } else if (args.requestType === "save") {
               if (!currentTaskToEdit?.current) {
                 return;
@@ -300,6 +324,7 @@ function TasksView({ projectId }: TasksViewProps) {
                   id: m.id,
                   unit: m.unit,
                   teamName: m.teamName,
+                  role: projectMembers.find((mem) => mem.id === m.id)?.role,
                   name: m.name,
                   emailAddress: projectMembers.find((mem) => mem.id === m.id)
                     ?.emailAddress,
@@ -355,7 +380,7 @@ function TasksView({ projectId }: TasksViewProps) {
                 .map((t: any) => t.taskData);
 
               // Sort siblings by their position in the Gantt chart
-              siblings?.sort((a, b) => a.index - b.index);
+              //siblings?.sort((a, b) => a.index - b.index);
 
               // Update order for each sibling
               siblings?.forEach((task: any, idx: number) => {
@@ -363,10 +388,6 @@ function TasksView({ projectId }: TasksViewProps) {
                   updateTask(projectId, String(task.docId), "order", idx);
                 }
               });
-
-              // console.log(siblings?.sort((a, b) => a.index - b.index));
-
-              // console.log("Row dropped: ", args);
             }
           }}
         >

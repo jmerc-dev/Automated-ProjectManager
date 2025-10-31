@@ -14,6 +14,7 @@ import {
   onTeamsSnapshot,
   updateTeam,
 } from "../../../services/firestore/teams";
+import { useAuth } from "../../../services/firebase/auth-context";
 
 interface MembersManagementProps {
   projectId: string;
@@ -50,6 +51,7 @@ export default function MembersManagement({
   const [newMemberTeamName, setNewMemberTeamName] = useState<string>("None");
   const [newLevel, setNewLevel] = useState<"Leader" | "Member">("Member");
   const [members, setMembers] = useState<Member[]>([]);
+  const { user } = useAuth();
 
   const [teams, setTeams] = useState<Team[]>([]);
   const [newTeamName, setNewTeamName] = useState<string>("");
@@ -73,6 +75,11 @@ export default function MembersManagement({
 
     if (!emailRegex.test(newEmail)) {
       alert("Please enter a valid email address.");
+      return;
+    }
+
+    if (user && user.email === newEmail) {
+      alert("You can't add your own email here.");
       return;
     }
 
@@ -259,7 +266,7 @@ export default function MembersManagement({
           }}
           onConfirm={handleAddMember}
         >
-          <form className="flex flex-col gap-4 p-2">
+          <form className="flex flex-col gap-4 p-2 min-w-[400px]">
             <input
               className="rounded-2xl border border-[#d1e4f7] bg-white/60 backdrop-blur-md px-4 py-2 text-gray-900 font-medium shadow focus:outline-none focus:border-[#0f6cbd] focus:ring-2 focus:ring-[#0f6cbd]/30 transition placeholder:text-gray-500 hover:bg-white/80"
               type="text"

@@ -1,7 +1,7 @@
 import { useEffect, useState } from "react";
 import NotifIcon from "../assets/images/notification.png";
 import { useAuth } from "../services/firebase/auth-context";
-import { listenToNotifications } from "../services/firestore/notifications";
+import { listenToNotifications, markNotificationAsRead } from "../services/firestore/notifications";
 import type { Notification } from "../types/notification";
 import NotificationItem from "./notification-item";
 import Modal from "./modal";
@@ -34,22 +34,42 @@ export default function NotifDropdown({
     console.log("Clicked notification:", clickedNotification);
   }
 
+  function handleMarkAllAsReadClick() {
+    notifications.forEach((notif) => {
+      if (user && user.email && !notif.readBy.includes(user.email)) {
+        markNotificationAsRead(projectId, notif.id, user.email);
+      }
+    });
+  }
+
   return (
     <div className="relative inline-block">
       <div
         onClick={() => setOpen(!open)}
-        className="cursor-pointer rounded-full p-2 bg-white/70 hover:bg-[#e6f0fa] transition shadow-sm focus:outline-none focus:ring-2 focus:ring-[#0f6cbd]/30"
+        className={`cursor-pointer rounded-full p-2 bg-white/70 hover:bg-[#e6f0fa] transition shadow-sm focus:outline-none focus:ring-2 focus:ring-[#0f6cbd]/30 relative `}
       >
         <img src={NotifIcon} className="w-6 h-6" />
+        {notifications.some((notif) => {
+          return !notif.readBy.includes(user?.email || "");
+        }) && (
+          <span className="absolute top-0 right-0 w-2 h-2 bg-red-500 rounded-full"></span>
+        )}
       </div>
 
       {open && (
         <div className="absolute right-0 mt-2 w-96 bg-white border border-[#e6f0fa] rounded-xl shadow-lg z-40">
           <div className="p-4">
-            <div className="font-semibold text-[#0f6cbd] mb-2">
-              Notifications
+            <div className="font-semibold text-[#0f6cbd] mb-2 flex justify-between items-center">
+              <div>Notifications</div>
+              <div className="text-sm text-gray-500">
+                {notifications.length} total
+              </div>
+              <button className="text-sm text-white bg-[#0f6cbd] hover:bg-[#0d5ca1] transition rounded px-2 py-1 focus:outline-none focus:ring-2 focus:ring-[#0f6cbd]/30"
+              onClick={handleMarkAllAsReadClick}>
+                Mark all as read
+              </button>
             </div>
-            <div className="space-y-2">
+            <div className="space-y-2 max-h-150 overflow-y-auto">
               {notifications.length === 0 ? (
                 <div className="text-gray-500 text-sm">
                   No new notifications.
